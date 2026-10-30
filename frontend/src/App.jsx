@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import './veloura-mobile-only.css';
 import localCatalog from './data/catalog.json';
 import {
   ArrowLeft, ArrowRight, ArrowUpRight, BadgePercent, Check, ChevronDown,

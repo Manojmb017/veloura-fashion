@@ -1,0 +1,396 @@
+/*
+  Veloura Fashion — mobile-only layout refinements
+  All rules are restricted to screens 760px wide or smaller.
+  Desktop styles are not changed by this file.
+*/
+
+@media (max-width: 760px) {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  body {
+    min-width: 320px;
+  }
+
+  img,
+  video,
+  svg {
+    max-width: 100%;
+  }
+
+  .lux-app,
+  .main-content {
+    width: 100%;
+    min-width: 0;
+    overflow-x: clip;
+  }
+
+  /* Header: keep menu, logo and action icons from colliding */
+  .site-header {
+    min-width: 0;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .site-header > * {
+    min-width: 0;
+  }
+
+  .site-header .brand-mark {
+    max-width: 52vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: clamp(17px, 5vw, 23px);
+    letter-spacing: clamp(1px, 0.8vw, 3px);
+  }
+
+  .header-tools {
+    flex-shrink: 0;
+    gap: 2px;
+  }
+
+  .header-icon,
+  .plain-icon {
+    width: 32px;
+    min-width: 32px;
+    height: 36px;
+  }
+
+  .main-nav {
+    z-index: 30;
+    max-height: calc(100dvh - 90px);
+    overflow-y: auto;
+  }
+
+  /* Hero: readable copy with no clipping on narrow phones */
+  .home-hero {
+    width: 100%;
+    min-height: 390px;
+    height: auto;
+    aspect-ratio: auto;
+  }
+
+  .home-hero-copy {
+    top: 24px;
+    left: 16px;
+    width: min(76%, 310px);
+    right: auto;
+  }
+
+  .home-hero-copy h1 {
+    font-size: clamp(31px, 9vw, 43px);
+    line-height: 1.08;
+    overflow-wrap: anywhere;
+  }
+
+  .home-hero-copy .hero-description {
+    max-width: 95%;
+    font-size: 11px;
+    line-height: 1.65;
+  }
+
+  .home-hero-copy .dark-button {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .hero-pagination {
+    gap: 5px;
+    margin-top: 19px;
+  }
+
+  .hero-pagination span {
+    width: 14px;
+  }
+
+  .hero-pagination span.pagination-active {
+    width: 27px;
+  }
+
+  .home-hero-image img {
+    object-position: 65% center;
+  }
+
+  /* Service strip and category tiles */
+  .service-strip {
+    width: 100%;
+    gap: 6px;
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+
+  .service-strip div {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-size: 7px;
+  }
+
+  .section-inner {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .section-title-row {
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .section-title-row h2 {
+    min-width: 0;
+  }
+
+  .category-circle-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+    width: 100%;
+  }
+
+  .category-circle-item {
+    min-width: 0;
+  }
+
+  .category-circle {
+    width: clamp(58px, 19vw, 88px);
+    height: clamp(58px, 19vw, 88px);
+  }
+
+  .category-circle-label {
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  .category-chips {
+    max-width: 100%;
+  }
+
+  .category-chips button {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  /* Product cards: two columns and usable touch controls */
+  .product-grid,
+  .catalog-page > .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-width: 0;
+    gap: 22px 9px;
+  }
+
+  .product-card,
+  .product-photo {
+    min-width: 0;
+  }
+
+  .product-photo {
+    aspect-ratio: 0.72;
+  }
+
+  .product-name,
+  .product-color,
+  .product-price {
+    overflow-wrap: anywhere;
+  }
+
+  .quick-add {
+    opacity: 1;
+    transform: none;
+    min-height: 36px;
+  }
+
+  /* Catalog filters and sorting */
+  .catalog-page {
+    min-width: 0;
+    padding-left: 13px;
+    padding-right: 13px;
+  }
+
+  .catalog-toolbar,
+  .toolbar-right,
+  .catalog-category-tabs {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .toolbar-right {
+    flex-wrap: wrap;
+  }
+
+  .toolbar-right label {
+    min-width: 0;
+  }
+
+  .toolbar-right select {
+    max-width: 48%;
+  }
+
+  /* Product details */
+  .product-detail-page {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .product-detail-card {
+    min-width: 0;
+    width: 100%;
+    padding: 12px;
+  }
+
+  .detail-info,
+  .detail-gallery {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .detail-info h1 {
+    overflow-wrap: anywhere;
+  }
+
+  .size-pills,
+  .color-pills {
+    flex-wrap: wrap;
+  }
+
+  .add-row {
+    width: 100%;
+  }
+
+  .add-to-bag {
+    min-width: 0;
+  }
+
+  /* Bag, profile, authentication and tracking */
+  .bag-page,
+  .subpage,
+  .auth-page {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .bag-line-item {
+    min-width: 0;
+  }
+
+  .bag-item-copy {
+    overflow-wrap: anywhere;
+  }
+
+  .bag-line-right {
+    flex-shrink: 0;
+  }
+
+  .order-summary,
+  .profile-card,
+  .profile-menu,
+  .auth-form-panel {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    max-width: 100%;
+  }
+
+  /* Footer and fixed mobile navigation */
+  .site-footer {
+    min-width: 0;
+    padding-bottom: calc(82px + env(safe-area-inset-bottom));
+  }
+
+  .footer-main {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .footer-main > * {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .mobile-tabbar {
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+  }
+
+  .toast {
+    bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 390px) {
+  .site-header {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .site-header .brand-mark {
+    font-size: 16px;
+    letter-spacing: 1px;
+  }
+
+  .header-icon,
+  .plain-icon {
+    width: 29px;
+    min-width: 29px;
+  }
+
+  .home-hero {
+    min-height: 375px;
+  }
+
+  .home-hero-copy {
+    left: 13px;
+    top: 21px;
+    width: 78%;
+  }
+
+  .home-hero-copy h1 {
+    font-size: clamp(29px, 8.8vw, 36px);
+  }
+
+  .home-hero-copy .hero-description {
+    font-size: 10px;
+  }
+
+  .section-inner {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .category-circle-grid {
+    gap: 3px;
+  }
+
+  .category-circle-label {
+    font-size: 10px;
+  }
+
+  .product-grid,
+  .catalog-page > .product-grid {
+    gap: 19px 7px;
+  }
+
+  .bag-page,
+  .subpage {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .bag-item-image {
+    width: 72px;
+  }
+}
