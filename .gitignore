@@ -1,0 +1,33 @@
+﻿# Environment variables and secrets
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Python
+**/.venv/
+**/venv/
+__pycache__/
+*.py[cod]
+*.sqlite3
+
+# Node.js
+**/node_modules/
+**/dist/
+
+# Local backups
+*.bak
+*.backup*
+
+# Logs and archives
+*.log
+*.zip
+
+# Operating system
+.DS_Store
+Thumbs.db
+
+# Local database schema file
+/backend/schema.sql

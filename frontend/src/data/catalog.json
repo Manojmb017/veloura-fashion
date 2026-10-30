@@ -1,0 +1,1812 @@
+[
+  {
+    "name": "Ivory Regal Embroidered Sherwani",
+    "slug": "ivory-regal-embroidered-sherwani",
+    "description": "A statement sherwani with intricate tonal embroidery and a matching stole, suited to weddings and formal celebrations.",
+    "category": "Men",
+    "product_type": "Traditional Wear",
+    "price": "7499.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/ivory-regal-embroidered-sherwani-view-1.jpg",
+    "gallery_images": [
+      "/products/men/ivory-regal-embroidered-sherwani-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Ivory & champagne",
+    "stock_quantity": 18,
+    "is_active": 1
+  },
+  {
+    "name": "Antique Gold Embroidered Bandhgala",
+    "slug": "antique-gold-embroidered-bandhgala",
+    "description": "An ornate embroidered bandhgala jacket paired with an ivory base for an elevated festive look.",
+    "category": "Men",
+    "product_type": "Traditional Wear",
+    "price": "5699.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/antique-gold-embroidered-bandhgala-view-1.jpg",
+    "gallery_images": [
+      "/products/men/antique-gold-embroidered-bandhgala-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Antique gold",
+    "stock_quantity": 16,
+    "is_active": 1
+  },
+  {
+    "name": "Burgundy Textured Kurta",
+    "slug": "burgundy-textured-kurta",
+    "description": "A deep burgundy kurta with subtle vertical texture for festive evenings and relaxed celebrations.",
+    "category": "Men",
+    "product_type": "Kurtas",
+    "price": "1799.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/burgundy-textured-kurta-view-1.jpg",
+    "gallery_images": [
+      "/products/men/burgundy-textured-kurta-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Burgundy",
+    "stock_quantity": 28,
+    "is_active": 1
+  },
+  {
+    "name": "Champagne Embroidered Nehru Jacket Set",
+    "slug": "champagne-embroidered-nehru-set",
+    "description": "A champagne kurta and trouser set finished with a patterned Nehru jacket for wedding guests and festivities.",
+    "category": "Men",
+    "product_type": "Ethnic Sets",
+    "price": "4299.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/champagne-embroidered-nehru-set-view-1.jpg",
+    "gallery_images": [
+      "/products/men/champagne-embroidered-nehru-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Champagne beige",
+    "stock_quantity": 14,
+    "is_active": 1
+  },
+  {
+    "name": "Sand Jacquard Indo-Western Suit",
+    "slug": "sand-jacquard-indo-western-suit",
+    "description": "A refined sand-toned Indo-Western outfit with jacquard texture and tailored trousers.",
+    "category": "Men",
+    "product_type": "Indo-Western",
+    "price": "6299.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/sand-jacquard-indo-western-suit-view-1.jpg",
+    "gallery_images": [
+      "/products/men/sand-jacquard-indo-western-suit-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Sand beige",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "name": "Black Heritage Embroidered Sherwani",
+    "slug": "black-heritage-embroidered-sherwani",
+    "description": "A long black sherwani with all-over heritage embroidery and ornate cuffs for evening occasions.",
+    "category": "Men",
+    "product_type": "Traditional Wear",
+    "price": "6799.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/black-heritage-embroidered-sherwani-view-1.jpg",
+    "gallery_images": [
+      "/products/men/black-heritage-embroidered-sherwani-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Black & antique gold",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "name": "Ivory Gold Festive Jacket Set",
+    "slug": "ivory-gold-festive-jacket-set",
+    "description": "An ivory kurta set layered with a light gold embroidered jacket for celebration dressing.",
+    "category": "Men",
+    "product_type": "Ethnic Sets",
+    "price": "4499.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/ivory-gold-festive-jacket-set-view-1.jpg",
+    "gallery_images": [
+      "/products/men/ivory-gold-festive-jacket-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Ivory & gold",
+    "stock_quantity": 18,
+    "is_active": 1
+  },
+  {
+    "name": "Modern Black Formal Shirt & Trousers",
+    "slug": "modern-black-formal-outfit",
+    "description": "A clean all-black shirt and trouser pairing with a sharp, understated silhouette.",
+    "category": "Men",
+    "product_type": "Formal Wear",
+    "price": "2499.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/modern-black-formal-outfit-view-1.jpg",
+    "gallery_images": [
+      "/products/men/modern-black-formal-outfit-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Black",
+    "stock_quantity": 24,
+    "is_active": 1
+  },
+  {
+    "name": "Plum Resort Co-ord Set",
+    "slug": "plum-resort-coord-set",
+    "description": "A matching short-sleeve shirt and relaxed trouser set in a rich plum shade.",
+    "category": "Men",
+    "product_type": "Co-ord Sets",
+    "price": "2299.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/plum-resort-coord-set-view-1.jpg",
+    "gallery_images": [
+      "/products/men/plum-resort-coord-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Deep plum",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "name": "Olive Utility Overshirt",
+    "slug": "olive-utility-overshirt",
+    "description": "A laid-back olive overshirt with utility-inspired styling, made for easy layering.",
+    "category": "Men",
+    "product_type": "Overshirts",
+    "price": "2199.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/olive-utility-overshirt-view-1.jpg",
+    "gallery_images": [
+      "/products/men/olive-utility-overshirt-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Olive green",
+    "stock_quantity": 22,
+    "is_active": 1
+  },
+  {
+    "name": "Espresso Tailored Suit",
+    "slug": "espresso-tailored-suit",
+    "description": "A rich brown tailored suit styled with dark separates for smart occasions and evening events.",
+    "category": "Men",
+    "product_type": "Formal Suits",
+    "price": "6999.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/espresso-tailored-suit-view-1.jpg",
+    "gallery_images": [
+      "/products/men/espresso-tailored-suit-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Espresso brown",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "name": "Midnight Teal Bandhgala",
+    "slug": "midnight-teal-bandhgala",
+    "description": "A deep teal bandhgala jacket with gold-tone buttons, ideal for formal celebrations.",
+    "category": "Men",
+    "product_type": "Traditional Jackets",
+    "price": "5299.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/midnight-teal-bandhgala-view-1.jpg",
+    "gallery_images": [
+      "/products/men/midnight-teal-bandhgala-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Midnight teal",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "name": "Dove Grey Formal Suit",
+    "slug": "dove-grey-formal-suit",
+    "description": "A classic light-grey suit with a contemporary tailored fit and clean finishing.",
+    "category": "Men",
+    "product_type": "Formal Suits",
+    "price": "6499.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/dove-grey-formal-suit-view-1.jpg",
+    "gallery_images": [
+      "/products/men/dove-grey-formal-suit-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Dove grey",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "name": "Black Contrast-Trim Shirt",
+    "slug": "black-contrast-trim-shirt",
+    "description": "A black button-down shirt with subtle contrast detailing for an evening-ready casual look.",
+    "category": "Men",
+    "product_type": "Casual Shirts",
+    "price": "1699.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/black-contrast-trim-shirt-view-1.jpg",
+    "gallery_images": [
+      "/products/men/black-contrast-trim-shirt-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Black with red accents",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "name": "Blue Stripe Relaxed Shirt",
+    "slug": "blue-stripe-relaxed-shirt",
+    "description": "A relaxed blue-and-white vertical stripe shirt that pairs easily with denim or tailored trousers.",
+    "category": "Men",
+    "product_type": "Casual Shirts",
+    "price": "1499.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/blue-stripe-relaxed-shirt-view-1.jpg",
+    "gallery_images": [
+      "/products/men/blue-stripe-relaxed-shirt-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Blue & white",
+    "stock_quantity": 24,
+    "is_active": 1
+  },
+  {
+    "name": "Ice Blue Printed Short-Sleeve Shirt",
+    "slug": "ice-blue-printed-linen-shirt",
+    "description": "A lightweight-looking ice-blue printed shirt with a relaxed warm-weather silhouette.",
+    "category": "Men",
+    "product_type": "Casual Shirts",
+    "price": "1399.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/ice-blue-printed-linen-shirt-view-1.jpg",
+    "gallery_images": [
+      "/products/men/ice-blue-printed-linen-shirt-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Ice blue",
+    "stock_quantity": 24,
+    "is_active": 1
+  },
+  {
+    "name": "Sand Textured Casual Shirt",
+    "slug": "sand-textured-casual-shirt",
+    "description": "A warm sand-coloured shirt with subtle texture, styled for easy smart-casual outfits.",
+    "category": "Men",
+    "product_type": "Casual Shirts",
+    "price": "1499.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/sand-textured-casual-shirt-view-1.jpg",
+    "gallery_images": [
+      "/products/men/sand-textured-casual-shirt-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Sand beige",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "name": "Deep Teal Textured Casual Shirt",
+    "slug": "deep-teal-textured-casual-shirt",
+    "description": "A deep teal textured short-sleeve shirt with a clean open-collar finish.",
+    "category": "Men",
+    "product_type": "Casual Shirts",
+    "price": "1499.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/deep-teal-textured-casual-shirt-view-1.jpg",
+    "gallery_images": [
+      "/products/men/deep-teal-textured-casual-shirt-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Deep teal",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "name": "Oat Linen-Look Casual Shirt",
+    "slug": "oat-linen-casual-shirt",
+    "description": "A neutral oat-coloured shirt with a breathable, relaxed look for everyday wear.",
+    "category": "Men",
+    "product_type": "Casual Shirts",
+    "price": "1599.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/oat-linen-casual-shirt-view-1.jpg",
+    "gallery_images": [
+      "/products/men/oat-linen-casual-shirt-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Oat beige",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "name": "Ivory Geometric Embroidered Shirt",
+    "slug": "ivory-geometric-embroidered-shirt",
+    "description": "An ivory shirt with tonal geometric embroidery down the front for special-occasion styling.",
+    "category": "Men",
+    "product_type": "Dress Shirts",
+    "price": "2199.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/ivory-geometric-embroidered-shirt-view-1.jpg",
+    "gallery_images": [
+      "/products/men/ivory-geometric-embroidered-shirt-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Ivory",
+    "stock_quantity": 14,
+    "is_active": 1
+  },
+  {
+    "name": "Charcoal Slim-Fit Formal Trousers",
+    "slug": "charcoal-slim-fit-formal-trouser",
+    "description": "A tailored charcoal trouser with a neat slim-leg profile for office and occasion wear.",
+    "category": "Men",
+    "product_type": "Trousers",
+    "price": "1799.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/charcoal-slim-fit-formal-trouser-view-1.jpg",
+    "gallery_images": [
+      "/products/men/charcoal-slim-fit-formal-trouser-view-1.jpg"
+    ],
+    "available_sizes": [
+      "28",
+      "30",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40"
+    ],
+    "color": "Charcoal grey",
+    "stock_quantity": 24,
+    "is_active": 1
+  },
+  {
+    "name": "Oatmeal Pleated Relaxed Trousers",
+    "slug": "oatmeal-pleated-relaxed-trouser",
+    "description": "Soft oatmeal trousers with a relaxed pleated shape and easy everyday styling.",
+    "category": "Men",
+    "product_type": "Trousers",
+    "price": "1899.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/oatmeal-pleated-relaxed-trouser-view-1.jpg",
+    "gallery_images": [
+      "/products/men/oatmeal-pleated-relaxed-trouser-view-1.jpg"
+    ],
+    "available_sizes": [
+      "28",
+      "30",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40"
+    ],
+    "color": "Oatmeal",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "name": "Olive Chino Trousers",
+    "slug": "olive-chino-trouser",
+    "description": "Versatile olive chinos with a clean tapered silhouette for smart-casual dressing.",
+    "category": "Men",
+    "product_type": "Chinos",
+    "price": "1599.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/olive-chino-trouser-view-1.jpg",
+    "gallery_images": [
+      "/products/men/olive-chino-trouser-view-1.jpg"
+    ],
+    "available_sizes": [
+      "28",
+      "30",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40"
+    ],
+    "color": "Olive green",
+    "stock_quantity": 24,
+    "is_active": 1
+  },
+  {
+    "name": "Midnight Tapered Trousers",
+    "slug": "midnight-tapered-trouser",
+    "description": "Deep navy tailored trousers with a tapered ankle and understated finish.",
+    "category": "Men",
+    "product_type": "Trousers",
+    "price": "1699.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/midnight-tapered-trouser-view-1.jpg",
+    "gallery_images": [
+      "/products/men/midnight-tapered-trouser-view-1.jpg"
+    ],
+    "available_sizes": [
+      "28",
+      "30",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40"
+    ],
+    "color": "Midnight navy",
+    "stock_quantity": 22,
+    "is_active": 1
+  },
+  {
+    "name": "Slate Grey Jogger Pants",
+    "slug": "slate-grey-jogger-pants",
+    "description": "Comfort-first grey joggers with a drawstring waist for travel, lounging and everyday wear.",
+    "category": "Men",
+    "product_type": "Joggers",
+    "price": "1299.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/slate-grey-jogger-pants-view-1.jpg",
+    "gallery_images": [
+      "/products/men/slate-grey-jogger-pants-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Slate grey",
+    "stock_quantity": 25,
+    "is_active": 1
+  },
+  {
+    "name": "Beige Double-Pleat Trousers",
+    "slug": "beige-double-pleat-trouser",
+    "description": "Beige double-pleat trousers with a relaxed, structured leg and polished finish.",
+    "category": "Men",
+    "product_type": "Trousers",
+    "price": "1999.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/beige-double-pleat-trouser-view-1.jpg",
+    "gallery_images": [
+      "/products/men/beige-double-pleat-trouser-view-1.jpg"
+    ],
+    "available_sizes": [
+      "28",
+      "30",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40"
+    ],
+    "color": "Beige",
+    "stock_quantity": 16,
+    "is_active": 1
+  },
+  {
+    "name": "Indigo Textured Relaxed Trousers",
+    "slug": "indigo-textured-relaxed-trouser",
+    "description": "Textured indigo trousers with a relaxed fit and casual tailoring details.",
+    "category": "Men",
+    "product_type": "Trousers",
+    "price": "1999.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/indigo-textured-relaxed-trouser-view-1.jpg",
+    "gallery_images": [
+      "/products/men/indigo-textured-relaxed-trouser-view-1.jpg"
+    ],
+    "available_sizes": [
+      "28",
+      "30",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40"
+    ],
+    "color": "Indigo navy",
+    "stock_quantity": 16,
+    "is_active": 1
+  },
+  {
+    "name": "White Summer Trousers",
+    "slug": "white-summer-trouser",
+    "description": "Crisp white trousers for warm-weather dressing and clean monochrome outfits.",
+    "category": "Men",
+    "product_type": "Trousers",
+    "price": "1699.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/white-summer-trouser-view-1.jpg",
+    "gallery_images": [
+      "/products/men/white-summer-trouser-view-1.jpg"
+    ],
+    "available_sizes": [
+      "28",
+      "30",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40"
+    ],
+    "color": "White",
+    "stock_quantity": 18,
+    "is_active": 1
+  },
+  {
+    "name": "Cocoa Straight-Fit Trousers",
+    "slug": "cocoa-straight-fit-trouser",
+    "description": "Straight-fit cocoa trousers with a rich brown tone and understated design.",
+    "category": "Men",
+    "product_type": "Trousers",
+    "price": "1599.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/cocoa-straight-fit-trouser-view-1.jpg",
+    "gallery_images": [
+      "/products/men/cocoa-straight-fit-trouser-view-1.jpg"
+    ],
+    "available_sizes": [
+      "28",
+      "30",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40"
+    ],
+    "color": "Cocoa brown",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "name": "Dusty Rose Overshirt & Black Wide-Leg Trousers",
+    "slug": "dusty-rose-overshirt-black-trouser-set",
+    "description": "A dusty rose overshirt styled with black wide-leg trousers for a relaxed modern outfit.",
+    "category": "Men",
+    "product_type": "Matching Outfit",
+    "price": "3499.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/dusty-rose-overshirt-black-trouser-set-view-1.jpg",
+    "gallery_images": [
+      "/products/men/dusty-rose-overshirt-black-trouser-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Dusty rose & black",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "name": "Black Wide-Leg Tailored Trousers",
+    "slug": "black-wide-leg-tailored-trouser",
+    "description": "Flowing black wide-leg trousers with a clean waistband and relaxed modern cut.",
+    "category": "Men",
+    "product_type": "Trousers",
+    "price": "1899.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/black-wide-leg-tailored-trouser-view-1.jpg",
+    "gallery_images": [
+      "/products/men/black-wide-leg-tailored-trouser-view-1.jpg"
+    ],
+    "available_sizes": [
+      "28",
+      "30",
+      "32",
+      "34",
+      "36",
+      "38",
+      "40"
+    ],
+    "color": "Black",
+    "stock_quantity": 18,
+    "is_active": 1
+  },
+  {
+    "name": "Black Textured Drawstring Shorts",
+    "slug": "black-textured-drawstring-shorts",
+    "description": "Lightweight-looking black shorts with an elastic drawstring waist for casual days.",
+    "category": "Men",
+    "product_type": "Shorts",
+    "price": "999.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/black-textured-drawstring-shorts-view-1.jpg",
+    "gallery_images": [
+      "/products/men/black-textured-drawstring-shorts-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Black",
+    "stock_quantity": 30,
+    "is_active": 1
+  },
+  {
+    "name": "Graphite Linen-Look Shorts",
+    "slug": "graphite-linen-shorts",
+    "description": "Graphite casual shorts with a relaxed fit and easy pull-on styling.",
+    "category": "Men",
+    "product_type": "Shorts",
+    "price": "1199.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/graphite-linen-shorts-view-1.jpg",
+    "gallery_images": [
+      "/products/men/graphite-linen-shorts-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Graphite grey",
+    "stock_quantity": 28,
+    "is_active": 1
+  },
+  {
+    "name": "Ivory Resort Shirt & Checked Shorts Set",
+    "slug": "ivory-resort-shirt-checked-shorts-set",
+    "description": "A holiday-ready short-sleeve shirt and checked shorts combination with a light, easy mood.",
+    "category": "Men",
+    "product_type": "Matching Outfit",
+    "price": "2299.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/ivory-resort-shirt-checked-shorts-set-view-1.jpg",
+    "gallery_images": [
+      "/products/men/ivory-resort-shirt-checked-shorts-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Ivory & grey check",
+    "stock_quantity": 14,
+    "is_active": 1
+  },
+  {
+    "name": "Grey Performance Training Shorts",
+    "slug": "grey-performance-training-shorts",
+    "description": "Everyday training shorts with a drawstring waist and sporty utility pocket.",
+    "category": "Men",
+    "product_type": "Sports Shorts",
+    "price": "899.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/grey-performance-training-shorts-view-1.jpg",
+    "gallery_images": [
+      "/products/men/grey-performance-training-shorts-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Grey",
+    "stock_quantity": 32,
+    "is_active": 1
+  },
+  {
+    "name": "Sand Contrast-Hem Swim Shorts",
+    "slug": "sand-contrast-hem-swim-shorts",
+    "description": "Sand-coloured shorts with contrast trim and an adjustable drawstring waist.",
+    "category": "Men",
+    "product_type": "Swim Shorts",
+    "price": "999.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/sand-contrast-hem-swim-shorts-view-1.jpg",
+    "gallery_images": [
+      "/products/men/sand-contrast-hem-swim-shorts-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Sand & white",
+    "stock_quantity": 24,
+    "is_active": 1
+  },
+  {
+    "name": "Cocoa Shirt & Ecru Shorts Set",
+    "slug": "cocoa-shirt-ecru-shorts-set",
+    "description": "A casual warm-weather pairing of a cocoa shirt and light ecru shorts.",
+    "category": "Men",
+    "product_type": "Matching Outfit",
+    "price": "2499.00",
+    "compare_at_price": null,
+    "image_url": "/products/men/cocoa-shirt-ecru-shorts-set-view-1.jpg",
+    "gallery_images": [
+      "/products/men/cocoa-shirt-ecru-shorts-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Cocoa & ecru",
+    "stock_quantity": 14,
+    "is_active": 1
+  },
+  {
+    "name": "Ivory Asymmetric Tunic & Trousers Set",
+    "slug": "ivory-asymmetric-tunic-set",
+    "description": "An ivory asymmetric tunic set with a flowing overlay and slim matching trousers for modern occasions.",
+    "category": "Women",
+    "product_type": "Co-ord Sets",
+    "price": "2799.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/ivory-asymmetric-tunic-set-view-1.jpg",
+    "gallery_images": [
+      "/products/women/ivory-asymmetric-tunic-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Ivory",
+    "stock_quantity": 16,
+    "is_active": 1
+  },
+  {
+    "name": "Powder Blue Ruched Mini Dress",
+    "slug": "powder-blue-ruched-mini-dress",
+    "description": "A softly ruched powder-blue mini dress with a smooth, party-ready silhouette.",
+    "category": "Women",
+    "product_type": "Western Dresses",
+    "price": "1999.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/powder-blue-ruched-mini-dress-view-1.jpg",
+    "gallery_images": [
+      "/products/women/powder-blue-ruched-mini-dress-view-1.jpg"
+    ],
+    "available_sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": "Powder blue",
+    "stock_quantity": 18,
+    "is_active": 1
+  },
+  {
+    "name": "Burgundy Printed Co-ord Maxi Set",
+    "slug": "burgundy-printed-coord-maxi",
+    "description": "A coordinated burgundy printed crop top and flowing maxi skirt with a statement pattern.",
+    "category": "Women",
+    "product_type": "Co-ord Sets",
+    "price": "2999.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/burgundy-printed-coord-maxi-view-1.jpg",
+    "gallery_images": [
+      "/products/women/burgundy-printed-coord-maxi-view-1.jpg"
+    ],
+    "available_sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Burgundy",
+    "stock_quantity": 14,
+    "is_active": 1
+  },
+  {
+    "name": "Noir Structured Fit-and-Flare Dress",
+    "slug": "noir-structured-fit-flare-dress",
+    "description": "A classic black fit-and-flare dress with a structured waist and clean lines.",
+    "category": "Women",
+    "product_type": "Western Dresses",
+    "price": "2499.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/noir-structured-fit-flare-dress-view-1.jpg",
+    "gallery_images": [
+      "/products/women/noir-structured-fit-flare-dress-view-1.jpg"
+    ],
+    "available_sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Black",
+    "stock_quantity": 16,
+    "is_active": 1
+  },
+  {
+    "name": "Kaleidoscope Floral Midi Dress",
+    "slug": "kaleidoscope-floral-midi-dress",
+    "description": "A playful multicolour floral midi dress with a swishy skirt and vibrant print.",
+    "category": "Women",
+    "product_type": "Western Dresses",
+    "price": "2699.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/kaleidoscope-floral-midi-dress-view-1.jpg",
+    "gallery_images": [
+      "/products/women/kaleidoscope-floral-midi-dress-view-1.jpg"
+    ],
+    "available_sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Multicolour",
+    "stock_quantity": 14,
+    "is_active": 1
+  },
+  {
+    "name": "Berry Embroidered Suit with Dupatta",
+    "slug": "berry-embroidered-suit-dupatta",
+    "description": "A rich berry suit with a patterned dupatta and delicate festive embroidery.",
+    "category": "Women",
+    "product_type": "Ethnic Sets",
+    "price": "3299.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/berry-embroidered-suit-dupatta-view-1.jpg",
+    "gallery_images": [
+      "/products/women/berry-embroidered-suit-dupatta-view-1.jpg"
+    ],
+    "available_sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Berry magenta",
+    "stock_quantity": 16,
+    "is_active": 1
+  },
+  {
+    "name": "Blue Floral Kurta & Ivory Trousers Set",
+    "slug": "blue-floral-kurta-ivory-trouser-set",
+    "description": "A blue floral kurta with a light embroidered yoke and matching ivory trousers.",
+    "category": "Women",
+    "product_type": "Ethnic Sets",
+    "price": "2499.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/blue-floral-kurta-ivory-trouser-set-view-1.jpg",
+    "gallery_images": [
+      "/products/women/blue-floral-kurta-ivory-trouser-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Blue & ivory",
+    "stock_quantity": 18,
+    "is_active": 1
+  },
+  {
+    "name": "Sage Botanical Kurta Set",
+    "slug": "sage-botanical-kurta-set",
+    "description": "A soft sage kurta with botanical motifs and coordinated light trousers.",
+    "category": "Women",
+    "product_type": "Ethnic Sets",
+    "price": "2299.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/sage-botanical-kurta-set-view-1.jpg",
+    "gallery_images": [
+      "/products/women/sage-botanical-kurta-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Sage green",
+    "stock_quantity": 18,
+    "is_active": 1
+  },
+  {
+    "name": "Ivory Floral Embroidered Kurta Set",
+    "slug": "ivory-floral-embroidered-kurta-set",
+    "description": "An ivory kurta set finished with floral embroidery and subtle colour accents.",
+    "category": "Women",
+    "product_type": "Ethnic Sets",
+    "price": "2799.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/ivory-floral-embroidered-kurta-set-view-1.jpg",
+    "gallery_images": [
+      "/products/women/ivory-floral-embroidered-kurta-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Ivory & pastel floral",
+    "stock_quantity": 16,
+    "is_active": 1
+  },
+  {
+    "name": "Peacock Teal Embroidered Suit Set",
+    "slug": "peacock-teal-embroidered-suit",
+    "description": "A peacock-teal suit with ornate embroidery and a matching dupatta for festive dressing.",
+    "category": "Women",
+    "product_type": "Ethnic Sets",
+    "price": "3499.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/peacock-teal-embroidered-suit-view-1.jpg",
+    "gallery_images": [
+      "/products/women/peacock-teal-embroidered-suit-view-1.jpg"
+    ],
+    "available_sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Peacock teal",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "name": "Ivory Saree with Wine-Gold Border",
+    "slug": "ivory-saree-wine-gold-border",
+    "description": "An elegant ivory saree finished with a rich wine-and-gold border for traditional celebrations.",
+    "category": "Women",
+    "product_type": "Sarees",
+    "price": "3999.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/ivory-saree-wine-gold-border-view-1.jpg",
+    "gallery_images": [
+      "/products/women/ivory-saree-wine-gold-border-view-1.jpg"
+    ],
+    "available_sizes": [
+      "Free Size"
+    ],
+    "color": "Ivory, wine & gold",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "name": "Coral Red Woven Saree",
+    "slug": "coral-red-woven-saree",
+    "description": "A coral-red saree with a lustrous woven border for festive and occasion wear.",
+    "category": "Women",
+    "product_type": "Sarees",
+    "price": "4599.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/coral-red-woven-saree-view-1.jpg",
+    "gallery_images": [
+      "/products/women/coral-red-woven-saree-view-1.jpg"
+    ],
+    "available_sizes": [
+      "Free Size"
+    ],
+    "color": "Coral red & gold",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "name": "Emerald Green Saree with Violet Border",
+    "slug": "emerald-violet-border-saree",
+    "description": "A vivid emerald-green saree paired with a contrasting violet border and blouse styling.",
+    "category": "Women",
+    "product_type": "Sarees",
+    "price": "4999.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/emerald-violet-border-saree-view-1.jpg",
+    "gallery_images": [
+      "/products/women/emerald-violet-border-saree-view-1.jpg"
+    ],
+    "available_sizes": [
+      "Free Size"
+    ],
+    "color": "Emerald green & violet",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "name": "Wine & Gold Brocade Saree",
+    "slug": "wine-gold-brocade-saree",
+    "description": "A deep wine saree with gold-toned brocade detailing, designed for wedding and festive occasions.",
+    "category": "Women",
+    "product_type": "Sarees",
+    "price": "5299.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/wine-gold-brocade-saree-view-1.jpg",
+    "gallery_images": [
+      "/products/women/wine-gold-brocade-saree-view-1.jpg"
+    ],
+    "available_sizes": [
+      "Free Size"
+    ],
+    "color": "Wine & antique gold",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "name": "Blush Pink Embroidered Saree",
+    "slug": "blush-pink-embroidered-saree",
+    "description": "A soft blush saree with delicate embroidery for receptions, celebrations and evening events.",
+    "category": "Women",
+    "product_type": "Sarees",
+    "price": "4599.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/blush-pink-embroidered-saree-view-1.jpg",
+    "gallery_images": [
+      "/products/women/blush-pink-embroidered-saree-view-1.jpg"
+    ],
+    "available_sizes": [
+      "Free Size"
+    ],
+    "color": "Blush pink",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "name": "Crimson Slit Evening Gown",
+    "slug": "crimson-slit-evening-gown",
+    "description": "A striking crimson gown with a defined waist and high slit, made for evening occasions.",
+    "category": "Women",
+    "product_type": "Evening Dresses",
+    "price": "3299.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/crimson-slit-evening-gown-view-1.jpg",
+    "gallery_images": [
+      "/products/women/crimson-slit-evening-gown-view-1.jpg"
+    ],
+    "available_sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": "Crimson red",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "name": "Ivory Lace Occasion Dress",
+    "slug": "ivory-lace-occasion-dress",
+    "description": "An ivory lace occasion dress with a delicate texture and elegant fitted silhouette.",
+    "category": "Women",
+    "product_type": "Evening Dresses",
+    "price": "3499.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/ivory-lace-occasion-dress-view-1.jpg",
+    "gallery_images": [
+      "/products/women/ivory-lace-occasion-dress-view-1.jpg"
+    ],
+    "available_sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Ivory",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "name": "Ivory Resort Maxi Dress",
+    "slug": "ivory-resort-maxi-dress",
+    "description": "A light ivory maxi dress with a relaxed resort silhouette for sunny days and getaways.",
+    "category": "Women",
+    "product_type": "Maxi Dresses",
+    "price": "2299.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/ivory-resort-maxi-dress-view-1.jpg",
+    "gallery_images": [
+      "/products/women/ivory-resort-maxi-dress-view-1.jpg"
+    ],
+    "available_sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Ivory",
+    "stock_quantity": 16,
+    "is_active": 1
+  },
+  {
+    "name": "Forest Botanical Maxi Dress",
+    "slug": "forest-botanical-maxi-dress",
+    "description": "A dramatic botanical-print maxi dress in green and amber tones with a flowing skirt.",
+    "category": "Women",
+    "product_type": "Maxi Dresses",
+    "price": "2999.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/forest-botanical-maxi-dress-view-1.jpg",
+    "gallery_images": [
+      "/products/women/forest-botanical-maxi-dress-view-1.jpg"
+    ],
+    "available_sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Green, amber & black",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "name": "Rust Floral Long Dress",
+    "slug": "rust-floral-long-dress",
+    "description": "A rust-toned floral dress with a softly gathered waist and relaxed long silhouette.",
+    "category": "Women",
+    "product_type": "Maxi Dresses",
+    "price": "2499.00",
+    "compare_at_price": null,
+    "image_url": "/products/women/rust-floral-long-dress-view-1.jpg",
+    "gallery_images": [
+      "/products/women/rust-floral-long-dress-view-1.jpg"
+    ],
+    "available_sizes": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Rust red & cream",
+    "stock_quantity": 14,
+    "is_active": 1
+  },
+  {
+    "name": "Midnight Tulle Party Dress",
+    "slug": "midnight-tulle-party-dress",
+    "description": "A layered midnight-black tulle party dress with a statement bow and playful volume.",
+    "category": "Kids",
+    "product_type": "Party Dresses",
+    "price": "1699.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/midnight-tulle-party-dress-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/midnight-tulle-party-dress-view-1.jpg"
+    ],
+    "available_sizes": [
+      "1-2Y",
+      "2-3Y",
+      "3-4Y",
+      "4-5Y",
+      "5-6Y"
+    ],
+    "color": "Black",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "name": "Blush Pink Sequin-Hem Ball Gown",
+    "slug": "blush-pink-sequin-ball-gown",
+    "description": "A full blush-pink party gown with a sparkling sequin hem and bow-waist detail.",
+    "category": "Kids",
+    "product_type": "Party Dresses",
+    "price": "1899.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/blush-pink-sequin-ball-gown-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/blush-pink-sequin-ball-gown-view-1.jpg"
+    ],
+    "available_sizes": [
+      "2-3Y",
+      "3-4Y",
+      "4-5Y",
+      "5-6Y",
+      "6-7Y"
+    ],
+    "color": "Blush pink",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "name": "Classic Black Cotton T-shirt",
+    "slug": "classic-black-cotton-tee-kids",
+    "description": "A simple black short-sleeve tee for everyday outfits and easy layering.",
+    "category": "Kids",
+    "product_type": "T-shirts",
+    "price": "499.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/classic-black-cotton-tee-kids-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/classic-black-cotton-tee-kids-view-1.jpg"
+    ],
+    "available_sizes": [
+      "2-3Y",
+      "3-4Y",
+      "4-5Y",
+      "5-6Y",
+      "6-7Y",
+      "7-8Y",
+      "8-9Y",
+      "9-10Y"
+    ],
+    "color": "Black",
+    "stock_quantity": 30,
+    "is_active": 1
+  },
+  {
+    "name": "Grey Check Kids Shirt",
+    "slug": "grey-check-kids-shirt",
+    "description": "A smart plaid button-down shirt with rolled sleeves for casual outings and family events.",
+    "category": "Kids",
+    "product_type": "Shirts",
+    "price": "699.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/grey-check-kids-shirt-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/grey-check-kids-shirt-view-1.jpg"
+    ],
+    "available_sizes": [
+      "2-3Y",
+      "3-4Y",
+      "4-5Y",
+      "5-6Y",
+      "6-7Y",
+      "7-8Y",
+      "8-9Y",
+      "9-10Y"
+    ],
+    "color": "Grey, black & white",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "name": "Mini Formal Black Shirt",
+    "slug": "mini-formal-black-shirt",
+    "description": "A neat black button-down shirt with a small chest emblem and roll-up sleeves.",
+    "category": "Kids",
+    "product_type": "Shirts",
+    "price": "649.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/mini-formal-black-shirt-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/mini-formal-black-shirt-view-1.jpg"
+    ],
+    "available_sizes": [
+      "2-3Y",
+      "3-4Y",
+      "4-5Y",
+      "5-6Y",
+      "6-7Y",
+      "7-8Y",
+      "8-9Y",
+      "9-10Y"
+    ],
+    "color": "Black",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "name": "White & Black Cargo Boys Set",
+    "slug": "white-black-cargo-boys-set",
+    "description": "A monochrome long-sleeve shirt and cargo-trouser set with sporty panel details.",
+    "category": "Kids",
+    "product_type": "Matching Sets",
+    "price": "1299.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/white-black-cargo-boys-set-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/white-black-cargo-boys-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "3-4Y",
+      "4-5Y",
+      "5-6Y",
+      "6-7Y",
+      "7-8Y",
+      "8-9Y",
+      "9-10Y",
+      "10-11Y"
+    ],
+    "color": "White & black",
+    "stock_quantity": 14,
+    "is_active": 1
+  },
+  {
+    "name": "Mustard Shirt & Sand Trousers Set",
+    "slug": "mustard-shirt-sand-trouser-set",
+    "description": "A mustard button-down shirt paired with sand trousers for smart casual styling.",
+    "category": "Kids",
+    "product_type": "Matching Sets",
+    "price": "1199.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/mustard-shirt-sand-trouser-set-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/mustard-shirt-sand-trouser-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "3-4Y",
+      "4-5Y",
+      "5-6Y",
+      "6-7Y",
+      "7-8Y",
+      "8-9Y",
+      "9-10Y"
+    ],
+    "color": "Mustard & sand",
+    "stock_quantity": 14,
+    "is_active": 1
+  },
+  {
+    "name": "Cartoon Friends Black Joggers",
+    "slug": "cartoon-friends-black-joggers",
+    "description": "Black joggers with playful animal character graphics down one leg.",
+    "category": "Kids",
+    "product_type": "Joggers",
+    "price": "799.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/cartoon-friends-black-joggers-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/cartoon-friends-black-joggers-view-1.jpg"
+    ],
+    "available_sizes": [
+      "2-3Y",
+      "3-4Y",
+      "4-5Y",
+      "5-6Y",
+      "6-7Y",
+      "7-8Y",
+      "8-9Y",
+      "9-10Y"
+    ],
+    "color": "Black",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "name": "Cherry Print Cotton Dress",
+    "slug": "cherry-print-cotton-dress",
+    "description": "A light white dress decorated with tiny cherry prints and gentle ruffle details.",
+    "category": "Kids",
+    "product_type": "Baby Dresses",
+    "price": "799.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/cherry-print-cotton-dress-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/cherry-print-cotton-dress-view-1.jpg"
+    ],
+    "available_sizes": [
+      "6-12M",
+      "12-18M",
+      "18-24M",
+      "2-3Y",
+      "3-4Y"
+    ],
+    "color": "White & cherry red",
+    "stock_quantity": 16,
+    "is_active": 1
+  },
+  {
+    "name": "Plum & Gold Festive Baby Dress",
+    "slug": "plum-gold-festive-baby-dress",
+    "description": "A traditional plum festive dress with a gold-toned woven hem and delicate all-over detailing.",
+    "category": "Kids",
+    "product_type": "Festive Dresses",
+    "price": "1299.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/plum-gold-festive-baby-dress-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/plum-gold-festive-baby-dress-view-1.jpg"
+    ],
+    "available_sizes": [
+      "0-6M",
+      "6-12M",
+      "12-18M",
+      "18-24M",
+      "2-3Y"
+    ],
+    "color": "Plum & antique gold",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "name": "Ivory Bow-Back Party Dress",
+    "slug": "ivory-bow-back-party-dress",
+    "description": "An ivory party dress with a soft patterned skirt and an elegant bow-back finish.",
+    "category": "Kids",
+    "product_type": "Party Dresses",
+    "price": "1499.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/ivory-bow-back-party-dress-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/ivory-bow-back-party-dress-view-1.jpg"
+    ],
+    "available_sizes": [
+      "1-2Y",
+      "2-3Y",
+      "3-4Y",
+      "4-5Y",
+      "5-6Y"
+    ],
+    "color": "Ivory & pale gold",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "name": "Colourblock Pleated Party Dress",
+    "slug": "colourblock-pleated-party-dress",
+    "description": "A playful colour-block party dress with a black bodice and pleated multicolour skirt.",
+    "category": "Kids",
+    "product_type": "Party Dresses",
+    "price": "1399.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/colourblock-pleated-party-dress-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/colourblock-pleated-party-dress-view-1.jpg"
+    ],
+    "available_sizes": [
+      "2-3Y",
+      "3-4Y",
+      "4-5Y",
+      "5-6Y",
+      "6-7Y"
+    ],
+    "color": "Black, ivory, rust & blue",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "name": "Rainbow Stripe Sweatshirt & Denim Set",
+    "slug": "rainbow-stripe-denim-set",
+    "description": "A cheerful rainbow-striped sweatshirt paired with easy denim trousers.",
+    "category": "Kids",
+    "product_type": "Matching Sets",
+    "price": "1299.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/rainbow-stripe-denim-set-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/rainbow-stripe-denim-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "1-2Y",
+      "2-3Y",
+      "3-4Y",
+      "4-5Y",
+      "5-6Y",
+      "6-7Y"
+    ],
+    "color": "Multicolour & denim blue",
+    "stock_quantity": 16,
+    "is_active": 1
+  },
+  {
+    "name": "Shark Print Tank & Shorts Set",
+    "slug": "shark-print-tank-shorts-set",
+    "description": "A sleeveless black top with playful shark-print shorts for summer days.",
+    "category": "Kids",
+    "product_type": "Summer Sets",
+    "price": "699.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/shark-print-tank-shorts-set-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/shark-print-tank-shorts-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "2-3Y",
+      "3-4Y",
+      "4-5Y",
+      "5-6Y",
+      "6-7Y",
+      "7-8Y"
+    ],
+    "color": "Black & white",
+    "stock_quantity": 18,
+    "is_active": 1
+  },
+  {
+    "name": "Burgundy “I Love My Dad” Sweat Set",
+    "slug": "burgundy-little-dad-sweat-set",
+    "description": "A cosy burgundy sweatshirt and matching jogger set with a playful front graphic.",
+    "category": "Kids",
+    "product_type": "Loungewear",
+    "price": "899.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/burgundy-little-dad-sweat-set-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/burgundy-little-dad-sweat-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "6-12M",
+      "12-18M",
+      "18-24M",
+      "2-3Y",
+      "3-4Y"
+    ],
+    "color": "Burgundy",
+    "stock_quantity": 14,
+    "is_active": 1
+  },
+  {
+    "name": "Grey Contrast Tracksuit Set",
+    "slug": "grey-contrast-tracksuit-set",
+    "description": "A sporty grey tracksuit with contrast colour-block sleeves and matching trousers.",
+    "category": "Kids",
+    "product_type": "Tracksuits",
+    "price": "1199.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/grey-contrast-tracksuit-set-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/grey-contrast-tracksuit-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "2-3Y",
+      "3-4Y",
+      "4-5Y",
+      "5-6Y",
+      "6-7Y",
+      "7-8Y",
+      "8-9Y",
+      "9-10Y"
+    ],
+    "color": "Grey, black & white",
+    "stock_quantity": 16,
+    "is_active": 1
+  },
+  {
+    "name": "Santa’s Little Helper Costume",
+    "slug": "santas-little-helper-costume",
+    "description": "A cheerful red-and-white holiday costume set with a matching hat and mini gift bag.",
+    "category": "Kids",
+    "product_type": "Festive Sets",
+    "price": "1299.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/santas-little-helper-costume-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/santas-little-helper-costume-view-1.jpg"
+    ],
+    "available_sizes": [
+      "0-6M",
+      "6-12M",
+      "12-18M",
+      "18-24M",
+      "2-3Y"
+    ],
+    "color": "Red & white",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "name": "Olive Sport-Stripe Tracksuit",
+    "slug": "olive-sport-stripe-tracksuit",
+    "description": "An olive-green sweatshirt and jogger set with sporty white sleeve and leg stripes.",
+    "category": "Kids",
+    "product_type": "Tracksuits",
+    "price": "1299.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/olive-sport-stripe-tracksuit-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/olive-sport-stripe-tracksuit-view-1.jpg"
+    ],
+    "available_sizes": [
+      "2-3Y",
+      "3-4Y",
+      "4-5Y",
+      "5-6Y",
+      "6-7Y",
+      "7-8Y",
+      "8-9Y",
+      "9-10Y"
+    ],
+    "color": "Olive green & white",
+    "stock_quantity": 16,
+    "is_active": 1
+  },
+  {
+    "name": "Mustard & Black Mini Gentleman Set",
+    "slug": "mustard-black-mini-gentleman-set",
+    "description": "A coordinated mini formal outfit with a black shirt, mustard trousers, bow tie, suspenders and accessories.",
+    "category": "Kids",
+    "product_type": "Formal Sets",
+    "price": "1599.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/mustard-black-mini-gentleman-set-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/mustard-black-mini-gentleman-set-view-1.jpg"
+    ],
+    "available_sizes": [
+      "0-6M",
+      "6-12M",
+      "12-18M",
+      "18-24M",
+      "2-3Y"
+    ],
+    "color": "Mustard & black",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "name": "Navy BMX Graphic Tracksuit",
+    "slug": "navy-bmx-graphic-tracksuit",
+    "description": "A navy hoodie and jogger set with BMX-inspired graphic details for active days.",
+    "category": "Kids",
+    "product_type": "Tracksuits",
+    "price": "1399.00",
+    "compare_at_price": null,
+    "image_url": "/products/kids/navy-bmx-graphic-tracksuit-view-1.jpg",
+    "gallery_images": [
+      "/products/kids/navy-bmx-graphic-tracksuit-view-1.jpg"
+    ],
+    "available_sizes": [
+      "2-3Y",
+      "3-4Y",
+      "4-5Y",
+      "5-6Y",
+      "6-7Y",
+      "7-8Y",
+      "8-9Y",
+      "9-10Y"
+    ],
+    "color": "Navy blue",
+    "stock_quantity": 14,
+    "is_active": 1
+  }
+]
