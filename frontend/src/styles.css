@@ -1015,3 +1015,31 @@ img { max-width: 100%; display: block; }
     padding: 8px 9px;
   }
 }
+
+/* Fix footer logo overlapping footer description */
+.site-footer .brand-mark,
+.site-footer .footer-logo {
+  position: static !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  transform: none !important;
+  display: inline-block;
+  text-align: left;
+  margin-bottom: 8px;
+}
+
+/* Keep footer brand content aligned properly on mobile */
+@media (max-width: 760px) {
+  .site-footer .footer-brand-col {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-footer .footer-brand-col .brand-mark {
+    position: static !important;
+    transform: none !important;
+  }
+}
