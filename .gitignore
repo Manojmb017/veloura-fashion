@@ -31,3 +31,16 @@ Thumbs.db
 
 # Local database schema file
 /backend/schema.sql
+
+# Local database migration dump
+/backend/products_migration_dump/
+
+# Cloud database certificate
+*.pem
+
+# Generated Django static files
+/backend/staticfiles/
+
+
+# Local-only product migration utility
+/backend/transfer_products_to_aiven.py

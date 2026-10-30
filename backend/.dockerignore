@@ -1,0 +1,17 @@
+
+.env
+.env.*
+!.env.example
+
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+staticfiles/
+products_migration_dump/
+schema.sql
+
+*.pem
+*.log
+
