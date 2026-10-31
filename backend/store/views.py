@@ -1,14 +1,18 @@
+import re
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .models import Product
+from .models import Address, Order, Product
 from .serializers import (
+    AddressSerializer,
     EmailTokenObtainPairSerializer,
+    OrderCreateSerializer,
+    OrderSerializer,
     ProductSerializer,
     RegisterSerializer,
     UserSerializer,
@@ -77,9 +81,218 @@ class EmailTokenObtainPairView(TokenObtainPairView):
     permission_classes = [AllowAny]
 
 
+def parse_address_string(raw_address):
+    raw = (raw_address or "").strip()
+    if not raw:
+        return {
+            "address_line1": "Address not specified",
+            "address_line2": "",
+            "city": "",
+            "state": "",
+            "postal_code": "",
+            "has_explicit_pin": False,
+            "has_explicit_city": False,
+            "has_explicit_state": False,
+        }
+
+    pin_match = re.search(r"\b(\d{6})\b", raw)
+    has_explicit_pin = bool(pin_match)
+    postal_code = pin_match.group(1) if pin_match else ""
+
+    cleaned = re.sub(r"\b\d{6}\b", "", raw).strip(" ,-\n\r")
+    parts = [p.strip() for p in re.split(r"[,\n]+", cleaned) if p.strip()]
+
+    known_states = {
+        "karnataka", "maharashtra", "delhi", "tamil nadu", "telangana",
+        "kerala", "andhra pradesh", "gujarat", "west bengal", "rajasthan",
+        "uttar pradesh", "haryana", "punjab", "goa", "madhya pradesh"
+    }
+
+    state = ""
+    has_explicit_state = False
+    city = ""
+    has_explicit_city = False
+    address_line1 = raw
+    address_line2 = ""
+
+    if len(parts) >= 3:
+        if parts[-1].lower() in known_states:
+            state = parts[-1].title()
+            has_explicit_state = True
+            city = parts[-2]
+            has_explicit_city = True
+            address_line1 = parts[0]
+            address_line2 = ", ".join(parts[1:-2])
+        else:
+            city = parts[-1]
+            has_explicit_city = True
+            address_line1 = parts[0]
+            address_line2 = ", ".join(parts[1:-1])
+    elif len(parts) == 2:
+        if parts[-1].lower() in known_states:
+            state = parts[-1].title()
+            has_explicit_state = True
+            address_line1 = parts[0]
+        else:
+            address_line1 = parts[0]
+            city = parts[1]
+            has_explicit_city = True
+    elif len(parts) == 1:
+        address_line1 = parts[0]
+
+    return {
+        "address_line1": address_line1[:255] or "Address line",
+        "address_line2": address_line2[:255],
+        "city": city[:100] if has_explicit_city else "",
+        "state": state[:100] if has_explicit_state else "",
+        "postal_code": postal_code[:20],
+        "has_explicit_pin": has_explicit_pin,
+        "has_explicit_city": has_explicit_city,
+        "has_explicit_state": has_explicit_state,
+    }
+
+
 class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]
 
+    def _get_user_data(self, user):
+        data = UserSerializer(user).data
+        default_addr = Address.objects.filter(user=user, is_default=True).first() or Address.objects.filter(user=user).first()
+        if default_addr:
+            data["phone"] = default_addr.phone or ""
+            if default_addr.address_line1 and default_addr.address_line1 != "Address not specified":
+                addr_parts = [default_addr.address_line1]
+                if default_addr.address_line2:
+                    addr_parts.append(default_addr.address_line2)
+                if default_addr.city:
+                    addr_parts.append(default_addr.city)
+                state_pin = f"{default_addr.state} - {default_addr.postal_code}" if default_addr.state and default_addr.postal_code else (default_addr.state or default_addr.postal_code or "")
+                if state_pin:
+                    addr_parts.append(state_pin)
+                data["address"] = ", ".join([p for p in addr_parts if p])
+            else:
+                data["address"] = ""
+            data["address_id"] = default_addr.id
+        else:
+            data["phone"] = ""
+            data["address"] = ""
+            data["address_id"] = None
+        return data
+
     def get(self, request):
-        serializer = UserSerializer(request.user)
-        return Response({"user": serializer.data})
+        return Response({"user": self._get_user_data(request.user)})
+
+    def patch(self, request):
+        name = request.data.get("name")
+        phone = request.data.get("phone")
+        address_text = request.data.get("address")
+
+        if name is not None:
+            clean_name = str(name).strip()
+            if clean_name:
+                request.user.first_name = clean_name
+                request.user.save(update_fields=["first_name"])
+
+        clean_phone = str(phone).strip() if phone is not None else ""
+        clean_address = str(address_text).strip() if address_text is not None else ""
+
+        if phone is not None or address_text is not None:
+            default_addr = Address.objects.filter(user=request.user, is_default=True).first() or Address.objects.filter(user=request.user).first()
+            parsed = parse_address_string(clean_address) if clean_address else None
+
+            if default_addr:
+                if phone is not None:
+                    default_addr.phone = clean_phone
+                if clean_address:
+                    default_addr.address_line1 = parsed["address_line1"]
+                    default_addr.address_line2 = parsed["address_line2"]
+                    default_addr.city = parsed["city"]
+                    default_addr.state = parsed["state"]
+                    default_addr.postal_code = parsed["postal_code"]
+                elif address_text is not None and not clean_address:
+                    default_addr.address_line1 = "Address not specified"
+                    default_addr.address_line2 = ""
+                    default_addr.city = ""
+                    default_addr.state = ""
+                    default_addr.postal_code = ""
+                if request.user.first_name:
+                    default_addr.full_name = request.user.first_name
+                default_addr.is_default = True
+                default_addr.save()
+                # Ensure no duplicate default addresses exist for this user
+                Address.objects.filter(user=request.user).exclude(id=default_addr.id).update(is_default=False)
+            elif clean_phone or clean_address:
+                # Ensure existing addresses are not marked default
+                Address.objects.filter(user=request.user).update(is_default=False)
+                Address.objects.create(
+                    user=request.user,
+                    full_name=request.user.first_name or request.user.email.split("@")[0],
+                    phone=clean_phone or "Not provided",
+                    address_line1=parsed["address_line1"] if parsed else "Address not specified",
+                    address_line2=parsed["address_line2"] if parsed else "",
+                    city=parsed["city"] if parsed else "",
+                    state=parsed["state"] if parsed else "",
+                    postal_code=parsed["postal_code"] if parsed else "",
+                    country="India",
+                    label="Home",
+                    is_default=True,
+                )
+
+        return Response({
+            "user": self._get_user_data(request.user),
+            "message": "Profile details updated successfully.",
+        })
+
+
+class AddressListCreateView(generics.ListCreateAPIView):
+    serializer_class = AddressSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Address.objects.filter(user=self.request.user)
+
+
+class AddressDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = AddressSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Address.objects.filter(user=self.request.user)
+
+
+class OrderListCreateView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return OrderCreateSerializer
+        return OrderSerializer
+
+    def get(self, request, *args, **kwargs):
+        queryset = Order.objects.filter(user=request.user).prefetch_related("items")
+        serializer = OrderSerializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        serializer = OrderCreateSerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        order = serializer.save()
+        response_serializer = OrderSerializer(order)
+        return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+
+class OrderDetailView(generics.RetrieveAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        lookup = self.kwargs.get("lookup", "").strip()
+        queryset = Order.objects.filter(user=self.request.user).prefetch_related("items")
+        order = None
+        if str(lookup).isdigit():
+            order = queryset.filter(id=lookup).first()
+        if not order:
+            order = queryset.filter(order_number__iexact=lookup).first()
+        if not order:
+            raise Http404("Order not found.")
+        return order

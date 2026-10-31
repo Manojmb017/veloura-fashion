@@ -9,7 +9,45 @@ import {
   CreditCard, ClipboardList, LogOut, LocateFixed
 } from 'lucide-react';
 
-const API_BASE = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://127.0.0.1:8000/api' : 'https://veloura-fashion-api.onrender.com/api');
+const getApiBase = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL.replace(/\/+$/, '');
+  if (typeof window !== 'undefined') {
+    const { hostname, port } = window.location;
+    if (
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      hostname === '0.0.0.0' ||
+      hostname === '[::1]' ||
+      hostname.endsWith('.localhost') ||
+      ['5173', '5174', '5175', '4173', '3000'].includes(port)
+    ) {
+      return 'http://127.0.0.1:8000/api';
+    }
+  }
+  return 'https://veloura-fashion-api.onrender.com/api';
+};
+const API_BASE = getApiBase();
+
+const formatAddressDisplay = (addr) => {
+  if (!addr) return '';
+  const parts = [];
+  if (addr.address_line1 && addr.address_line1 !== 'Address not specified') {
+    parts.push(addr.address_line1);
+  }
+  if (addr.address_line2) {
+    parts.push(addr.address_line2);
+  }
+  if (addr.city) {
+    parts.push(addr.city);
+  }
+  const statePin = addr.state && addr.postal_code
+    ? `${addr.state} - ${addr.postal_code}`
+    : (addr.state || addr.postal_code || '');
+  if (statePin) {
+    parts.push(statePin);
+  }
+  return parts.join(', ');
+};
 const API_URL = `${API_BASE}/products/`;
 const PLACEHOLDER = '/products/men/blue-stripe-relaxed-shirt-view-1.jpg';
 // Embedded banner image so the mid-page banner works without a separate asset path.
@@ -150,10 +188,14 @@ function App() {
   const [authForm, setAuthForm] = useState({ name: '', email: '', password: '' });
   const [authLoading, setAuthLoading] = useState(false);
   const [authRedirect, setAuthRedirect] = useState(null);
-  const [checkoutAddress, setCheckoutAddress] = useState({ name: '', phone: '', address: '', city: '', pin: '' });
-  const [orders, setOrders] = useState(() => { try { return JSON.parse(localStorage.getItem('luxeorders') || '[]'); } catch { return []; } });
+  const [checkoutAddress, setCheckoutAddress] = useState({ name: '', phone: '', address: '', city: '', pin: '', state: 'Karnataka' });
+  const [orders, setOrders] = useState([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [orderNumber, setOrderNumber] = useState('');
   const [profileForm, setProfileForm] = useState({ name: '', phone: '', address: '' });
+  const [profileSaving, setProfileSaving] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -177,7 +219,6 @@ function App() {
     }
   }, [cart, signedInUser]);
   useEffect(() => { localStorage.setItem('luxewishlist', JSON.stringify(wishlist)); }, [wishlist]);
-  useEffect(() => { localStorage.setItem('luxeorders', JSON.stringify(orders)); }, [orders]);
   useEffect(() => { if (signedInUser) localStorage.setItem('luxecustomer', JSON.stringify(signedInUser)); else localStorage.removeItem('luxecustomer'); }, [signedInUser]);
 
   useEffect(() => {
@@ -205,7 +246,13 @@ function App() {
               setCart(mergedCart);
             }
             setSignedInUser(data.user);
-            setProfileForm((old) => ({ ...old, name: data.user.name || old.name }));
+            setProfileForm({
+              name: data.user.name || '',
+              phone: data.user.phone || '',
+              address: data.user.address || '',
+            });
+            fetchAddresses(token);
+            fetchOrders(token);
           }
           return;
         }
@@ -238,7 +285,13 @@ function App() {
                     setCart(mergedCart);
                   }
                   setSignedInUser(retryData.user);
-                  setProfileForm((old) => ({ ...old, name: retryData.user.name || old.name }));
+                  setProfileForm({
+                    name: retryData.user.name || '',
+                    phone: retryData.user.phone || '',
+                    address: retryData.user.address || '',
+                  });
+                  fetchAddresses(refreshData.access);
+                  fetchOrders(refreshData.access);
                 }
                 return;
               }
@@ -255,7 +308,11 @@ function App() {
           setCart(loadSavedCart(null));
         }
       })
-      .catch(() => {});
+      .catch((err) => {
+        if (import.meta.env.DEV) {
+          console.warn('[Initial Auth Check Warning]', err);
+        }
+      });
 
     return () => { active = false; };
   }, []);
@@ -348,8 +405,19 @@ function App() {
 
       cartOwnerIdRef.current = newUserId;
       setCart(mergedCart);
+      setSavedAddresses([]);
+      setSelectedAddressId(null);
+      setOrders([]);
       setSignedInUser(user);
-      setProfileForm((old) => ({ ...old, name: user.name }));
+      setProfileForm({
+        name: user.name || '',
+        phone: user.phone || '',
+        address: user.address || '',
+      });
+      if (data.access) {
+        fetchAddresses(data.access);
+        fetchOrders(data.access);
+      }
       notify(authMode === 'signup' ? 'Your account has been created' : 'Welcome back');
 
       setAuthLoading(false);
@@ -360,8 +428,11 @@ function App() {
       } else {
         navigate('profile');
       }
-    } catch {
-      notify('Unable to connect to authentication service. Please try again.');
+    } catch (err) {
+      console.error('[Auth Error]', err, 'Endpoint:', endpoint);
+      const isDev = import.meta.env.DEV || (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'));
+      const details = isDev && err?.message ? ` (${err.message} - ${endpoint})` : '';
+      notify(`Unable to connect to authentication service. Please try again.${details}`);
       setAuthLoading(false);
     }
   };
@@ -378,13 +449,161 @@ function App() {
     localStorage.removeItem('luxecustomer');
     localStorage.removeItem('luxecart');
 
+    setSavedAddresses([]);
+    setSelectedAddressId(null);
+    setOrders([]);
     setSignedInUser(null);
+    setProfileForm({ name: '', phone: '', address: '' });
     setCart(guestCart);
 
     navigate('home');
     notify('You have signed out');
   };
-  const placeDemoOrder = (deliveryAddress, onComplete) => {
+  const fetchAddresses = async (tokenOverride) => {
+    const token = tokenOverride || localStorage.getItem('luxetoken');
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_BASE}/addresses/`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setSavedAddresses(data);
+          setSelectedAddressId((curr) => {
+            if (curr && data.some((a) => a.id === curr)) return curr;
+            const def = data.find((a) => a.is_default) || data[0];
+            return def ? def.id : null;
+          });
+          const def = data.find((a) => a.is_default) || data[0];
+          if (def) {
+            const formatted = formatAddressDisplay(def);
+            setProfileForm((prev) => ({
+              name: prev.name || def.full_name || '',
+              phone: def.phone || prev.phone || '',
+              address: formatted,
+            }));
+          }
+        }
+      }
+    } catch {}
+  };
+
+  const fetchOrders = async (tokenOverride) => {
+    const token = tokenOverride || localStorage.getItem('luxetoken');
+    if (!token) return;
+    setOrdersLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/orders/`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setOrders(data);
+        }
+      }
+    } catch {}
+    finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  const handleSaveAddress = async (addressData) => {
+    const token = localStorage.getItem('luxetoken');
+    if (!token) return false;
+    try {
+      const res = await fetch(`${API_BASE}/addresses/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(addressData),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        notify('Delivery address saved to your account');
+        fetchAddresses(token);
+        return true;
+      }
+      notify(extractErrorMessage(data, 'Could not save address.'));
+      return false;
+    } catch {
+      notify('Network error saving address.');
+      return false;
+    }
+  };
+
+  const handleDeleteAddress = async (addressId) => {
+    const token = localStorage.getItem('luxetoken');
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_BASE}/addresses/${addressId}/`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      if (res.ok) {
+        notify('Address removed');
+        setSavedAddresses((old) => old.filter((a) => a.id !== addressId));
+        if (selectedAddressId === addressId) {
+          setSelectedAddressId(null);
+        }
+      } else {
+        notify('Could not remove address.');
+      }
+    } catch {
+      notify('Network error removing address.');
+    }
+  };
+
+  const handleSaveProfileDetails = async () => {
+    const token = localStorage.getItem('luxetoken');
+    if (!token) {
+      notify('Please sign in to save your profile details');
+      beginAuth('login', 'profile');
+      return;
+    }
+    setProfileSaving(true);
+    try {
+      const res = await fetch(`${API_BASE}/auth/me/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: profileForm.name,
+          phone: profileForm.phone,
+          address: profileForm.address,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        await fetchAddresses(token);
+        if (data.user) {
+          setSignedInUser(data.user);
+          if (data.user.address) {
+            setProfileForm((prev) => ({
+              ...prev,
+              name: data.user.name || prev.name,
+              phone: data.user.phone || prev.phone,
+              address: data.user.address,
+            }));
+          }
+        }
+        notify('Profile details updated');
+      } else {
+        notify(extractErrorMessage(data, 'Could not save profile details'));
+      }
+    } catch {
+      notify('Network error saving profile details');
+    } finally {
+      setProfileSaving(false);
+    }
+  };
+
+  const placeRealOrder = async (deliveryAddress, onComplete) => {
     if (!cart.length) {
       if (onComplete) onComplete();
       return;
@@ -395,12 +614,84 @@ function App() {
       beginAuth('login', 'checkout');
       return;
     }
-    const number = `LM${Date.now().toString().slice(-8)}`;
-    const formattedAddress = deliveryAddress && typeof deliveryAddress === 'object' && deliveryAddress.address
-      ? `${deliveryAddress.name || profileForm.name || signedInUser.name}, ${deliveryAddress.phone || profileForm.phone || ''}, ${deliveryAddress.address}, ${deliveryAddress.city} - ${deliveryAddress.pin}`
-      : (profileForm.address || 'Address to be added');
-    const order = { number, userEmail: signedInUser.email, userName: signedInUser.name, date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }), status: 'Order placed', items: [...cart], total: cartSubtotal, address: formattedAddress, timeline: ['Order placed', 'Confirmed', 'Packed', 'Out for delivery', 'Delivered'] };
-    setOrders((old) => [order, ...old]); setCart([]); saveSavedCart(signedInUser, []); setOrderNumber(number); if (onComplete) onComplete(); notify('Demo order created'); navigate('orders');
+
+    const token = localStorage.getItem('luxetoken');
+    if (!token) {
+      if (onComplete) onComplete();
+      notify('Please sign in again to place your order');
+      beginAuth('login', 'checkout');
+      return;
+    }
+
+    let payload;
+    if (deliveryAddress && deliveryAddress.addressId) {
+      payload = {
+        address_id: deliveryAddress.addressId,
+        items: cart.map((item) => ({
+          product_id: item.id,
+          quantity: item.qty || 1,
+          size: item.size || 'S',
+          color: item.selectedColor || item.color || 'Neutral',
+        })),
+      };
+    } else {
+      payload = {
+        address: {
+          full_name: deliveryAddress.name || profileForm.name || signedInUser.name,
+          phone: deliveryAddress.phone || profileForm.phone || '',
+          address_line1: deliveryAddress.address,
+          city: deliveryAddress.city,
+          state: deliveryAddress.state || 'Karnataka',
+          postal_code: deliveryAddress.pin,
+          save_address: true,
+        },
+        items: cart.map((item) => ({
+          product_id: item.id,
+          quantity: item.qty || 1,
+          size: item.size || 'S',
+          color: item.selectedColor || item.color || 'Neutral',
+        })),
+      };
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/orders/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        const errMsg = extractErrorMessage(data, 'Could not complete your order. Please check delivery details.');
+        notify(errMsg);
+        if (onComplete) onComplete();
+        return;
+      }
+
+      // Order created in MySQL
+      const createdNumber = data.order_number || data.number;
+      setOrders((old) => [data, ...old.filter((o) => (o.order_number || o.number) !== createdNumber)]);
+      setOrderNumber(createdNumber);
+
+      // Empty cart only after confirmed by API
+      setCart([]);
+      saveSavedCart(signedInUser, []);
+
+      // Refresh saved addresses if newly saved
+      fetchAddresses(token);
+
+      notify(`Order ${createdNumber} placed successfully`);
+      if (onComplete) onComplete();
+      navigate('orders');
+    } catch {
+      notify('Unable to connect to order service. Please check your connection.');
+      if (onComplete) onComplete();
+    }
   };
   const chooseNav = (label) => {
     if (['Men', 'Women', 'Kids', 'Accessories', 'Beauty'].includes(label)) shopCategory(label);
@@ -408,9 +699,9 @@ function App() {
     else if (label === 'Sale') { setCategory('Sale'); setSort('featured'); navigate('shop'); }
     else if (label === 'Home') navigate('home');
     else if (label === 'Wishlist') navigate('wishlist');
-    else if (label === 'Orders') navigate('orders');
+    else if (label === 'Orders') { fetchOrders(); navigate('orders'); }
     else if (label === 'Track order') navigate('tracking');
-    else if (label === 'Profile') signedInUser ? navigate('profile') : beginAuth('login');
+    else if (label === 'Profile') { if (signedInUser) { fetchAddresses(); fetchOrders(); navigate('profile'); } else { beginAuth('login'); } }
     else if (label === 'Bag') navigate('bag');
   };
 
@@ -435,21 +726,21 @@ function App() {
       {page === 'home' && <HomePage products={products} onShop={shopCategory} onProduct={openProduct} onNavigate={navigate} onAdd={addToBag} wishlist={wishlist} onWish={toggleWishlist} />}
       {page === 'shop' && <ShopPage products={visibleProducts} category={category} setCategory={setCategory} search={search} setSearch={setSearch} sort={sort} setSort={setSort} filterOpen={filterOpen} setFilterOpen={setFilterOpen} maxPrice={maxPrice} setMaxPrice={setMaxPrice} onProduct={openProduct} wishlist={wishlist} onWish={toggleWishlist} onAdd={addToBag} onClear={() => { setSearch(''); setMaxPrice(10000); setCategory('All Products'); }} apiStatus={apiStatus} />}
       {page === 'product' && selectedProduct && <ProductPage product={selectedProduct} products={products} size={selectedSize} setSize={setSelectedSize} color={selectedColor} setColor={setSelectedColor} onAdd={() => addToBag(selectedProduct)} onAddProduct={addToBag} wishlist={wishlist} onWish={() => toggleWishlist(selectedProduct)} onToggleWish={toggleWishlist} onBack={() => navigate('shop')} openDetails={openDetails} setOpenDetails={setOpenDetails} onProduct={openProduct} />}
-      {page === 'bag' && <BagPage cart={cart} subtotal={cartSubtotal} updateQty={updateQty} onRemove={(key) => setCart((old) => old.filter((item) => cartKey(item) !== key))} onShop={() => navigate('shop')} onCheckout={placeDemoOrder} signedInUser={signedInUser} onRequireAuth={() => { notify('Please sign in to complete your order'); beginAuth('login', 'checkout'); }} address={checkoutAddress} setAddress={setCheckoutAddress} initialCheckout={false} />}
+      {page === 'bag' && <BagPage cart={cart} subtotal={cartSubtotal} updateQty={updateQty} onRemove={(key) => setCart((old) => old.filter((item) => cartKey(item) !== key))} onShop={() => navigate('shop')} onCheckout={placeRealOrder} signedInUser={signedInUser} onRequireAuth={() => { notify('Please sign in to complete your order'); beginAuth('login', 'checkout'); }} address={checkoutAddress} setAddress={setCheckoutAddress} initialCheckout={false} savedAddresses={savedAddresses} selectedAddressId={selectedAddressId} setSelectedAddressId={setSelectedAddressId} />}
       {page === 'wishlist' && <WishlistPage wishlist={wishlist} onProduct={openProduct} onWish={toggleWishlist} onAdd={addToBag} onShop={() => navigate('shop')} />}
       {page === 'auth' && <AuthPage mode={authMode} setMode={setAuthMode} values={authForm} setValues={setAuthForm} onSubmit={submitAuth} onHome={() => navigate('home')} loading={authLoading} />}
-      {page === 'profile' && <ProfilePage user={signedInUser} form={profileForm} setForm={setProfileForm} onSave={() => { setSignedInUser((old) => ({ ...(old || {}), name: profileForm.name, email: old?.email || '' })); notify('Profile saved on this device'); }} onLogout={handleLogout} onAuth={() => beginAuth('login')} onOrders={() => navigate('orders')} />}
+      {page === 'profile' && <ProfilePage user={signedInUser} form={profileForm} setForm={setProfileForm} savedAddresses={savedAddresses} onSaveAddress={handleSaveAddress} onDeleteAddress={handleDeleteAddress} onSave={handleSaveProfileDetails} saving={profileSaving} onLogout={handleLogout} onAuth={() => beginAuth('login')} onOrders={() => { fetchOrders(); navigate('orders'); }} />}
       {page === 'orders' && (signedInUser ? (
-      <OrdersPage orders={userOrders} onTrack={(number) => { setOrderNumber(number); navigate('tracking'); }} onShop={() => navigate('shop')} />
+      <OrdersPage orders={orders} loading={ordersLoading} onTrack={(number) => { setOrderNumber(number); navigate('tracking'); }} onShop={() => navigate('shop')} />
       ) : (
       <AuthPage mode={authMode} setMode={setAuthMode} values={authForm} setValues={setAuthForm} onSubmit={submitAuth} onHome={() => navigate('home')} loading={authLoading} />
       ))}
       {page === 'tracking' && (signedInUser ? (
-      <TrackingPage orders={userOrders} orderNumber={orderNumber} setOrderNumber={setOrderNumber} onBack={() => navigate('orders')} />
+      <TrackingPage orders={orders} orderNumber={orderNumber} setOrderNumber={setOrderNumber} onBack={() => navigate('orders')} />
       ) : (
       <AuthPage mode={authMode} setMode={setAuthMode} values={authForm} setValues={setAuthForm} onSubmit={submitAuth} onHome={() => navigate('home')} loading={authLoading} />
       ))}
-      {page === 'checkout' && <BagPage cart={cart} subtotal={cartSubtotal} updateQty={updateQty} onRemove={(key) => setCart((old) => old.filter((item) => cartKey(item) !== key))} onShop={() => navigate('shop')} onCheckout={placeDemoOrder} signedInUser={signedInUser} onRequireAuth={() => { notify('Please sign in to complete your order'); beginAuth('login', 'checkout'); }} address={checkoutAddress} setAddress={setCheckoutAddress} initialCheckout={true} />}
+      {page === 'checkout' && <BagPage cart={cart} subtotal={cartSubtotal} updateQty={updateQty} onRemove={(key) => setCart((old) => old.filter((item) => cartKey(item) !== key))} onShop={() => navigate('shop')} onCheckout={placeRealOrder} signedInUser={signedInUser} onRequireAuth={() => { notify('Please sign in to complete your order'); beginAuth('login', 'checkout'); }} address={checkoutAddress} setAddress={setCheckoutAddress} initialCheckout={true} savedAddresses={savedAddresses} selectedAddressId={selectedAddressId} setSelectedAddressId={setSelectedAddressId} />}
     </main>
 
     <Footer onNavigate={navigate} onShop={shopCategory} />
@@ -601,14 +892,31 @@ function ProductPage({ product, products, size, setSize, color, setColor, onAdd,
 
 function Accordion({ title, open, onToggle, icon, children }) { return <section className={`detail-accordion ${open ? 'accordion-open' : ''}`}><button className="accordion-trigger" onClick={onToggle}>{icon && <span className="accordion-icon">{icon}</span>}<span>{title}</span><ChevronDown size={16} className={open ? 'chevron-open' : ''} /></button>{open && <div className="accordion-content">{children}</div>}</section>; }
 
-function BagPage({ cart, subtotal, updateQty, onRemove, onShop, onCheckout, signedInUser, onRequireAuth, address, setAddress, initialCheckout = false }) {
+function BagPage({
+  cart,
+  subtotal,
+  updateQty,
+  onRemove,
+  onShop,
+  onCheckout,
+  signedInUser,
+  onRequireAuth,
+  address,
+  setAddress,
+  initialCheckout = false,
+  savedAddresses = [],
+  selectedAddressId,
+  setSelectedAddressId,
+}) {
   const [checkoutStarted, setCheckoutStarted] = useState(initialCheckout);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [internalAddress, setInternalAddress] = useState({ name: '', phone: '', address: '', city: '', pin: '' });
+  const [useNewAddress, setUseNewAddress] = useState(false);
+  const [internalAddress, setInternalAddress] = useState({ name: '', phone: '', address: '', city: '', pin: '', state: 'Karnataka' });
   const activeAddress = address || internalAddress;
   const updateAddress = setAddress || setInternalAddress;
   const shipping = subtotal >= 1999 || subtotal === 0 ? 0 : 99;
   const total = subtotal + shipping;
+
   const localCheckout = () => {
     if (!cart.length || isSubmitting) return;
     if (!checkoutStarted) {
@@ -616,31 +924,388 @@ function BagPage({ cart, subtotal, updateQty, onRemove, onShop, onCheckout, sign
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-    if (!activeAddress.name.trim() || !activeAddress.phone.trim() || !activeAddress.address.trim() || !activeAddress.city.trim() || !activeAddress.pin.trim()) return;
     if (!signedInUser) {
       if (onRequireAuth) onRequireAuth();
+      return;
+    }
+
+    if (savedAddresses && savedAddresses.length > 0 && !useNewAddress) {
+      if (!selectedAddressId) {
+        alert('Please select a delivery address');
+        return;
+      }
+      setIsSubmitting(true);
+      onCheckout({ addressId: selectedAddressId }, () => setIsSubmitting(false));
+      return;
+    }
+
+    if (!activeAddress.name.trim() || !activeAddress.phone.trim() || !activeAddress.address.trim() || !activeAddress.city.trim() || !activeAddress.pin.trim()) {
+      alert('Please fill in all delivery address fields');
       return;
     }
     setIsSubmitting(true);
     onCheckout(activeAddress, () => setIsSubmitting(false));
   };
-  return <section className="bag-page"><div className="breadcrumb">HOME <ChevronRight size={12} /> MY BAG</div><div className="page-heading"><div><p className="eyebrow">YOUR EDIT, YOUR WAY</p><h1>{checkoutStarted ? 'Delivery details' : 'My Bag'} <span>({cart.reduce((sum, item) => sum + item.qty, 0)})</span></h1></div><button className="text-link" onClick={onShop}><ArrowLeft size={15} /> Continue shopping</button></div>{!cart.length ? <div className="empty-bag-state"><div className="empty-bag-symbol"><ShoppingBag size={30} /></div><h2>Your bag is waiting.</h2><p>Thoughtful pieces are just a few clicks away.</p><button className="dark-button" onClick={onShop}>Explore the collection <ArrowRight size={15} /></button></div> : <div className="bag-layout"><div className="bag-items-panel"><div className="bag-note"><Truck size={16} /> {subtotal >= 1999 ? 'You have unlocked complimentary delivery.' : `Add ${formatPrice(1999 - subtotal)} more for complimentary delivery.`}</div>{checkoutStarted && <div className="address-form"><p className="eyebrow">WHERE SHOULD WE SEND IT?</p><h2>Delivery address</h2><div className="form-two"><label>Full name<input value={activeAddress.name} onChange={(e) => updateAddress({ ...activeAddress, name: e.target.value })} placeholder="Your name" /></label><label>Mobile number<input value={activeAddress.phone} onChange={(e) => updateAddress({ ...activeAddress, phone: e.target.value })} placeholder="10-digit mobile number" /></label></div><label>Street address<input value={activeAddress.address} onChange={(e) => updateAddress({ ...activeAddress, address: e.target.value })} placeholder="House, street, area" /></label><div className="form-two"><label>City<input value={activeAddress.city} onChange={(e) => updateAddress({ ...activeAddress, city: e.target.value })} placeholder="City" /></label><label>PIN code<input value={activeAddress.pin} onChange={(e) => updateAddress({ ...activeAddress, pin: e.target.value })} placeholder="6-digit PIN" /></label></div><p className="micro-copy">Checkout is currently a local project demo. Payment gateway and server-side order persistence will be integrated in a later milestone.</p></div>}{cart.map((item) => <article className="bag-line-item" key={cartKey(item)}><button className="bag-item-image" onClick={() => {}}><img src={productImage(item)} alt={item.name} /></button><div className="bag-item-copy"><p className="bag-item-category">{item.category}</p><h3>{item.name}</h3><p>{item.selectedColor || item.color || 'Neutral'} · {item.size || 'One Size'}</p><strong>{formatPrice(item.price)}</strong><div className="quantity-stepper"><button aria-label="Decrease quantity" onClick={() => updateQty(cartKey(item), -1)}><Minus size={13} /></button><span>{item.qty}</span><button aria-label="Increase quantity" onClick={() => updateQty(cartKey(item), 1)}><Plus size={13} /></button></div></div><div className="bag-line-right"><strong>{formatPrice(Number(item.price) * item.qty)}</strong><button className="remove-line" onClick={() => onRemove(cartKey(item))} aria-label="Remove item"><Trash2 size={16} /></button></div></article>)}</div><aside className="order-summary"><p className="eyebrow">THE DETAILS</p><h2>Order summary</h2><div className="summary-line"><span>Subtotal</span><span>{formatPrice(subtotal)}</span></div><div className="summary-line"><span>Shipping</span><span>{shipping === 0 ? 'Complimentary' : formatPrice(shipping)}</span></div><div className="summary-line"><span>Taxes</span><span>Included</span></div><div className="summary-total"><span>Total</span><strong>{formatPrice(total)}</strong></div><p className="summary-note"><ShieldCheck size={15} /> Secure checkout · No hidden fees</p><button className="add-to-bag checkout-button" onClick={localCheckout} disabled={isSubmitting} style={isSubmitting ? { opacity: 0.7, cursor: 'not-allowed' } : {}}>{isSubmitting ? 'Placing order...' : checkoutStarted ? 'Place order' : 'Continue to checkout'} <ArrowRight size={17} /></button>{checkoutStarted && <button className="back-to-bag" onClick={() => setCheckoutStarted(false)}>Back to bag</button>}<p className="summary-footnote">By continuing, you agree to our terms of service and return policy.</p></aside></div>}</section>;
-}
 
+  return (
+    <section className="bag-page">
+      <div className="breadcrumb">HOME <ChevronRight size={12} /> MY BAG</div>
+      <div className="page-heading">
+        <div>
+          <p className="eyebrow">YOUR EDIT, YOUR WAY</p>
+          <h1>{checkoutStarted ? 'Delivery details' : 'My Bag'} <span>({cart.reduce((sum, item) => sum + item.qty, 0)})</span></h1>
+        </div>
+        <button className="text-link" onClick={onShop}><ArrowLeft size={15} /> Continue shopping</button>
+      </div>
+
+      {!cart.length ? (
+        <div className="empty-bag-state">
+          <div className="empty-bag-symbol"><ShoppingBag size={30} /></div>
+          <h2>Your bag is waiting.</h2>
+          <p>Thoughtful pieces are just a few clicks away.</p>
+          <button className="dark-button" onClick={onShop}>Explore the collection <ArrowRight size={15} /></button>
+        </div>
+      ) : (
+        <div className="bag-layout">
+          <div className="bag-items-panel">
+            <div className="bag-note">
+              <Truck size={16} /> {subtotal >= 1999 ? 'You have unlocked complimentary delivery.' : `Add ${formatPrice(1999 - subtotal)} more for complimentary delivery.`}
+            </div>
+
+            {checkoutStarted && (
+              <div className="address-form">
+                <p className="eyebrow">WHERE SHOULD WE SEND IT?</p>
+                <h2>Delivery address</h2>
+
+                {signedInUser && savedAddresses && savedAddresses.length > 0 && (
+                  <div className="saved-addresses-section" style={{ marginBottom: '18px' }}>
+                    <p style={{ fontSize: '11px', color: '#66594b', marginBottom: '8px', fontWeight: 600 }}>
+                      Select a saved address:
+                    </p>
+                    <div style={{ display: 'grid', gap: '8px', marginBottom: '12px' }}>
+                      {savedAddresses.map((addr) => {
+                        const isSelected = selectedAddressId === addr.id && !useNewAddress;
+                        return (
+                          <div
+                            key={addr.id}
+                            onClick={() => { setSelectedAddressId(addr.id); setUseNewAddress(false); }}
+                            style={{
+                              border: isSelected ? '1.5px solid #221c17' : '1px solid #ded6cb',
+                              background: isSelected ? '#faf8f5' : '#fff',
+                              padding: '12px 14px',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
+                                <strong style={{ fontSize: '12px', color: '#221c17' }}>{addr.full_name}</strong>
+                                <span style={{ fontSize: '9px', background: '#eadecd', padding: '1px 5px', textTransform: 'uppercase' }}>
+                                  {addr.label || 'Home'}
+                                </span>
+                                {addr.is_default && <span style={{ fontSize: '9px', color: '#8c8176' }}>(Default)</span>}
+                              </div>
+                              <p style={{ margin: '0 0 2px', fontSize: '11px', color: '#52483d' }}>
+                                {formatAddressDisplay(addr)}
+                              </p>
+                              <small style={{ fontSize: '10px', color: '#8c8176' }}>Phone: {addr.phone}</small>
+                            </div>
+                            {isSelected && <Check size={17} color="#221c17" />}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setUseNewAddress(!useNewAddress)}
+                      style={{ background: 'none', border: 'none', color: '#221c17', fontSize: '11px', cursor: 'pointer', padding: 0, textDecoration: 'underline' }}
+                    >
+                      {useNewAddress ? '← Use a saved address above' : '+ Deliver to a new address'}
+                    </button>
+                  </div>
+                )}
+
+                {(!signedInUser || savedAddresses.length === 0 || useNewAddress) && (
+                  <div>
+                    <div className="form-two">
+                      <label>Full name<input value={activeAddress.name} onChange={(e) => updateAddress({ ...activeAddress, name: e.target.value })} placeholder="Your name" /></label>
+                      <label>Mobile number<input value={activeAddress.phone} onChange={(e) => updateAddress({ ...activeAddress, phone: e.target.value })} placeholder="10-digit mobile number" /></label>
+                    </div>
+                    <label>Street address<input value={activeAddress.address} onChange={(e) => updateAddress({ ...activeAddress, address: e.target.value })} placeholder="House, street, area" /></label>
+                    <div className="form-two">
+                      <label>City<input value={activeAddress.city} onChange={(e) => updateAddress({ ...activeAddress, city: e.target.value })} placeholder="City" /></label>
+                      <label>PIN code<input value={activeAddress.pin} onChange={(e) => updateAddress({ ...activeAddress, pin: e.target.value })} placeholder="6-digit PIN" /></label>
+                    </div>
+                  </div>
+                )}
+                <p className="micro-copy">Order and address data are securely stored in your Veloura MySQL database.</p>
+              </div>
+            )}
+
+            {cart.map((item) => (
+              <article className="bag-line-item" key={cartKey(item)}>
+                <button className="bag-item-image" onClick={() => {}}>
+                  <img src={productImage(item)} alt={item.name} />
+                </button>
+                <div className="bag-item-copy">
+                  <p className="bag-item-category">{item.category}</p>
+                  <h3>{item.name}</h3>
+                  <p>{item.selectedColor || item.color || 'Neutral'} · {item.size || 'One Size'}</p>
+                  <strong>{formatPrice(item.price)}</strong>
+                  <div className="quantity-stepper">
+                    <button aria-label="Decrease quantity" onClick={() => updateQty(cartKey(item), -1)}><Minus size={13} /></button>
+                    <span>{item.qty}</span>
+                    <button aria-label="Increase quantity" onClick={() => updateQty(cartKey(item), 1)}><Plus size={13} /></button>
+                  </div>
+                </div>
+                <div className="bag-line-right">
+                  <strong>{formatPrice(Number(item.price) * item.qty)}</strong>
+                  <button className="remove-line" onClick={() => onRemove(cartKey(item))} aria-label="Remove item"><Trash2 size={16} /></button>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <aside className="order-summary">
+            <p className="eyebrow">THE DETAILS</p>
+            <h2>Order summary</h2>
+            <div className="summary-line"><span>Subtotal</span><span>{formatPrice(subtotal)}</span></div>
+            <div className="summary-line"><span>Shipping</span><span>{shipping === 0 ? 'Complimentary' : formatPrice(shipping)}</span></div>
+            <div className="summary-line"><span>Taxes</span><span>Included</span></div>
+            <div className="summary-total"><span>Total</span><strong>{formatPrice(total)}</strong></div>
+            <p className="summary-note"><ShieldCheck size={15} /> Secure checkout · No hidden fees</p>
+            <button className="add-to-bag checkout-button" onClick={localCheckout} disabled={isSubmitting} style={isSubmitting ? { opacity: 0.7, cursor: 'not-allowed' } : {}}>
+              {isSubmitting ? 'Placing order...' : checkoutStarted ? 'Place order' : 'Continue to checkout'} <ArrowRight size={17} />
+            </button>
+            {checkoutStarted && <button className="back-to-bag" onClick={() => setCheckoutStarted(false)}>Back to bag</button>}
+            <p className="summary-footnote">By continuing, you agree to our terms of service and return policy.</p>
+          </aside>
+        </div>
+      )}
+    </section>
+  );
+}
 function WishlistPage({ wishlist, onProduct, onWish, onAdd, onShop }) { return <section className="subpage"><p className="eyebrow">SAVED FOR LATER</p><h1>Wishlist <span>({wishlist.length})</span></h1><p className="subpage-intro">Pieces you love, all in one place.</p>{wishlist.length ? <ProductGrid products={wishlist} onProduct={onProduct} onAdd={onAdd} wishlist={wishlist} onWish={onWish} /> : <div className="empty-bag-state"><Heart size={30} /><h2>A little love goes a long way.</h2><p>Save pieces as you browse and find them here.</p><button className="dark-button" onClick={onShop}>Discover the collection <ArrowRight size={15} /></button></div>}</section>; }
 
 function AuthPage({ mode, setMode, values, setValues, onSubmit, onHome, loading = false }) { return <section className="auth-page"><div className="auth-image"><img src="/fashion-login-editorial.png" alt="Fashion Store editorial collection" /><div><p className="eyebrow light">WELCOME TO FASHION STORE</p><h2>Make room for<br /><em>beautiful things.</em></h2></div></div><div className="auth-form-panel"><button className="back-link" onClick={onHome}><ArrowLeft size={15} /> Back to the store</button><p className="eyebrow">YOUR FASHION STORE ACCOUNT</p><h1>{mode === 'signup' ? 'Create your account.' : 'Welcome back.'}</h1><p className="auth-intro">{mode === 'signup' ? 'A few details and your next favourite things are closer.' : 'Sign in to view your profile, orders and saved pieces.'}</p><form onSubmit={onSubmit}>{mode === 'signup' && <label>Full name<input value={values.name} onChange={(e) => setValues({ ...values, name: e.target.value })} placeholder="Your name" autoComplete="name" required disabled={loading} /></label>}<label>Email address<input type="email" value={values.email} onChange={(e) => setValues({ ...values, email: e.target.value })} placeholder="you@example.com" autoComplete="email" required disabled={loading} /></label><label>Password<input type="password" minLength="6" value={values.password} onChange={(e) => setValues({ ...values, password: e.target.value })} placeholder="At least 6 characters" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} required disabled={loading} /></label><button className="dark-button auth-submit" type="submit" disabled={loading} style={loading ? { opacity: 0.7, cursor: 'not-allowed' } : {}}>{loading ? (mode === 'signup' ? 'Creating account...' : 'Signing in...') : (mode === 'signup' ? 'Create account' : 'Sign in')} <ArrowRight size={15} /></button></form><p className="auth-switch">{mode === 'signup' ? 'Already have an account?' : 'New to FASHION STORE?'} <button onClick={() => setMode(mode === 'signup' ? 'login' : 'signup')} disabled={loading}>{mode === 'signup' ? 'Sign in' : 'Create an account'}</button></p><p className="micro-copy auth-demo-note">Protected by secure Django REST Framework authentication and JWT.</p></div></section>; }
 
-function ProfilePage({ user, form, setForm, onSave, onLogout, onAuth, onOrders }) { if (!user) return <section className="subpage"><p className="eyebrow">YOUR FASHION STORE ACCOUNT</p><h1>Your account.</h1><p className="subpage-intro">Sign in to manage your profile, orders and saved pieces.</p><button className="dark-button" onClick={onAuth}>Sign in / Create account <ArrowRight size={15} /></button></section>; return <section className="subpage"><p className="eyebrow">ACCOUNT OVERVIEW</p><h1>Good to see you, <em>{user.name}.</em></h1><p className="subpage-intro">Keep your details close and your favourite pieces closer.</p><div className="profile-layout"><aside className="profile-menu"><div className="profile-avatar">{user.name.slice(0, 1).toUpperCase()}</div><strong>{user.name}</strong><span>{user.email}</span><button className="profile-tab-active"><UserRound size={16} /> Personal details</button><button onClick={onOrders}><ClipboardList size={16} /> My orders</button><button onClick={onLogout}><LogOut size={16} /> Sign out</button></aside><div className="profile-card"><p className="eyebrow">YOUR DETAILS</p><h2>Personal information</h2><label>Full name<input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Full name" /></label><label>Email address<input value={user.email || ''} readOnly /></label><label>Mobile number<input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Add your mobile number" /></label><label>Default address<textarea value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Add your delivery address" rows={3} /></label><button className="dark-button" onClick={onSave}>Save details <Check size={15} /></button><p className="micro-copy">Profile details are currently stored in this browser for demonstration.</p></div></div></section>; }
+function ProfilePage({ user, form, setForm, savedAddresses = [], onSaveAddress, onDeleteAddress, onSave, saving = false, onLogout, onAuth, onOrders }) {
+  const [showAddAddr, setShowAddAddr] = useState(false);
+  const [addrForm, setAddrForm] = useState({ full_name: user?.name || '', phone: '', address_line1: '', address_line2: '', city: '', state: 'Karnataka', postal_code: '', label: 'Home', is_default: false });
 
-function OrdersPage({ orders, onTrack, onShop }) { return <section className="subpage"><p className="eyebrow">THE JOURNEY HOME</p><h1>My <em>orders.</em></h1><p className="subpage-intro">A little update on the pieces making their way to you.</p>{orders.length ? <div className="orders-list">{orders.map((order) => <article className="order-card" key={order.number}><div className="order-card-head"><div><p className="eyebrow">ORDER {order.number}</p><strong>Placed {order.date}</strong></div><span className="status-pill"><span />{order.status}</span></div><div className="order-mini-items">{order.items.slice(0, 3).map((item) => <img key={cartKey(item)} src={productImage(item)} alt={item.name} />)}<div><strong>{order.items.length} {order.items.length === 1 ? 'piece' : 'pieces'}</strong><span>Total {formatPrice(order.total)}</span></div></div><div className="order-card-bottom"><span>Delivery address: {order.address}</span><button className="text-link" onClick={() => onTrack(order.number)}>Track order <ArrowRight size={14} /></button></div></article>)}</div> : <div className="empty-bag-state"><PackageCheck size={32} /><h2>Your story starts here.</h2><p>Your orders will appear here once you have something on the way.</p><button className="dark-button" onClick={onShop}>Shop the collection <ArrowRight size={15} /></button></div>}</section>; }
+  if (!user) {
+    return (
+      <section className="subpage">
+        <p className="eyebrow">YOUR FASHION STORE ACCOUNT</p>
+        <h1>Your account.</h1>
+        <p className="subpage-intro">Sign in to manage your profile, orders and saved pieces.</p>
+        <button className="dark-button" onClick={onAuth}>Sign in / Create account <ArrowRight size={15} /></button>
+      </section>
+    );
+  }
+
+  const submitAddress = async (e) => {
+    e.preventDefault();
+    if (!addrForm.full_name || !addrForm.phone || !addrForm.address_line1 || !addrForm.city || !addrForm.postal_code) {
+      alert('Please fill all required address fields');
+      return;
+    }
+    const success = await onSaveAddress(addrForm);
+    if (success) {
+      setShowAddAddr(false);
+      setAddrForm({ full_name: user.name || '', phone: '', address_line1: '', address_line2: '', city: '', state: 'Karnataka', postal_code: '', label: 'Home', is_default: false });
+    }
+  };
+
+  return (
+    <section className="subpage">
+      <p className="eyebrow">ACCOUNT OVERVIEW</p>
+      <h1>Good to see you, <em>{user.name}.</em></h1>
+      <p className="subpage-intro">Keep your details close and your favourite pieces closer.</p>
+      <div className="profile-layout">
+        <aside className="profile-menu">
+          <div className="profile-avatar">{user.name.slice(0, 1).toUpperCase()}</div>
+          <strong>{user.name}</strong>
+          <span>{user.email}</span>
+          <button className="profile-tab-active"><UserRound size={16} /> Personal details</button>
+          <button onClick={onOrders}><ClipboardList size={16} /> My orders</button>
+          <button onClick={onLogout}><LogOut size={16} /> Sign out</button>
+        </aside>
+
+        <div className="profile-card">
+          <p className="eyebrow">YOUR DETAILS</p>
+          <h2>Personal information</h2>
+          <label>Full name<input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Full name" /></label>
+          <label>Email address<input value={user.email || ''} readOnly /></label>
+          <label>Mobile number<input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Add your mobile number" /></label>
+          <label>Default address<textarea value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="Add your delivery address" rows={3} /></label>
+          <button className="dark-button" onClick={onSave} disabled={saving} style={{ marginBottom: '24px', opacity: saving ? 0.7 : 1, cursor: saving ? 'not-allowed' : 'pointer' }}>
+            {saving ? 'Saving...' : <>Save details <Check size={15} /></>}
+          </button>
+
+          <hr style={{ border: 'none', borderTop: '1px solid #e3dace', margin: '24px 0' }} />
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <div>
+              <p className="eyebrow" style={{ margin: 0 }}>DELIVERY ADDRESSES</p>
+              <h2 style={{ margin: '4px 0 0' }}>Delivery addresses</h2>
+            </div>
+            <button className="text-link" onClick={() => setShowAddAddr(!showAddAddr)} style={{ textDecoration: 'underline' }}>
+              {showAddAddr ? 'Cancel' : '+ Add new address'}
+            </button>
+          </div>
+
+          {showAddAddr && (
+            <form onSubmit={submitAddress} style={{ background: '#faf8f5', padding: '16px', border: '1px solid #e3dace', marginBottom: '18px' }}>
+              <div className="form-two">
+                <label>Full name<input value={addrForm.full_name} onChange={(e) => setAddrForm({ ...addrForm, full_name: e.target.value })} required /></label>
+                <label>Phone<input value={addrForm.phone} onChange={(e) => setAddrForm({ ...addrForm, phone: e.target.value })} required /></label>
+              </div>
+              <label>Address line 1<input value={addrForm.address_line1} onChange={(e) => setAddrForm({ ...addrForm, address_line1: e.target.value })} required /></label>
+              <div className="form-two">
+                <label>City<input value={addrForm.city} onChange={(e) => setAddrForm({ ...addrForm, city: e.target.value })} required /></label>
+                <label>Postal code (PIN)<input value={addrForm.postal_code} onChange={(e) => setAddrForm({ ...addrForm, postal_code: e.target.value })} required /></label>
+              </div>
+              <div className="form-two">
+                <label>State<input value={addrForm.state} onChange={(e) => setAddrForm({ ...addrForm, state: e.target.value })} required /></label>
+                <label>Label (e.g. Home, Work)<input value={addrForm.label} onChange={(e) => setAddrForm({ ...addrForm, label: e.target.value })} /></label>
+              </div>
+              <button className="dark-button" type="submit" style={{ marginTop: '10px' }}>Save address to account</button>
+            </form>
+          )}
+
+          {savedAddresses.length > 0 ? (
+            <div style={{ display: 'grid', gap: '10px' }}>
+              {savedAddresses.map((addr) => (
+                <div key={addr.id} className="saved-address-card" style={{ border: '1px solid #ded6cb', padding: '12px 14px', background: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                      <strong>{addr.full_name}</strong>
+                      <span style={{ fontSize: '9px', background: '#eadecd', padding: '1px 5px', textTransform: 'uppercase' }}>{addr.label || 'Home'}</span>
+                      {addr.is_default && <small style={{ color: '#8c8176' }}>(Default)</small>}
+                    </div>
+                    <p style={{ margin: 0, fontSize: '11px', color: '#554b40' }}>
+                      {formatAddressDisplay(addr)}
+                    </p>
+                    <small style={{ color: '#8c8176' }}>Phone: {addr.phone}</small>
+                  </div>
+                  <button onClick={() => onDeleteAddress(addr.id)} style={{ background: 'none', border: 'none', color: '#993333', cursor: 'pointer', fontSize: '11px', textDecoration: 'underline' }}>
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ fontSize: '12px', color: '#8c8176' }}>No saved addresses yet. Addresses added during checkout will also appear here.</p>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function OrdersPage({ orders, onTrack, onShop, loading = false }) {
+  return (
+    <section className="subpage">
+      <p className="eyebrow">THE JOURNEY HOME</p>
+      <h1>My <em>orders.</em></h1>
+      <p className="subpage-intro">A little update on the pieces making their way to you.</p>
+
+      {loading ? (
+        <div style={{ padding: '40px 0', textAlign: 'center', color: '#82766b' }}>
+          <p>Loading your orders from database...</p>
+        </div>
+      ) : orders.length ? (
+        <div className="orders-list">
+          {orders.map((order) => {
+            const orderNum = order.order_number || order.number;
+            const orderDate = order.date || (order.created_at ? new Date(order.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '');
+            const items = order.items || [];
+            return (
+              <article className="order-card" key={orderNum}>
+                <div className="order-card-head">
+                  <div>
+                    <p className="eyebrow">ORDER {orderNum}</p>
+                    <strong>Placed {orderDate}</strong>
+                  </div>
+                  <span className="status-pill"><span />{order.status}</span>
+                </div>
+                <div className="order-mini-items">
+                  {items.slice(0, 3).map((item, idx) => (
+                    <img key={item.id || idx} src={item.image || item.image_url || item.product_image || PLACEHOLDER} alt={item.name || item.product_name} onError={(e) => { e.currentTarget.src = PLACEHOLDER; }} />
+                  ))}
+                  <div>
+                    <strong>{items.length} {items.length === 1 ? 'piece' : 'pieces'}</strong>
+                    <span>Total {formatPrice(order.total)}</span>
+                  </div>
+                </div>
+                <div className="order-card-bottom">
+                  <span>Delivery address: {order.delivery_address || (order.delivery_address_snapshot?.address_line1 ? `${order.delivery_address_snapshot.full_name}, ${order.delivery_address_snapshot.address_line1}, ${order.delivery_address_snapshot.city}` : 'Saved address')}</span>
+                  <button className="text-link" onClick={() => onTrack(orderNum)}>Track order <ArrowRight size={14} /></button>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="empty-bag-state">
+          <PackageCheck size={32} />
+          <h2>Your story starts here.</h2>
+          <p>Your orders will appear here once you have something on the way.</p>
+          <button className="dark-button" onClick={onShop}>Shop the collection <ArrowRight size={15} /></button>
+        </div>
+      )}
+    </section>
+  );
+}
 
 function TrackingPage({ orders, orderNumber, setOrderNumber, onBack }) {
   const [lookup, setLookup] = useState(orderNumber);
-  const order = orders.find(
-    (item) => item.number.toLowerCase() === lookup.trim().toLowerCase()
-  );
   const [searched, setSearched] = useState(false);
+  const [fetchedOrder, setFetchedOrder] = useState(null);
+  const [fetching, setFetching] = useState(false);
+
+  const matchedOrder = orders.find(
+    (item) => (item.order_number || item.number || '').toLowerCase() === lookup.trim().toLowerCase()
+  ) || fetchedOrder;
+
+  const handleTrackSubmit = async (e) => {
+    e.preventDefault();
+    const query = lookup.trim();
+    if (!query) return;
+    setOrderNumber(query);
+    setSearched(true);
+
+    const localMatch = orders.find(
+      (item) => (item.order_number || item.number || '').toLowerCase() === query.toLowerCase()
+    );
+    if (!localMatch) {
+      const token = localStorage.getItem('luxetoken');
+      if (token) {
+        setFetching(true);
+        try {
+          const res = await fetch(`${API_BASE}/orders/${encodeURIComponent(query)}/`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setFetchedOrder(data);
+          } else {
+            setFetchedOrder(null);
+          }
+        } catch {
+          setFetchedOrder(null);
+        } finally {
+          setFetching(false);
+        }
+      }
+    }
+  };
+
+  const timelineStages = matchedOrder?.timeline || ['Order placed', 'Confirmed', 'Packed', 'Out for delivery', 'Delivered'];
+  const orderDate = matchedOrder?.date || (matchedOrder?.created_at ? new Date(matchedOrder.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Recent');
 
   return (
     <section className="subpage tracking-page">
@@ -651,17 +1316,10 @@ function TrackingPage({ orders, orderNumber, setOrderNumber, onBack }) {
       <p className="eyebrow">FROM OUR DOOR TO YOURS</p>
       <h1>Track your <em>order.</em></h1>
       <p className="subpage-intro">
-        Enter your order reference to see its latest status.
+        Enter your order reference to see its latest status from the database.
       </p>
 
-      <form
-        className="tracking-form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          setOrderNumber(lookup);
-          setSearched(true);
-        }}
-      >
+      <form className="tracking-form" onSubmit={handleTrackSubmit}>
         <label>
           Order reference
           <input
@@ -670,33 +1328,36 @@ function TrackingPage({ orders, orderNumber, setOrderNumber, onBack }) {
             placeholder="e.g. LM12345678"
           />
         </label>
-        <button className="dark-button" type="submit">
-          Track order <ArrowRight size={15} />
+        <button className="dark-button" type="submit" disabled={fetching}>
+          {fetching ? 'Looking up...' : 'Track order'} <ArrowRight size={15} />
         </button>
       </form>
 
-      {searched && !order && (
+      {searched && !matchedOrder && !fetching && (
         <p className="tracking-message">
-          We couldn't find that order in this browser. Check the number or view your orders.
+          We couldn't find order "{lookup}" in your account. Please verify the order reference.
         </p>
       )}
 
-      {order && (
+      {matchedOrder && (
         <div className="tracking-result">
           <div className="tracking-result-head">
             <div>
-              <p className="eyebrow">ORDER {order.number}</p>
-              <h2>{order.status}</h2>
-              <p>Placed on {order.date}</p>
+              <p className="eyebrow">ORDER {matchedOrder.order_number || matchedOrder.number}</p>
+              <h2>{matchedOrder.status}</h2>
+              <p>Placed on {orderDate} · Total {formatPrice(matchedOrder.total)}</p>
+              <small style={{ color: '#8c8176' }}>
+                Delivery to: {matchedOrder.delivery_address || matchedOrder.delivery_address_snapshot?.full_name || 'Customer'}
+              </small>
             </div>
             <span className="status-pill">
               <span />
-              In progress
+              {matchedOrder.status}
             </span>
           </div>
 
           <div className="tracking-timeline">
-            {order.timeline.map((stage, index) => (
+            {timelineStages.map((stage, index) => (
               <div
                 key={stage}
                 className={`timeline-step ${index === 0 ? 'timeline-done' : ''}`}
@@ -708,10 +1369,10 @@ function TrackingPage({ orders, orderNumber, setOrderNumber, onBack }) {
                   <strong>{stage}</strong>
                   <small>
                     {index === 0
-                      ? order.date
+                      ? orderDate
                       : index === 1
-                      ? 'Up next'
-                      : 'Awaiting update'}
+                      ? 'In progress'
+                      : 'Upcoming'}
                   </small>
                 </div>
               </div>
@@ -720,11 +1381,11 @@ function TrackingPage({ orders, orderNumber, setOrderNumber, onBack }) {
         </div>
       )}
 
-      {!orders.length && !searched && (
+      {!orders.length && !searched && !matchedOrder && (
         <div className="tracking-help">
           <CircleHelp size={19} />
           <p>
-            Placed a order? Its order reference will be available on the My Orders page.
+            Placed an order? Its order reference will be available on the My Orders page.
           </p>
         </div>
       )}
