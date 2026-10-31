@@ -65,6 +65,8 @@ function App() {
   const [toast, setToast] = useState('');
   const [authMode, setAuthMode] = useState('login');
   const [authForm, setAuthForm] = useState({ name: '', email: '', password: '' });
+  const [authRedirect, setAuthRedirect] = useState(null);
+  const [checkoutAddress, setCheckoutAddress] = useState({ name: '', phone: '', address: '', city: '', pin: '' });
   const [signedInUser, setSignedInUser] = useState(() => { try { return JSON.parse(localStorage.getItem('luxecustomer') || 'null'); } catch { return null; } });
   const [orders, setOrders] = useState(() => { try { return JSON.parse(localStorage.getItem('luxeorders') || '[]'); } catch { return []; } });
   const [orderNumber, setOrderNumber] = useState('');
@@ -105,6 +107,10 @@ function App() {
   }, [products, category, search, sort, maxPrice]);
   const cartCount = cart.reduce((sum, item) => sum + item.qty, 0);
   const cartSubtotal = cart.reduce((sum, item) => sum + Number(item.price) * item.qty, 0);
+  const userOrders = useMemo(() => {
+    if (!signedInUser) return [];
+    return orders.filter((o) => o.userEmail && o.userEmail.toLowerCase() === signedInUser.email.toLowerCase());
+  }, [orders, signedInUser]);
 
   const notify = (message) => { setToast(message); window.clearTimeout(notify.timer); notify.timer = window.setTimeout(() => setToast(''), 2400); };
   const navigate = (nextPage) => { setPage(nextPage); setMobileMenu(false); setSearchOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); };
@@ -123,18 +129,37 @@ function App() {
     notify(wishlist.some((item) => item.id === product.id) ? 'Removed from wishlist' : 'Saved to wishlist');
   };
   const cartKey = (item) =>`${item.id}-${item.size || ''}-${item.selectedColor || ''}`;
-  const beginAuth = (mode = 'login') => { setAuthMode(mode); setAuthForm({ name: '', email: '', password: '' }); navigate('auth'); };
+  const beginAuth = (mode = 'login', redirect = null) => { setAuthMode(mode); if (redirect) setAuthRedirect(redirect); setAuthForm({ name: '', email: '', password: '' }); navigate('auth'); };
   const submitAuth = (event) => {
     event.preventDefault();
     if (!authForm.email.trim() || !authForm.password.trim() || (authMode === 'signup' && !authForm.name.trim())) { notify('Please complete all required fields'); return; }
-    const user = { name: authForm.name || authForm.email.split('@')[0], email: authForm.email };
-    setSignedInUser(user); setProfileForm((old) => ({ ...old, name: user.name })); notify(authMode === 'signup' ? 'Your demo account is ready' : 'Welcome back'); navigate('profile');
+    const user = { name: authForm.name || authForm.email.split('@')[0], email: authForm.email.trim().toLowerCase() };
+    setSignedInUser(user); setProfileForm((old) => ({ ...old, name: user.name })); notify(authMode === 'signup' ? 'Your demo account is ready' : 'Welcome back');
+    if (authRedirect) {
+      const target = authRedirect;
+      setAuthRedirect(null);
+      navigate(target);
+    } else {
+      navigate('profile');
+    }
   };
-  const placeDemoOrder = () => {
-    if (!cart.length) return;
+  const placeDemoOrder = (deliveryAddress, onComplete) => {
+    if (!cart.length) {
+      if (onComplete) onComplete();
+      return;
+    }
+    if (!signedInUser) {
+      if (onComplete) onComplete();
+      notify('Please sign in to complete your order');
+      beginAuth('login', 'checkout');
+      return;
+    }
     const number = `LM${Date.now().toString().slice(-8)}`;
-    const order = { number, date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }), status: 'Order placed', items: cart, total: cartSubtotal, address: profileForm.address || 'Address to be added', timeline: ['Order placed', 'Confirmed', 'Packed', 'Out for delivery', 'Delivered'] };
-    setOrders((old) => [order, ...old]); setCart([]); setOrderNumber(number); notify('Demo order created'); navigate('orders');
+    const formattedAddress = deliveryAddress && typeof deliveryAddress === 'object' && deliveryAddress.address
+      ? `${deliveryAddress.name || profileForm.name || signedInUser.name}, ${deliveryAddress.phone || profileForm.phone || ''}, ${deliveryAddress.address}, ${deliveryAddress.city} - ${deliveryAddress.pin}`
+      : (profileForm.address || 'Address to be added');
+    const order = { number, userEmail: signedInUser.email, userName: signedInUser.name, date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }), status: 'Order placed', items: [...cart], total: cartSubtotal, address: formattedAddress, timeline: ['Order placed', 'Confirmed', 'Packed', 'Out for delivery', 'Delivered'] };
+    setOrders((old) => [order, ...old]); setCart([]); setOrderNumber(number); if (onComplete) onComplete(); notify('Demo order created'); navigate('orders');
   };
   const chooseNav = (label) => {
     if (['Men', 'Women', 'Kids', 'Accessories', 'Beauty'].includes(label)) shopCategory(label);
@@ -169,21 +194,21 @@ function App() {
       {page === 'home' && <HomePage products={products} onShop={shopCategory} onProduct={openProduct} onNavigate={navigate} onAdd={addToBag} wishlist={wishlist} onWish={toggleWishlist} />}
       {page === 'shop' && <ShopPage products={visibleProducts} category={category} setCategory={setCategory} search={search} setSearch={setSearch} sort={sort} setSort={setSort} filterOpen={filterOpen} setFilterOpen={setFilterOpen} maxPrice={maxPrice} setMaxPrice={setMaxPrice} onProduct={openProduct} wishlist={wishlist} onWish={toggleWishlist} onAdd={addToBag} onClear={() => { setSearch(''); setMaxPrice(10000); setCategory('All Products'); }} apiStatus={apiStatus} />}
       {page === 'product' && selectedProduct && <ProductPage product={selectedProduct} products={products} size={selectedSize} setSize={setSelectedSize} color={selectedColor} setColor={setSelectedColor} onAdd={() => addToBag(selectedProduct)} onAddProduct={addToBag} wishlist={wishlist} onWish={() => toggleWishlist(selectedProduct)} onToggleWish={toggleWishlist} onBack={() => navigate('shop')} openDetails={openDetails} setOpenDetails={setOpenDetails} onProduct={openProduct} />}
-      {page === 'bag' && <BagPage cart={cart} subtotal={cartSubtotal} updateQty={updateQty} onRemove={(key) => setCart((old) => old.filter((item) => cartKey(item) !== key))} onShop={() => navigate('shop')} onCheckout={placeDemoOrder} />}
+      {page === 'bag' && <BagPage cart={cart} subtotal={cartSubtotal} updateQty={updateQty} onRemove={(key) => setCart((old) => old.filter((item) => cartKey(item) !== key))} onShop={() => navigate('shop')} onCheckout={placeDemoOrder} signedInUser={signedInUser} onRequireAuth={() => { notify('Please sign in to complete your order'); beginAuth('login', 'checkout'); }} address={checkoutAddress} setAddress={setCheckoutAddress} initialCheckout={false} />}
       {page === 'wishlist' && <WishlistPage wishlist={wishlist} onProduct={openProduct} onWish={toggleWishlist} onAdd={addToBag} onShop={() => navigate('shop')} />}
       {page === 'auth' && <AuthPage mode={authMode} setMode={setAuthMode} values={authForm} setValues={setAuthForm} onSubmit={submitAuth} onHome={() => navigate('home')} />}
       {page === 'profile' && <ProfilePage user={signedInUser} form={profileForm} setForm={setProfileForm} onSave={() => { setSignedInUser((old) => ({ ...(old || {}), name: profileForm.name, email: old?.email || '' })); notify('Profile saved on this device'); }} onLogout={() => { setSignedInUser(null); navigate('home'); notify('You have signed out'); }} onAuth={() => beginAuth('login')} onOrders={() => navigate('orders')} />}
       {page === 'orders' && (signedInUser ? (
-      <OrdersPage orders={orders} onTrack={(number) => { setOrderNumber(number); navigate('tracking'); }} onShop={() => navigate('shop')} />
+      <OrdersPage orders={userOrders} onTrack={(number) => { setOrderNumber(number); navigate('tracking'); }} onShop={() => navigate('shop')} />
       ) : (
       <AuthPage mode={authMode} setMode={setAuthMode} values={authForm} setValues={setAuthForm} onSubmit={submitAuth} onHome={() => navigate('home')} />
       ))}
       {page === 'tracking' && (signedInUser ? (
-      <TrackingPage orders={orders} orderNumber={orderNumber} setOrderNumber={setOrderNumber} onBack={() => navigate('orders')} />
+      <TrackingPage orders={userOrders} orderNumber={orderNumber} setOrderNumber={setOrderNumber} onBack={() => navigate('orders')} />
       ) : (
       <AuthPage mode={authMode} setMode={setAuthMode} values={authForm} setValues={setAuthForm} onSubmit={submitAuth} onHome={() => navigate('home')} />
       ))}
-      {page === 'checkout' && <BagPage cart={cart} subtotal={cartSubtotal} updateQty={updateQty} onRemove={(key) => setCart((old) => old.filter((item) => cartKey(item) !== key))} onShop={() => navigate('shop')} onCheckout={placeDemoOrder} />}
+      {page === 'checkout' && <BagPage cart={cart} subtotal={cartSubtotal} updateQty={updateQty} onRemove={(key) => setCart((old) => old.filter((item) => cartKey(item) !== key))} onShop={() => navigate('shop')} onCheckout={placeDemoOrder} signedInUser={signedInUser} onRequireAuth={() => { notify('Please sign in to complete your order'); beginAuth('login', 'checkout'); }} address={checkoutAddress} setAddress={setCheckoutAddress} initialCheckout={true} />}
     </main>
 
     <Footer onNavigate={navigate} onShop={shopCategory} />
@@ -335,13 +360,30 @@ function ProductPage({ product, products, size, setSize, color, setColor, onAdd,
 
 function Accordion({ title, open, onToggle, icon, children }) { return <section className={`detail-accordion ${open ? 'accordion-open' : ''}`}><button className="accordion-trigger" onClick={onToggle}>{icon && <span className="accordion-icon">{icon}</span>}<span>{title}</span><ChevronDown size={16} className={open ? 'chevron-open' : ''} /></button>{open && <div className="accordion-content">{children}</div>}</section>; }
 
-function BagPage({ cart, subtotal, updateQty, onRemove, onShop, onCheckout }) {
-  const [checkoutStarted, setCheckoutStarted] = useState(false);
-  const [address, setAddress] = useState({ name: '', phone: '', address: '', city: '', pin: '' });
+function BagPage({ cart, subtotal, updateQty, onRemove, onShop, onCheckout, signedInUser, onRequireAuth, address, setAddress, initialCheckout = false }) {
+  const [checkoutStarted, setCheckoutStarted] = useState(initialCheckout);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [internalAddress, setInternalAddress] = useState({ name: '', phone: '', address: '', city: '', pin: '' });
+  const activeAddress = address || internalAddress;
+  const updateAddress = setAddress || setInternalAddress;
   const shipping = subtotal >= 1999 || subtotal === 0 ? 0 : 99;
   const total = subtotal + shipping;
-  const localCheckout = () => { if (!cart.length) return; if (!checkoutStarted) { setCheckoutStarted(true); window.scrollTo({ top: 0, behavior: 'smooth' }); return; } if (!address.name.trim() || !address.phone.trim() || !address.address.trim() || !address.city.trim() || !address.pin.trim()) return; onCheckout(); };
-  return <section className="bag-page"><div className="breadcrumb">HOME <ChevronRight size={12} /> MY BAG</div><div className="page-heading"><div><p className="eyebrow">YOUR EDIT, YOUR WAY</p><h1>{checkoutStarted ? 'Delivery details' : 'My Bag'} <span>({cart.reduce((sum, item) => sum + item.qty, 0)})</span></h1></div><button className="text-link" onClick={onShop}><ArrowLeft size={15} /> Continue shopping</button></div>{!cart.length ? <div className="empty-bag-state"><div className="empty-bag-symbol"><ShoppingBag size={30} /></div><h2>Your bag is waiting.</h2><p>Thoughtful pieces are just a few clicks away.</p><button className="dark-button" onClick={onShop}>Explore the collection <ArrowRight size={15} /></button></div> : <div className="bag-layout"><div className="bag-items-panel"><div className="bag-note"><Truck size={16} /> {subtotal >= 1999 ? 'You have unlocked complimentary delivery.' : `Add ${formatPrice(1999 - subtotal)} more for complimentary delivery.`}</div>{checkoutStarted && <div className="address-form"><p className="eyebrow">WHERE SHOULD WE SEND IT?</p><h2>Delivery address</h2><div className="form-two"><label>Full name<input value={address.name} onChange={(e) => setAddress({ ...address, name: e.target.value })} placeholder="Your name" /></label><label>Mobile number<input value={address.phone} onChange={(e) => setAddress({ ...address, phone: e.target.value })} placeholder="10-digit mobile number" /></label></div><label>Street address<input value={address.address} onChange={(e) => setAddress({ ...address, address: e.target.value })} placeholder="House, street, area" /></label><div className="form-two"><label>City<input value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} placeholder="City" /></label><label>PIN code<input value={address.pin} onChange={(e) => setAddress({ ...address, pin: e.target.value })} placeholder="6-digit PIN" /></label></div><p className="micro-copy">Checkout is currently a local project demo. Payment gateway and server-side order persistence will be integrated in a later milestone.</p></div>}{cart.map((item) => <article className="bag-line-item" key={cartKey(item)}><button className="bag-item-image" onClick={() => {}}><img src={productImage(item)} alt={item.name} /></button><div className="bag-item-copy"><p className="bag-item-category">{item.category}</p><h3>{item.name}</h3><p>{item.selectedColor || item.color || 'Neutral'} · {item.size || 'One Size'}</p><strong>{formatPrice(item.price)}</strong><div className="quantity-stepper"><button aria-label="Decrease quantity" onClick={() => updateQty(cartKey(item), -1)}><Minus size={13} /></button><span>{item.qty}</span><button aria-label="Increase quantity" onClick={() => updateQty(cartKey(item), 1)}><Plus size={13} /></button></div></div><div className="bag-line-right"><strong>{formatPrice(Number(item.price) * item.qty)}</strong><button className="remove-line" onClick={() => onRemove(cartKey(item))} aria-label="Remove item"><Trash2 size={16} /></button></div></article>)}</div><aside className="order-summary"><p className="eyebrow">THE DETAILS</p><h2>Order summary</h2><div className="summary-line"><span>Subtotal</span><span>{formatPrice(subtotal)}</span></div><div className="summary-line"><span>Shipping</span><span>{shipping === 0 ? 'Complimentary' : formatPrice(shipping)}</span></div><div className="summary-line"><span>Taxes</span><span>Included</span></div><div className="summary-total"><span>Total</span><strong>{formatPrice(total)}</strong></div><p className="summary-note"><ShieldCheck size={15} /> Secure checkout · No hidden fees</p><button className="add-to-bag checkout-button" onClick={localCheckout}>{checkoutStarted ? 'Place order' : 'Continue to checkout'} <ArrowRight size={17} /></button>{checkoutStarted && <button className="back-to-bag" onClick={() => setCheckoutStarted(false)}>Back to bag</button>}<p className="summary-footnote">By continuing, you agree to our terms of service and return policy.</p></aside></div>}</section>;
+  const localCheckout = () => {
+    if (!cart.length || isSubmitting) return;
+    if (!checkoutStarted) {
+      setCheckoutStarted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (!activeAddress.name.trim() || !activeAddress.phone.trim() || !activeAddress.address.trim() || !activeAddress.city.trim() || !activeAddress.pin.trim()) return;
+    if (!signedInUser) {
+      if (onRequireAuth) onRequireAuth();
+      return;
+    }
+    setIsSubmitting(true);
+    onCheckout(activeAddress, () => setIsSubmitting(false));
+  };
+  return <section className="bag-page"><div className="breadcrumb">HOME <ChevronRight size={12} /> MY BAG</div><div className="page-heading"><div><p className="eyebrow">YOUR EDIT, YOUR WAY</p><h1>{checkoutStarted ? 'Delivery details' : 'My Bag'} <span>({cart.reduce((sum, item) => sum + item.qty, 0)})</span></h1></div><button className="text-link" onClick={onShop}><ArrowLeft size={15} /> Continue shopping</button></div>{!cart.length ? <div className="empty-bag-state"><div className="empty-bag-symbol"><ShoppingBag size={30} /></div><h2>Your bag is waiting.</h2><p>Thoughtful pieces are just a few clicks away.</p><button className="dark-button" onClick={onShop}>Explore the collection <ArrowRight size={15} /></button></div> : <div className="bag-layout"><div className="bag-items-panel"><div className="bag-note"><Truck size={16} /> {subtotal >= 1999 ? 'You have unlocked complimentary delivery.' : `Add ${formatPrice(1999 - subtotal)} more for complimentary delivery.`}</div>{checkoutStarted && <div className="address-form"><p className="eyebrow">WHERE SHOULD WE SEND IT?</p><h2>Delivery address</h2><div className="form-two"><label>Full name<input value={activeAddress.name} onChange={(e) => updateAddress({ ...activeAddress, name: e.target.value })} placeholder="Your name" /></label><label>Mobile number<input value={activeAddress.phone} onChange={(e) => updateAddress({ ...activeAddress, phone: e.target.value })} placeholder="10-digit mobile number" /></label></div><label>Street address<input value={activeAddress.address} onChange={(e) => updateAddress({ ...activeAddress, address: e.target.value })} placeholder="House, street, area" /></label><div className="form-two"><label>City<input value={activeAddress.city} onChange={(e) => updateAddress({ ...activeAddress, city: e.target.value })} placeholder="City" /></label><label>PIN code<input value={activeAddress.pin} onChange={(e) => updateAddress({ ...activeAddress, pin: e.target.value })} placeholder="6-digit PIN" /></label></div><p className="micro-copy">Checkout is currently a local project demo. Payment gateway and server-side order persistence will be integrated in a later milestone.</p></div>}{cart.map((item) => <article className="bag-line-item" key={cartKey(item)}><button className="bag-item-image" onClick={() => {}}><img src={productImage(item)} alt={item.name} /></button><div className="bag-item-copy"><p className="bag-item-category">{item.category}</p><h3>{item.name}</h3><p>{item.selectedColor || item.color || 'Neutral'} · {item.size || 'One Size'}</p><strong>{formatPrice(item.price)}</strong><div className="quantity-stepper"><button aria-label="Decrease quantity" onClick={() => updateQty(cartKey(item), -1)}><Minus size={13} /></button><span>{item.qty}</span><button aria-label="Increase quantity" onClick={() => updateQty(cartKey(item), 1)}><Plus size={13} /></button></div></div><div className="bag-line-right"><strong>{formatPrice(Number(item.price) * item.qty)}</strong><button className="remove-line" onClick={() => onRemove(cartKey(item))} aria-label="Remove item"><Trash2 size={16} /></button></div></article>)}</div><aside className="order-summary"><p className="eyebrow">THE DETAILS</p><h2>Order summary</h2><div className="summary-line"><span>Subtotal</span><span>{formatPrice(subtotal)}</span></div><div className="summary-line"><span>Shipping</span><span>{shipping === 0 ? 'Complimentary' : formatPrice(shipping)}</span></div><div className="summary-line"><span>Taxes</span><span>Included</span></div><div className="summary-total"><span>Total</span><strong>{formatPrice(total)}</strong></div><p className="summary-note"><ShieldCheck size={15} /> Secure checkout · No hidden fees</p><button className="add-to-bag checkout-button" onClick={localCheckout} disabled={isSubmitting} style={isSubmitting ? { opacity: 0.7, cursor: 'not-allowed' } : {}}>{isSubmitting ? 'Placing order...' : checkoutStarted ? 'Place order' : 'Continue to checkout'} <ArrowRight size={17} /></button>{checkoutStarted && <button className="back-to-bag" onClick={() => setCheckoutStarted(false)}>Back to bag</button>}<p className="summary-footnote">By continuing, you agree to our terms of service and return policy.</p></aside></div>}</section>;
 }
 
 function WishlistPage({ wishlist, onProduct, onWish, onAdd, onShop }) { return <section className="subpage"><p className="eyebrow">SAVED FOR LATER</p><h1>Wishlist <span>({wishlist.length})</span></h1><p className="subpage-intro">Pieces you love, all in one place.</p>{wishlist.length ? <ProductGrid products={wishlist} onProduct={onProduct} onAdd={onAdd} wishlist={wishlist} onWish={onWish} /> : <div className="empty-bag-state"><Heart size={30} /><h2>A little love goes a long way.</h2><p>Save pieces as you browse and find them here.</p><button className="dark-button" onClick={onShop}>Discover the collection <ArrowRight size={15} /></button></div>}</section>; }
