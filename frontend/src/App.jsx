@@ -177,7 +177,7 @@ function App() {
     <div className="announcement-bar"><span>COMPLIMENTARY SHIPPING ON ORDERS OVER ₹1,999</span><span className="announcement-right">A LITTLE LUXURY, EVERY DAY <Sparkles size={12} /></span></div>
     <header className="site-header">
       <button className="header-icon mobile-only" aria-label="Open menu" onClick={() => setMobileMenu(!mobileMenu)}><Menu size={21} /></button>
-      <button className="brand-mark" onClick={() => navigate('home')} aria-label="Fashion Store home">FASHION<span> STORE</span></button>
+      <button className="brand-mark" onClick={() => navigate('home')} aria-label="Veloura Fashion home"><img src="/veloura-icon.png" alt="Veloura Fashion" className="brand-logo" /><span>VELOURA</span></button>
       <nav className={`main-nav ${mobileMenu ? 'main-nav-open' : ''}`}>
         {['Home', 'Shop', 'Men', 'Women', 'Kids', 'Accessories', 'Beauty', 'Sale'].map((item) => <button key={item} className={(page === 'shop' && (category === item || item === 'Shop' && category === 'All Products')) || (page === 'home' && item === 'Home') ? 'nav-current' : ''} onClick={() => chooseNav(item)}>{item}</button>)}
       </nav>

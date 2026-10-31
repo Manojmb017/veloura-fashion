@@ -1043,3 +1043,16 @@ img { max-width: 100%; display: block; }
     transform: none !important;
   }
 }
+
+.brand-logo {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  display: block;
+}
+
+.brand-mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
