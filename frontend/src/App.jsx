@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './veloura-mobile-only.css';
 import localCatalog from './data/catalog.json';
 import {
@@ -63,6 +63,63 @@ const extractErrorMessage = (data, defaultMsg) => {
   return defaultMsg;
 };
 
+const getCartStorageKey = (user) => {
+  if (!user) return 'luxecart_guest';
+  if (typeof user === 'string' || typeof user === 'number') {
+    if (user === 'guest') return 'luxecart_guest';
+    return `luxecart_user_${user}`;
+  }
+  if (user.id) return `luxecart_user_${user.id}`;
+  if (user.email) return `luxecart_user_${user.email.toLowerCase().replace(/[^a-z0-9_-]/g, '_')}`;
+  return 'luxecart_guest';
+};
+
+const loadSavedCart = (user) => {
+  try {
+    localStorage.removeItem('luxecart');
+    const key = getCartStorageKey(user);
+    const data = localStorage.getItem(key);
+    if (data) {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) return parsed;
+    }
+    return [];
+  } catch {
+    return [];
+  }
+};
+
+const saveSavedCart = (user, items) => {
+  try {
+    const key = getCartStorageKey(user);
+    localStorage.setItem(key, JSON.stringify(items || []));
+  } catch {}
+};
+
+const mergeCarts = (baseCart = [], incomingCart = []) => {
+  if (!incomingCart || !incomingCart.length) return baseCart ? [...baseCart] : [];
+  if (!baseCart || !baseCart.length) return [...incomingCart];
+
+  const merged = baseCart.map((item) => ({ ...item }));
+  for (const incoming of incomingCart) {
+    const existingIndex = merged.findIndex(
+      (item) =>
+        item.id === incoming.id &&
+        (item.size || '') === (incoming.size || '') &&
+        (item.selectedColor || item.color || '') === (incoming.selectedColor || incoming.color || '')
+    );
+    if (existingIndex > -1) {
+      merged[existingIndex] = {
+        ...merged[existingIndex],
+        qty: (merged[existingIndex].qty || 1) + (incoming.qty || 1),
+      };
+    } else {
+      merged.push({ ...incoming });
+    }
+  }
+  return merged;
+};
+
 function App() {
   const [products, setProducts] = useState(initialProducts);
   const [apiStatus, setApiStatus] = useState('loading');
@@ -74,7 +131,15 @@ function App() {
   const [sort, setSort] = useState('featured');
   const [filterOpen, setFilterOpen] = useState(false);
   const [maxPrice, setMaxPrice] = useState(10000);
-  const [cart, setCart] = useState(() => { try { return JSON.parse(localStorage.getItem('luxecart') || '[]'); } catch { return []; } });
+  const [signedInUser, setSignedInUser] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('luxecustomer') || 'null'); } catch { return null; }
+  });
+  const [cart, setCart] = useState(() => {
+    let initialUser = null;
+    try { initialUser = JSON.parse(localStorage.getItem('luxecustomer') || 'null'); } catch {}
+    return loadSavedCart(initialUser);
+  });
+  const cartOwnerIdRef = useRef(signedInUser ? (signedInUser.id || signedInUser.email) : 'guest');
   const [wishlist, setWishlist] = useState(() => { try { return JSON.parse(localStorage.getItem('luxewishlist') || '[]'); } catch { return []; } });
   const [selectedSize, setSelectedSize] = useState('S');
   const [selectedColor, setSelectedColor] = useState('Beige');
@@ -86,7 +151,6 @@ function App() {
   const [authLoading, setAuthLoading] = useState(false);
   const [authRedirect, setAuthRedirect] = useState(null);
   const [checkoutAddress, setCheckoutAddress] = useState({ name: '', phone: '', address: '', city: '', pin: '' });
-  const [signedInUser, setSignedInUser] = useState(() => { try { return JSON.parse(localStorage.getItem('luxecustomer') || 'null'); } catch { return null; } });
   const [orders, setOrders] = useState(() => { try { return JSON.parse(localStorage.getItem('luxeorders') || '[]'); } catch { return []; } });
   const [orderNumber, setOrderNumber] = useState('');
   const [profileForm, setProfileForm] = useState({ name: '', phone: '', address: '' });
@@ -106,7 +170,12 @@ function App() {
       .catch(() => { if (active) setApiStatus('fallback'); });
     return () => { active = false; };
   }, []);
-  useEffect(() => { localStorage.setItem('luxecart', JSON.stringify(cart)); }, [cart]);
+  useEffect(() => {
+    const currentUserId = signedInUser ? (signedInUser.id || signedInUser.email) : 'guest';
+    if (cartOwnerIdRef.current === currentUserId) {
+      saveSavedCart(signedInUser, cart);
+    }
+  }, [cart, signedInUser]);
   useEffect(() => { localStorage.setItem('luxewishlist', JSON.stringify(wishlist)); }, [wishlist]);
   useEffect(() => { localStorage.setItem('luxeorders', JSON.stringify(orders)); }, [orders]);
   useEffect(() => { if (signedInUser) localStorage.setItem('luxecustomer', JSON.stringify(signedInUser)); else localStorage.removeItem('luxecustomer'); }, [signedInUser]);
@@ -124,6 +193,17 @@ function App() {
         if (res.ok) {
           const data = await res.json();
           if (active && data.user) {
+            const newUserId = data.user.id || data.user.email;
+            if (cartOwnerIdRef.current !== newUserId) {
+              const guestCart = loadSavedCart(null);
+              const userSavedCart = loadSavedCart(data.user);
+              const mergedCart = guestCart.length ? mergeCarts(userSavedCart, guestCart) : userSavedCart;
+              saveSavedCart(data.user, mergedCart);
+              localStorage.removeItem('luxecart_guest');
+              localStorage.removeItem('luxecart');
+              cartOwnerIdRef.current = newUserId;
+              setCart(mergedCart);
+            }
             setSignedInUser(data.user);
             setProfileForm((old) => ({ ...old, name: data.user.name || old.name }));
           }
@@ -146,6 +226,17 @@ function App() {
               if (retryRes.ok) {
                 const retryData = await retryRes.json();
                 if (active && retryData.user) {
+                  const newUserId = retryData.user.id || retryData.user.email;
+                  if (cartOwnerIdRef.current !== newUserId) {
+                    const guestCart = loadSavedCart(null);
+                    const userSavedCart = loadSavedCart(retryData.user);
+                    const mergedCart = guestCart.length ? mergeCarts(userSavedCart, guestCart) : userSavedCart;
+                    saveSavedCart(retryData.user, mergedCart);
+                    localStorage.removeItem('luxecart_guest');
+                    localStorage.removeItem('luxecart');
+                    cartOwnerIdRef.current = newUserId;
+                    setCart(mergedCart);
+                  }
                   setSignedInUser(retryData.user);
                   setProfileForm((old) => ({ ...old, name: retryData.user.name || old.name }));
                 }
@@ -157,7 +248,11 @@ function App() {
         if (active) {
           localStorage.removeItem('luxetoken');
           localStorage.removeItem('luxerefresh');
+          localStorage.removeItem('luxecustomer');
+          localStorage.removeItem('luxecart');
+          cartOwnerIdRef.current = 'guest';
           setSignedInUser(null);
+          setCart(loadSavedCart(null));
         }
       })
       .catch(() => {});
@@ -240,6 +335,19 @@ function App() {
       if (data.refresh) localStorage.setItem('luxerefresh', data.refresh);
 
       const user = data.user || { name: name || email.split('@')[0], email: email.toLowerCase() };
+      const newUserId = user.id || user.email;
+
+      // Only merge genuine guest cart from storage
+      const guestCart = loadSavedCart(null);
+      const userSavedCart = loadSavedCart(user);
+      const mergedCart = guestCart.length ? mergeCarts(userSavedCart, guestCart) : userSavedCart;
+
+      saveSavedCart(user, mergedCart);
+      localStorage.removeItem('luxecart_guest');
+      localStorage.removeItem('luxecart');
+
+      cartOwnerIdRef.current = newUserId;
+      setCart(mergedCart);
       setSignedInUser(user);
       setProfileForm((old) => ({ ...old, name: user.name }));
       notify(authMode === 'signup' ? 'Your account has been created' : 'Welcome back');
@@ -259,9 +367,20 @@ function App() {
   };
 
   const handleLogout = () => {
+    if (signedInUser) {
+      saveSavedCart(signedInUser, cart);
+    }
+    const guestCart = loadSavedCart(null);
+    cartOwnerIdRef.current = 'guest';
+
     localStorage.removeItem('luxetoken');
     localStorage.removeItem('luxerefresh');
+    localStorage.removeItem('luxecustomer');
+    localStorage.removeItem('luxecart');
+
     setSignedInUser(null);
+    setCart(guestCart);
+
     navigate('home');
     notify('You have signed out');
   };
@@ -281,7 +400,7 @@ function App() {
       ? `${deliveryAddress.name || profileForm.name || signedInUser.name}, ${deliveryAddress.phone || profileForm.phone || ''}, ${deliveryAddress.address}, ${deliveryAddress.city} - ${deliveryAddress.pin}`
       : (profileForm.address || 'Address to be added');
     const order = { number, userEmail: signedInUser.email, userName: signedInUser.name, date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }), status: 'Order placed', items: [...cart], total: cartSubtotal, address: formattedAddress, timeline: ['Order placed', 'Confirmed', 'Packed', 'Out for delivery', 'Delivered'] };
-    setOrders((old) => [order, ...old]); setCart([]); setOrderNumber(number); if (onComplete) onComplete(); notify('Demo order created'); navigate('orders');
+    setOrders((old) => [order, ...old]); setCart([]); saveSavedCart(signedInUser, []); setOrderNumber(number); if (onComplete) onComplete(); notify('Demo order created'); navigate('orders');
   };
   const chooseNav = (label) => {
     if (['Men', 'Women', 'Kids', 'Accessories', 'Beauty'].includes(label)) shopCategory(label);
