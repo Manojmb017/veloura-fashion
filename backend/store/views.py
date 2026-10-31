@@ -1,8 +1,18 @@
 from django.db.models import Q
 from django.http import JsonResponse
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import Product
-from .serializers import ProductSerializer
+from .serializers import (
+    EmailTokenObtainPairSerializer,
+    ProductSerializer,
+    RegisterSerializer,
+    UserSerializer,
+)
 
 
 def health_check(request):
@@ -39,3 +49,37 @@ class ProductDetailView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         return Product.objects.filter(is_active=True)
+
+
+class RegisterView(generics.GenericAPIView):
+    serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        refresh = RefreshToken.for_user(user)
+        user_data = UserSerializer(user).data
+        return Response(
+            {
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+                "user": user_data,
+                "message": "Account created successfully.",
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class EmailTokenObtainPairView(TokenObtainPairView):
+    serializer_class = EmailTokenObtainPairSerializer
+    permission_classes = [AllowAny]
+
+
+class CurrentUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response({"user": serializer.data})
