@@ -1,7 +1,13 @@
 import re
+from django.conf import settings
+from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
 from django.db.models import Q
 from django.db.utils import OperationalError
 from django.http import Http404, JsonResponse
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -14,6 +20,8 @@ from .serializers import (
     EmailTokenObtainPairSerializer,
     OrderCreateSerializer,
     OrderSerializer,
+    PasswordResetConfirmSerializer,
+    PasswordResetRequestSerializer,
     ProductSerializer,
     RegisterSerializer,
     UserSerializer,
@@ -80,6 +88,99 @@ class RegisterView(generics.GenericAPIView):
 class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = EmailTokenObtainPairSerializer
     permission_classes = [AllowAny]
+
+
+class PasswordResetRequestView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = PasswordResetRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data["email"].lower().strip()
+
+        user = User.objects.filter(Q(email__iexact=email) | Q(username__iexact=email)).first()
+
+        if user and user.is_active:
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+
+            frontend_url = getattr(settings, "FRONTEND_URL", "")
+            if not frontend_url:
+                origin = request.headers.get("Origin") or request.headers.get("Referer") or ""
+                if origin:
+                    frontend_url = origin.rstrip("/")
+                else:
+                    frontend_url = "http://localhost:5173"
+            else:
+                frontend_url = frontend_url.rstrip("/")
+
+            reset_url = f"{frontend_url}/?uid={uid}&token={token}"
+
+            subject = "Reset your Veloura Fashion password"
+            name = user.first_name or "there"
+            body = (
+                f"Hello {name},\n\n"
+                f"We received a request to reset the password for your Veloura Fashion account ({user.email}).\n\n"
+                f"To choose a new password, please click the link below (or copy and paste it into your browser):\n"
+                f"{reset_url}\n\n"
+                f"This link is valid for a limited time and can only be used once.\n\n"
+                f"If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.\n\n"
+                f"Warm regards,\n"
+                f"Veloura Fashion Team\n"
+            )
+
+            try:
+                send_mail(
+                    subject=subject,
+                    message=body,
+                    from_email=getattr(settings, "DEFAULT_FROM_EMAIL", "Veloura Fashion <noreply@veloura.example>"),
+                    recipient_list=[user.email],
+                    fail_silently=False,
+                )
+            except Exception:
+                pass
+
+        return Response(
+            {
+                "detail": "If an account exists with that email address, password reset instructions have been sent."
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class PasswordResetConfirmView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = PasswordResetConfirmSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        uid = serializer.validated_data["uid"]
+        token = serializer.validated_data["token"]
+        password = serializer.validated_data["password"]
+
+        try:
+            uid_int = force_str(urlsafe_base64_decode(uid))
+            user = User.objects.get(pk=uid_int)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+
+        if user is not None and default_token_generator.check_token(user, token):
+            user.set_password(password)
+            user.save()
+            return Response(
+                {
+                    "detail": "Your password has been successfully reset. You can now sign in with your new password."
+                },
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {
+                    "detail": "This password reset link is invalid or has expired."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 def parse_address_string(raw_address):

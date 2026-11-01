@@ -1,10 +1,14 @@
 from decimal import Decimal
 from unittest.mock import patch
 from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
+from django.core import mail
 from django.db import DatabaseError, connection
 from django.db.utils import OperationalError
 from django.test import TestCase
 from django.utils import timezone
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from rest_framework import status
 from rest_framework.test import APIClient
 from .models import Address, Order, OrderItem, Product
@@ -370,6 +374,166 @@ class AuthAPITests(TestCase):
         self.assertEqual(get_res.data["user"]["address"], "")
         self.assertNotIn("1111111111", get_res.data["user"]["phone"])
         self.assertNotIn("Secret", get_res.data["user"]["address"])
+
+
+class PasswordResetAPITests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.reset_request_url = "/api/auth/password-reset/"
+        self.reset_confirm_url = "/api/auth/password-reset/confirm/"
+        self.login_url = "/api/auth/login/"
+        self.user = User.objects.create_user(
+            username="resetuser@example.com",
+            email="resetuser@example.com",
+            password="originalpassword123",
+            first_name="Reset User",
+        )
+
+    def test_request_reset_existing_user_sends_email(self):
+        mail.outbox.clear()
+        res = self.client.post(self.reset_request_url, {"email": "resetuser@example.com"}, format="json")
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            res.data.get("detail"),
+            "If an account exists with that email address, password reset instructions have been sent."
+        )
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+        self.assertEqual(email.to, ["resetuser@example.com"])
+        self.assertEqual(email.subject, "Reset your Veloura Fashion password")
+        self.assertIn("Hello Reset User,", email.body)
+        self.assertIn("?uid=", email.body)
+        self.assertIn("&token=", email.body)
+        self.assertNotIn("originalpassword123", email.body)
+
+    def test_request_reset_case_insensitive_email(self):
+        mail.outbox.clear()
+        res = self.client.post(self.reset_request_url, {"email": "RESETUSER@EXAMPLE.COM"}, format="json")
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, ["resetuser@example.com"])
+
+    def test_request_reset_nonexistent_user_reveals_nothing(self):
+        mail.outbox.clear()
+        res = self.client.post(self.reset_request_url, {"email": "doesnotexist@example.com"}, format="json")
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            res.data.get("detail"),
+            "If an account exists with that email address, password reset instructions have been sent."
+        )
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_reset_confirm_success_and_login_with_new_password(self):
+        uid = urlsafe_base64_encode(force_bytes(self.user.pk))
+        token = default_token_generator.make_token(self.user)
+
+        res = self.client.post(
+            self.reset_confirm_url,
+            {
+                "uid": uid,
+                "token": token,
+                "password": "newpassword456",
+                "confirm_password": "newpassword456",
+            },
+            format="json",
+        )
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn("successfully reset", res.data.get("detail", ""))
+
+        # Verify old password no longer works
+        old_login = self.client.post(
+            self.login_url,
+            {"email": "resetuser@example.com", "password": "originalpassword123"},
+            format="json",
+        )
+        self.assertEqual(old_login.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # Verify new password works
+        new_login = self.client.post(
+            self.login_url,
+            {"email": "resetuser@example.com", "password": "newpassword456"},
+            format="json",
+        )
+        self.assertEqual(new_login.status_code, status.HTTP_200_OK)
+        self.assertIn("access", new_login.data)
+
+    def test_reset_token_invalidated_after_use(self):
+        uid = urlsafe_base64_encode(force_bytes(self.user.pk))
+        token = default_token_generator.make_token(self.user)
+
+        # First use succeeds
+        res1 = self.client.post(
+            self.reset_confirm_url,
+            {
+                "uid": uid,
+                "token": token,
+                "password": "newpassword456",
+                "confirm_password": "newpassword456",
+            },
+            format="json",
+        )
+        self.assertEqual(res1.status_code, status.HTTP_200_OK)
+
+        # Second use with exact same token must fail
+        res2 = self.client.post(
+            self.reset_confirm_url,
+            {
+                "uid": uid,
+                "token": token,
+                "password": "anotherpassword789",
+                "confirm_password": "anotherpassword789",
+            },
+            format="json",
+        )
+        self.assertEqual(res2.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(res2.data.get("detail"), "This password reset link is invalid or has expired.")
+
+    def test_reset_confirm_password_mismatch(self):
+        uid = urlsafe_base64_encode(force_bytes(self.user.pk))
+        token = default_token_generator.make_token(self.user)
+
+        res = self.client.post(
+            self.reset_confirm_url,
+            {
+                "uid": uid,
+                "token": token,
+                "password": "passwordA123",
+                "confirm_password": "passwordB456",
+            },
+            format="json",
+        )
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("confirm_password", res.data)
+
+    def test_reset_confirm_invalid_or_tampered_token(self):
+        uid = urlsafe_base64_encode(force_bytes(self.user.pk))
+
+        res = self.client.post(
+            self.reset_confirm_url,
+            {
+                "uid": uid,
+                "token": "invalid-tampered-token",
+                "password": "newpassword456",
+                "confirm_password": "newpassword456",
+            },
+            format="json",
+        )
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(res.data.get("detail"), "This password reset link is invalid or has expired.")
+
+    def test_reset_confirm_invalid_uid(self):
+        res = self.client.post(
+            self.reset_confirm_url,
+            {
+                "uid": "invalid-uid-99999",
+                "token": "some-token",
+                "password": "newpassword456",
+                "confirm_password": "newpassword456",
+            },
+            format="json",
+        )
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(res.data.get("detail"), "This password reset link is invalid or has expired.")
 
 
 class AddressAPITests(TestCase):

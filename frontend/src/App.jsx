@@ -247,9 +247,13 @@ function App() {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [toast, setToast] = useState('');
   const [authMode, setAuthMode] = useState('login');
-  const [authForm, setAuthForm] = useState({ name: '', email: '', password: '' });
+  const [authForm, setAuthForm] = useState({ name: '', email: '', password: '', confirmPassword: '' });
   const [authLoading, setAuthLoading] = useState(false);
   const [authRedirect, setAuthRedirect] = useState(null);
+  const [resetParams, setResetParams] = useState({ uid: '', token: '' });
+  const [forgotMessage, setForgotMessage] = useState('');
+  const [resetSuccess, setResetSuccess] = useState(false);
+  const [resetMessage, setResetMessage] = useState('');
   const [checkoutAddress, setCheckoutAddress] = useState({ name: '', phone: '', address: '', city: '', pin: '', state: 'Karnataka' });
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
@@ -258,6 +262,19 @@ function App() {
   const [orderNumber, setOrderNumber] = useState('');
   const [profileForm, setProfileForm] = useState({ name: '', phone: '', address: '' });
   const [profileSaving, setProfileSaving] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const uid = params.get('uid');
+      const token = params.get('token');
+      if (uid && token) {
+        setResetParams({ uid, token });
+        setAuthMode('reset');
+        setPage('auth');
+      }
+    }
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -443,7 +460,14 @@ function App() {
     notify(wishlist.some((item) => item.id === product.id) ? 'Removed from wishlist' : 'Saved to wishlist');
   };
   const cartKey = (item) =>`${item.id}-${item.size || ''}-${item.selectedColor || ''}`;
-  const beginAuth = (mode = 'login', redirect = null) => { setAuthMode(mode); if (redirect) setAuthRedirect(redirect); setAuthForm({ name: '', email: '', password: '' }); navigate('auth'); };
+  const beginAuth = (mode = 'login', redirect = null) => {
+    setAuthMode(mode);
+    if (redirect) setAuthRedirect(redirect);
+    setAuthForm({ name: '', email: '', password: '', confirmPassword: '' });
+    setForgotMessage('');
+    setResetSuccess(false);
+    navigate('auth');
+  };
   const submitAuth = async (event) => {
     event.preventDefault();
     const email = authForm.email.trim();
@@ -533,6 +557,87 @@ function App() {
       const isDev = import.meta.env.DEV || (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'));
       const details = isDev && err?.message ? ` (${err.message} - ${endpoint})` : '';
       notify(`Unable to connect to authentication service. Please try again.${details}`);
+      setAuthLoading(false);
+    }
+  };
+
+  const submitForgotPassword = async (event) => {
+    event.preventDefault();
+    const email = authForm.email.trim();
+    if (!email) {
+      notify('Please enter your email address');
+      return;
+    }
+    setAuthLoading(true);
+    try {
+      const response = await fetch(`${API_BASE}/auth/password-reset/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json().catch(() => ({}));
+      setForgotMessage(
+        data.detail ||
+        'If an account exists with that email address, password reset instructions have been sent.'
+      );
+    } catch {
+      setForgotMessage(
+        'If an account exists with that email address, password reset instructions have been sent.'
+      );
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const submitResetPassword = async (event) => {
+    event.preventDefault();
+    const password = authForm.password;
+    const confirmPassword = authForm.confirmPassword;
+    if (!password || !confirmPassword) {
+      notify('Please enter and confirm your new password');
+      return;
+    }
+    if (password.length < 6) {
+      notify('Password must be at least 6 characters');
+      return;
+    }
+    if (password !== confirmPassword) {
+      notify('Passwords do not match');
+      return;
+    }
+    if (!resetParams.uid || !resetParams.token) {
+      notify('Invalid or missing password reset link');
+      return;
+    }
+
+    setAuthLoading(true);
+    try {
+      const response = await fetch(`${API_BASE}/auth/password-reset/confirm/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uid: resetParams.uid,
+          token: resetParams.token,
+          password,
+          confirm_password: confirmPassword,
+        }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (response.ok) {
+        setResetSuccess(true);
+        setResetMessage(data.detail || 'Your password has been successfully reset.');
+        setAuthForm({ name: '', email: '', password: '', confirmPassword: '' });
+        notify('Password reset successfully');
+        if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      } else {
+        const errorMsg = extractErrorMessage(data, 'This password reset link is invalid or has expired.');
+        notify(errorMsg);
+      }
+    } catch {
+      notify('Unable to reset password. Please check your network connection.');
+    } finally {
       setAuthLoading(false);
     }
   };
@@ -833,17 +938,64 @@ function App() {
       {page === 'product' && selectedProduct && <ProductPage product={selectedProduct} products={products} size={selectedSize} setSize={setSelectedSize} color={selectedColor} setColor={setSelectedColor} onAdd={() => addToBag(selectedProduct)} onAddProduct={addToBag} wishlist={wishlist} onWish={() => toggleWishlist(selectedProduct)} onToggleWish={toggleWishlist} onBack={() => navigate('shop')} openDetails={openDetails} setOpenDetails={setOpenDetails} onProduct={openProduct} />}
       {page === 'bag' && <BagPage cart={cart} subtotal={cartSubtotal} updateQty={updateQty} onRemove={(key) => setCart((old) => old.filter((item) => cartKey(item) !== key))} onShop={() => navigate('shop')} onCheckout={placeRealOrder} signedInUser={signedInUser} onRequireAuth={() => { notify('Please sign in to complete your order'); beginAuth('login', 'checkout'); }} address={checkoutAddress} setAddress={setCheckoutAddress} initialCheckout={false} savedAddresses={savedAddresses} selectedAddressId={selectedAddressId} setSelectedAddressId={setSelectedAddressId} />}
       {page === 'wishlist' && <WishlistPage wishlist={wishlist} onProduct={openProduct} onWish={toggleWishlist} onAdd={addToBag} onShop={() => navigate('shop')} />}
-      {page === 'auth' && <AuthPage mode={authMode} setMode={setAuthMode} values={authForm} setValues={setAuthForm} onSubmit={submitAuth} onHome={() => navigate('home')} loading={authLoading} />}
+      {page === 'auth' && (
+        <AuthPage
+          mode={authMode}
+          setMode={setAuthMode}
+          values={authForm}
+          setValues={setAuthForm}
+          onSubmit={submitAuth}
+          onForgotPassword={submitForgotPassword}
+          onResetPassword={submitResetPassword}
+          forgotMessage={forgotMessage}
+          setForgotMessage={setForgotMessage}
+          resetSuccess={resetSuccess}
+          setResetSuccess={setResetSuccess}
+          resetMessage={resetMessage}
+          onHome={() => navigate('home')}
+          loading={authLoading}
+        />
+      )}
       {page === 'profile' && <ProfilePage user={signedInUser} form={profileForm} setForm={setProfileForm} savedAddresses={savedAddresses} onSaveAddress={handleSaveAddress} onDeleteAddress={handleDeleteAddress} onSave={handleSaveProfileDetails} saving={profileSaving} onLogout={handleLogout} onAuth={() => beginAuth('login')} onOrders={() => { fetchOrders(); navigate('orders'); }} />}
       {page === 'orders' && (signedInUser ? (
       <OrdersPage orders={orders} loading={ordersLoading} onTrack={(number) => { setOrderNumber(number); navigate('tracking'); }} onShop={() => navigate('shop')} />
       ) : (
-      <AuthPage mode={authMode} setMode={setAuthMode} values={authForm} setValues={setAuthForm} onSubmit={submitAuth} onHome={() => navigate('home')} loading={authLoading} />
+      <AuthPage
+        mode={authMode}
+        setMode={setAuthMode}
+        values={authForm}
+        setValues={setAuthForm}
+        onSubmit={submitAuth}
+        onForgotPassword={submitForgotPassword}
+        onResetPassword={submitResetPassword}
+        forgotMessage={forgotMessage}
+        setForgotMessage={setForgotMessage}
+        resetSuccess={resetSuccess}
+        setResetSuccess={setResetSuccess}
+        resetMessage={resetMessage}
+        onHome={() => navigate('home')}
+        loading={authLoading}
+      />
       ))}
       {page === 'tracking' && (signedInUser ? (
       <TrackingPage orders={orders} orderNumber={orderNumber} setOrderNumber={setOrderNumber} onBack={() => navigate('orders')} />
       ) : (
-      <AuthPage mode={authMode} setMode={setAuthMode} values={authForm} setValues={setAuthForm} onSubmit={submitAuth} onHome={() => navigate('home')} loading={authLoading} />
+      <AuthPage
+        mode={authMode}
+        setMode={setAuthMode}
+        values={authForm}
+        setValues={setAuthForm}
+        onSubmit={submitAuth}
+        onForgotPassword={submitForgotPassword}
+        onResetPassword={submitResetPassword}
+        forgotMessage={forgotMessage}
+        setForgotMessage={setForgotMessage}
+        resetSuccess={resetSuccess}
+        setResetSuccess={setResetSuccess}
+        resetMessage={resetMessage}
+        onHome={() => navigate('home')}
+        loading={authLoading}
+      />
       ))}
       {page === 'checkout' && <BagPage cart={cart} subtotal={cartSubtotal} updateQty={updateQty} onRemove={(key) => setCart((old) => old.filter((item) => cartKey(item) !== key))} onShop={() => navigate('shop')} onCheckout={placeRealOrder} signedInUser={signedInUser} onRequireAuth={() => { notify('Please sign in to complete your order'); beginAuth('login', 'checkout'); }} address={checkoutAddress} setAddress={setCheckoutAddress} initialCheckout={true} savedAddresses={savedAddresses} selectedAddressId={selectedAddressId} setSelectedAddressId={setSelectedAddressId} />}
     </main>
@@ -1210,7 +1362,304 @@ function BagPage({
 }
 function WishlistPage({ wishlist, onProduct, onWish, onAdd, onShop }) { return <section className="subpage"><p className="eyebrow">SAVED FOR LATER</p><h1>Wishlist <span>({wishlist.length})</span></h1><p className="subpage-intro">Pieces you love, all in one place.</p>{wishlist.length ? <ProductGrid products={wishlist} onProduct={onProduct} onAdd={onAdd} wishlist={wishlist} onWish={onWish} /> : <div className="empty-bag-state"><Heart size={30} /><h2>A little love goes a long way.</h2><p>Save pieces as you browse and find them here.</p><button className="dark-button" onClick={onShop}>Discover the collection <ArrowRight size={15} /></button></div>}</section>; }
 
-function AuthPage({ mode, setMode, values, setValues, onSubmit, onHome, loading = false }) { return <section className="auth-page"><div className="auth-image"><img src="/fashion-login-editorial.png" alt="Fashion Store editorial collection" /><div><p className="eyebrow light">WELCOME TO FASHION STORE</p><h2>Make room for<br /><em>beautiful things.</em></h2></div></div><div className="auth-form-panel"><button className="back-link" onClick={onHome}><ArrowLeft size={15} /> Back to the store</button><p className="eyebrow">YOUR FASHION STORE ACCOUNT</p><h1>{mode === 'signup' ? 'Create your account.' : 'Welcome back.'}</h1><p className="auth-intro">{mode === 'signup' ? 'A few details and your next favourite things are closer.' : 'Sign in to view your profile, orders and saved pieces.'}</p><form onSubmit={onSubmit}>{mode === 'signup' && <label>Full name<input value={values.name} onChange={(e) => setValues({ ...values, name: e.target.value })} placeholder="Your name" autoComplete="name" required disabled={loading} /></label>}<label>Email address<input type="email" value={values.email} onChange={(e) => setValues({ ...values, email: e.target.value })} placeholder="you@example.com" autoComplete="email" required disabled={loading} /></label><label>Password<input type="password" minLength="6" value={values.password} onChange={(e) => setValues({ ...values, password: e.target.value })} placeholder="At least 6 characters" autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} required disabled={loading} /></label><button className="dark-button auth-submit" type="submit" disabled={loading} style={loading ? { opacity: 0.7, cursor: 'not-allowed' } : {}}>{loading ? (mode === 'signup' ? 'Creating account...' : 'Signing in...') : (mode === 'signup' ? 'Create account' : 'Sign in')} <ArrowRight size={15} /></button></form><p className="auth-switch">{mode === 'signup' ? 'Already have an account?' : 'New to FASHION STORE?'} <button onClick={() => setMode(mode === 'signup' ? 'login' : 'signup')} disabled={loading}>{mode === 'signup' ? 'Sign in' : 'Create an account'}</button></p><p className="micro-copy auth-demo-note">Protected by secure Django REST Framework authentication and JWT.</p></div></section>; }
+function AuthPage({
+  mode,
+  setMode,
+  values,
+  setValues,
+  onSubmit,
+  onForgotPassword,
+  onResetPassword,
+  forgotMessage,
+  setForgotMessage,
+  resetSuccess,
+  setResetSuccess,
+  resetMessage,
+  onHome,
+  loading = false,
+}) {
+  let eyebrow = 'YOUR FASHION STORE ACCOUNT';
+  let title = 'Welcome back.';
+  let intro = 'Sign in to view your profile, orders and saved pieces.';
+
+  if (mode === 'signup') {
+    title = 'Create your account.';
+    intro = 'A few details and your next favourite things are closer.';
+  } else if (mode === 'forgot') {
+    eyebrow = 'PASSWORD RECOVERY';
+    title = 'Reset your password.';
+    intro = "Enter your email address and we'll send you instructions to reset your password.";
+  } else if (mode === 'reset') {
+    eyebrow = 'ACCOUNT SECURITY';
+    title = 'Set a new password.';
+    intro = 'Enter a strong new password for your account (at least 6 characters).';
+  }
+
+  const handleFormSubmit = (e) => {
+    if (mode === 'forgot') {
+      onForgotPassword(e);
+    } else if (mode === 'reset') {
+      onResetPassword(e);
+    } else {
+      onSubmit(e);
+    }
+  };
+
+  return (
+    <section className="auth-page">
+      <div className="auth-image">
+        <img src="/fashion-login-editorial.png" alt="Fashion Store editorial collection" />
+        <div>
+          <p className="eyebrow light">WELCOME TO FASHION STORE</p>
+          <h2>
+            Make room for<br />
+            <em>beautiful things.</em>
+          </h2>
+        </div>
+      </div>
+      <div className="auth-form-panel">
+        <button className="back-link" onClick={onHome}>
+          <ArrowLeft size={15} /> Back to the store
+        </button>
+        <p className="eyebrow">{eyebrow}</p>
+        <h1>{title}</h1>
+        <p className="auth-intro">{intro}</p>
+
+        {mode === 'forgot' && forgotMessage ? (
+          <div className="forgot-confirmation">
+            <div
+              style={{
+                background: '#f8f6f3',
+                border: '1px solid #ded6cb',
+                padding: '18px 20px',
+                borderRadius: '4px',
+                margin: '18px 0',
+                color: '#3d3126',
+                fontSize: '11px',
+                lineHeight: '1.7',
+              }}
+            >
+              <p style={{ margin: 0, fontWeight: 500 }}>{forgotMessage}</p>
+              <p style={{ margin: '8px 0 0', color: '#7a6e63', fontSize: '10px' }}>
+                Please check your inbox as well as your spam or junk folder. The reset link is single-use and time-limited.
+              </p>
+            </div>
+            <button
+              className="dark-button auth-submit"
+              type="button"
+              onClick={() => {
+                if (setForgotMessage) setForgotMessage('');
+                setMode('login');
+              }}
+            >
+              Back to sign in <ArrowRight size={15} />
+            </button>
+          </div>
+        ) : mode === 'reset' && resetSuccess ? (
+          <div className="reset-confirmation">
+            <div
+              style={{
+                background: '#edf7ed',
+                border: '1px solid #b7dfb9',
+                padding: '18px 20px',
+                borderRadius: '4px',
+                margin: '18px 0',
+                color: '#1e4620',
+                fontSize: '11px',
+                lineHeight: '1.7',
+              }}
+            >
+              <p style={{ margin: 0, fontWeight: 600 }}>{resetMessage || 'Your password has been successfully reset!'}</p>
+              <p style={{ margin: '6px 0 0', color: '#2e6b32', fontSize: '10px' }}>
+                You can now sign in to your Veloura Fashion account with your new password.
+              </p>
+            </div>
+            <button
+              className="dark-button auth-submit"
+              type="button"
+              onClick={() => {
+                if (setResetSuccess) setResetSuccess(false);
+                setMode('login');
+              }}
+            >
+              Sign in with new password <ArrowRight size={15} />
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleFormSubmit}>
+            {mode === 'signup' && (
+              <label>
+                Full name
+                <input
+                  value={values.name}
+                  onChange={(e) => setValues({ ...values, name: e.target.value })}
+                  placeholder="Your name"
+                  autoComplete="name"
+                  required
+                  disabled={loading}
+                />
+              </label>
+            )}
+
+            {(mode === 'login' || mode === 'signup' || mode === 'forgot') && (
+              <label>
+                Email address
+                <input
+                  type="email"
+                  value={values.email}
+                  onChange={(e) => setValues({ ...values, email: e.target.value })}
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  required
+                  disabled={loading}
+                />
+              </label>
+            )}
+
+            {(mode === 'login' || mode === 'signup') && (
+              <label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span>Password</span>
+                  {mode === 'login' && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (setForgotMessage) setForgotMessage('');
+                        setMode('forgot');
+                      }}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        color: '#897c6e',
+                        fontSize: '10px',
+                        cursor: 'pointer',
+                        textDecoration: 'underline',
+                      }}
+                    >
+                      Forgot password?
+                    </button>
+                  )}
+                </div>
+                <input
+                  type="password"
+                  minLength="6"
+                  value={values.password}
+                  onChange={(e) => setValues({ ...values, password: e.target.value })}
+                  placeholder="At least 6 characters"
+                  autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+                  required
+                  disabled={loading}
+                />
+              </label>
+            )}
+
+            {mode === 'reset' && (
+              <>
+                <label>
+                  New password
+                  <input
+                    type="password"
+                    minLength="6"
+                    value={values.password}
+                    onChange={(e) => setValues({ ...values, password: e.target.value })}
+                    placeholder="At least 6 characters"
+                    autoComplete="new-password"
+                    required
+                    disabled={loading}
+                  />
+                </label>
+                <label>
+                  Confirm new password
+                  <input
+                    type="password"
+                    minLength="6"
+                    value={values.confirmPassword || ''}
+                    onChange={(e) => setValues({ ...values, confirmPassword: e.target.value })}
+                    placeholder="Re-enter your new password"
+                    autoComplete="new-password"
+                    required
+                    disabled={loading}
+                  />
+                </label>
+              </>
+            )}
+
+            <button
+              className="dark-button auth-submit"
+              type="submit"
+              disabled={loading}
+              style={loading ? { opacity: 0.7, cursor: 'not-allowed' } : {}}
+            >
+              {loading
+                ? mode === 'signup'
+                  ? 'Creating account...'
+                  : mode === 'forgot'
+                  ? 'Sending reset link...'
+                  : mode === 'reset'
+                  ? 'Saving new password...'
+                  : 'Signing in...'
+                : mode === 'signup'
+                ? 'Create account'
+                : mode === 'forgot'
+                ? 'Send reset link'
+                : mode === 'reset'
+                ? 'Save new password'
+                : 'Sign in'}{' '}
+              <ArrowRight size={15} />
+            </button>
+          </form>
+        )}
+
+        {mode === 'login' && (
+          <p className="auth-switch">
+            New to FASHION STORE?{' '}
+            <button onClick={() => setMode('signup')} disabled={loading}>
+              Create an account
+            </button>
+          </p>
+        )}
+
+        {mode === 'signup' && (
+          <p className="auth-switch">
+            Already have an account?{' '}
+            <button onClick={() => setMode('login')} disabled={loading}>
+              Sign in
+            </button>
+          </p>
+        )}
+
+        {mode === 'forgot' && !forgotMessage && (
+          <p className="auth-switch">
+            Remembered your password?{' '}
+            <button
+              onClick={() => {
+                if (setForgotMessage) setForgotMessage('');
+                setMode('login');
+              }}
+              disabled={loading}
+            >
+              Back to sign in
+            </button>
+          </p>
+        )}
+
+        {mode === 'reset' && !resetSuccess && (
+          <p className="auth-switch">
+            Cancel reset?{' '}
+            <button onClick={() => setMode('login')} disabled={loading}>
+              Back to sign in
+            </button>
+          </p>
+        )}
+
+        <p className="micro-copy auth-demo-note">
+          Protected by secure Django REST Framework authentication and JWT.
+        </p>
+      </div>
+    </section>
+  );
+}
 
 function ProfilePage({ user, form, setForm, savedAddresses = [], onSaveAddress, onDeleteAddress, onSave, saving = false, onLogout, onAuth, onOrders }) {
   const [showAddAddr, setShowAddAddr] = useState(false);

@@ -105,6 +105,25 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
         }
 
 
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField(max_length=190)
+
+    def validate_email(self, value):
+        return value.lower().strip()
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    uid = serializers.CharField()
+    token = serializers.CharField()
+    password = serializers.CharField(min_length=6, write_only=True)
+    confirm_password = serializers.CharField(min_length=6, write_only=True)
+
+    def validate(self, attrs):
+        if attrs["password"] != attrs["confirm_password"]:
+            raise serializers.ValidationError({"confirm_password": "Passwords do not match."})
+        return attrs
+
+
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = Address

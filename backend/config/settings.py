@@ -196,7 +196,10 @@ STORAGES = {
 # CORS - REACT FRONTEND
 # --------------------------------------------------
 
-FRONTEND_URL = os.getenv("FRONTEND_URL", "").strip().rstrip("/")
+FRONTEND_URL = os.getenv(
+    "FRONTEND_URL",
+    "https://veloura-fashion-ten.vercel.app" if not DEBUG else ""
+).strip().rstrip("/")
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
@@ -210,6 +213,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "https://veloura-fashion.vercel.app",
+    "https://veloura-fashion-ten.vercel.app",
 ]
 
 if FRONTEND_URL and FRONTEND_URL not in CORS_ALLOWED_ORIGINS:
@@ -236,6 +240,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "https://veloura-fashion.vercel.app",
+    "https://veloura-fashion-ten.vercel.app",
 ]
 
 if FRONTEND_URL and FRONTEND_URL not in CSRF_TRUSTED_ORIGINS:
@@ -260,6 +265,16 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 # --------------------------------------------------
 # EMAIL
 # --------------------------------------------------
+EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "Veloura Fashion <noreply@veloura.example>")
+EMAIL_HOST = os.getenv("EMAIL_HOST", "")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() in ("true", "1", "yes")
+
+if EMAIL_HOST and EMAIL_HOST_USER:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 # --------------------------------------------------
 # REST FRAMEWORK & SIMPLE JWT
