@@ -110,33 +110,74 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 
 # --------------------------------------------------
-# MYSQL DATABASE - AIVEN
+# DATABASE CONFIGURATION (PostgreSQL / Neon & MySQL)
 # --------------------------------------------------
 
-DB_SSL_CA = os.getenv(
-    "DB_SSL_CA",
-    str(BASE_DIR / "aiven-ca.pem")
-)
+import dj_database_url
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": os.getenv("DB_NAME", "defaultdb"),
-        "USER": os.getenv("DB_USER", "avnadmin"),
-        "PASSWORD": os.getenv("DB_PASSWORD", ""),
-        "HOST": os.getenv(
-            "DB_HOST",
-            "mysql-2bfdab6d-veloura-fashion.i.aivencloud.com"
-        ),
-        "PORT": os.getenv("DB_PORT", "18035"),
-        "OPTIONS": {
-            "charset": "utf8mb4",
-            "ssl": {
-                "ca": DB_SSL_CA,
-            },
-        },
+database_url = os.getenv("DATABASE_URL", "").strip()
+
+if database_url:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=database_url,
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True,
+        )
     }
-}
+else:
+    db_engine = os.getenv("DB_ENGINE", "").strip()
+    db_port = os.getenv("DB_PORT", "").strip()
+    db_host = os.getenv("DB_HOST", "").strip()
+
+    is_postgres = (
+        "postgres" in db_engine.lower()
+        or db_port == "5432"
+        or ".neon.tech" in db_host.lower()
+    )
+
+    if is_postgres:
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.postgresql",
+                "NAME": os.getenv("DB_NAME", "neondb"),
+                "USER": os.getenv("DB_USER", ""),
+                "PASSWORD": os.getenv("DB_PASSWORD", ""),
+                "HOST": os.getenv("DB_HOST", ""),
+                "PORT": os.getenv("DB_PORT", "5432"),
+                "OPTIONS": {
+                    "sslmode": os.getenv("DB_SSLMODE", "require"),
+                },
+                "CONN_MAX_AGE": 600,
+                "CONN_HEALTH_CHECKS": True,
+            }
+        }
+    else:
+        # Default to MySQL (e.g. local development on 127.0.0.1:3306)
+        DB_SSL_CA = os.getenv("DB_SSL_CA", "").strip()
+        if not DB_SSL_CA:
+            candidate_ca = BASE_DIR / "aiven-ca.pem"
+            if candidate_ca.exists():
+                DB_SSL_CA = str(candidate_ca)
+
+        db_options = {
+            "charset": "utf8mb4",
+        }
+        if DB_SSL_CA and os.path.exists(DB_SSL_CA):
+            db_options["ssl"] = {"ca": DB_SSL_CA}
+
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.mysql",
+                "NAME": os.getenv("DB_NAME", "fashion_store"),
+                "USER": os.getenv("DB_USER", "root"),
+                "PASSWORD": os.getenv("DB_PASSWORD", ""),
+                "HOST": os.getenv("DB_HOST", "127.0.0.1"),
+                "PORT": os.getenv("DB_PORT", "3306"),
+                "OPTIONS": db_options,
+            }
+        }
 
 
 # --------------------------------------------------
@@ -298,5 +339,48 @@ SIMPLE_JWT = {
 MAILERS = {
     "default": {
         "BACKEND": "django.core.mail.backends.console.EmailBackend",
+    },
+}
+
+
+# --------------------------------------------------
+# LOGGING
+# --------------------------------------------------
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "[{asctime}] {levelname} {name}: {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+    "loggers": {
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "django.db.backends": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "store": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
     },
 }

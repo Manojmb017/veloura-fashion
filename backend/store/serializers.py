@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.db.utils import OperationalError
+from django.db.utils import OperationalError, ProgrammingError
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import Address, Order, OrderItem, Product
@@ -76,7 +76,7 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         try:
             default_addr = Address.objects.filter(user=user, is_default=True).first() or Address.objects.filter(user=user).first()
-        except OperationalError:
+        except (OperationalError, ProgrammingError):
             default_addr = None
         phone_val = default_addr.phone if default_addr else ""
         address_val = ""

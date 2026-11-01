@@ -1,14 +1,16 @@
+import logging
 import re
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db.models import Q
-from django.db.utils import OperationalError
+from django.db.utils import OperationalError, ProgrammingError
 from django.http import Http404, JsonResponse
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import generics, status
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -85,9 +87,33 @@ class RegisterView(generics.GenericAPIView):
         )
 
 
+logger = logging.getLogger(__name__)
+
+
 class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = EmailTokenObtainPairSerializer
     permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        try:
+            return super().post(request, *args, **kwargs)
+        except (ValidationError, AuthenticationFailed):
+            raise
+        except Exception as exc:
+            raw_email = request.data.get("email") if isinstance(request.data, dict) else None
+            masked_email = (
+                f"{raw_email[:2]}***@{raw_email.split('@')[-1]}"
+                if raw_email and "@" in str(raw_email)
+                else "unknown"
+            )
+            logger.error(
+                "Login endpoint server exception for user [%s]: %s: %s",
+                masked_email,
+                type(exc).__name__,
+                exc,
+                exc_info=True,
+            )
+            raise
 
 
 class PasswordResetRequestView(APIView):
@@ -261,7 +287,7 @@ class CurrentUserView(APIView):
         data = UserSerializer(user).data
         try:
             default_addr = Address.objects.filter(user=user, is_default=True).first() or Address.objects.filter(user=user).first()
-        except OperationalError:
+        except (OperationalError, ProgrammingError):
             default_addr = None
         if default_addr:
             data["phone"] = default_addr.phone or ""

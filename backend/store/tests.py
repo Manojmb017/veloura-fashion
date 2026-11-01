@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.core import mail
 from django.db import DatabaseError, connection
-from django.db.utils import OperationalError
+from django.db.utils import OperationalError, ProgrammingError
 from django.test import TestCase
 from django.utils import timezone
 from django.utils.encoding import force_bytes
@@ -231,6 +231,67 @@ class AuthAPITests(TestCase):
             self.assertEqual(me_resp.data["user"]["email"], "operroruser@example.com")
             self.assertEqual(me_resp.data["user"]["phone"], "")
             self.assertEqual(me_resp.data["user"]["address"], "")
+
+    def test_login_and_me_succeeds_when_address_lookup_raises_programming_error(self):
+        User.objects.create_user(
+            username="progerroruser@example.com",
+            email="progerroruser@example.com",
+            password="mysecretpassword",
+            first_name="ProgError User",
+        )
+        with patch("store.serializers.Address.objects.filter", side_effect=ProgrammingError("Table 'fashion_store.addresses' doesn't exist")), \
+             patch("store.views.Address.objects.filter", side_effect=ProgrammingError("Table 'fashion_store.addresses' doesn't exist")):
+            response = self.client.post(
+                self.login_url,
+                {"email": "progerroruser@example.com", "password": "mysecretpassword"},
+                format="json",
+            )
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertIn("access", response.data)
+            self.assertIn("refresh", response.data)
+            self.assertEqual(response.data["user"]["name"], "ProgError User")
+            self.assertEqual(response.data["user"]["phone"], "")
+            self.assertEqual(response.data["user"]["address"], "")
+
+            access_token = response.data["access"]
+            self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+            me_resp = self.client.get(self.me_url)
+            self.assertEqual(me_resp.status_code, status.HTTP_200_OK)
+            self.assertEqual(me_resp.data["user"]["email"], "progerroruser@example.com")
+            self.assertEqual(me_resp.data["user"]["phone"], "")
+            self.assertEqual(me_resp.data["user"]["address"], "")
+
+    def test_login_logs_server_exception_without_leaking_credentials(self):
+        with patch("store.views.TokenObtainPairView.post", side_effect=DatabaseError("MySQL server has gone away")):
+            with patch("store.views.logger.error") as mock_logger:
+                with self.assertRaises(DatabaseError):
+                    self.client.post(
+                        self.login_url,
+                        {"email": "testservererror@example.com", "password": "verysecretpassword123"},
+                        format="json",
+                    )
+                self.assertTrue(mock_logger.called)
+                call_args, call_kwargs = mock_logger.call_args
+                log_message = call_args[0] % call_args[1:]
+                self.assertIn("te***@example.com", log_message)
+                self.assertNotIn("verysecretpassword123", log_message)
+                self.assertIn("DatabaseError", log_message)
+                self.assertTrue(call_kwargs.get("exc_info"))
+
+    def test_login_wrong_credentials_does_not_log_server_error(self):
+        User.objects.create_user(
+            username="validuser@example.com",
+            email="validuser@example.com",
+            password="realpassword123",
+        )
+        with patch("store.views.logger.error") as mock_logger:
+            response = self.client.post(
+                self.login_url,
+                {"email": "validuser@example.com", "password": "wrongpassword!"},
+                format="json",
+            )
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            self.assertFalse(mock_logger.called)
 
     def test_me_unauthenticated(self):
         response = self.client.get(self.me_url)
@@ -627,25 +688,46 @@ class OrderAPITests(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         with connection.cursor() as cursor:
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS products (
-                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                    name VARCHAR(180) NOT NULL,
-                    slug VARCHAR(200) NOT NULL UNIQUE,
-                    description TEXT NULL,
-                    category VARCHAR(50) NOT NULL,
-                    product_type VARCHAR(80) NOT NULL DEFAULT 'Clothing',
-                    price DECIMAL(10,2) NOT NULL,
-                    compare_at_price DECIMAL(10,2) NULL,
-                    image_url VARCHAR(1000) NULL,
-                    color VARCHAR(80) NULL,
-                    stock_quantity INT UNSIGNED NOT NULL DEFAULT 0,
-                    is_active BOOLEAN NOT NULL DEFAULT TRUE,
-                    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                    available_sizes JSON NULL,
-                    gallery_images JSON NULL
-                );
-            """)
+            if connection.vendor == "postgresql":
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS products (
+                        id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+                        name VARCHAR(180) NOT NULL,
+                        slug VARCHAR(200) NOT NULL UNIQUE,
+                        description TEXT NULL,
+                        category VARCHAR(50) NOT NULL,
+                        product_type VARCHAR(80) NOT NULL DEFAULT 'Clothing',
+                        price DECIMAL(10,2) NOT NULL,
+                        compare_at_price DECIMAL(10,2) NULL,
+                        image_url VARCHAR(1000) NULL,
+                        color VARCHAR(80) NULL,
+                        stock_quantity INT NOT NULL DEFAULT 0,
+                        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+                        created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        available_sizes JSONB NULL,
+                        gallery_images JSONB NULL
+                    );
+                """)
+            else:
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS products (
+                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        name VARCHAR(180) NOT NULL,
+                        slug VARCHAR(200) NOT NULL UNIQUE,
+                        description TEXT NULL,
+                        category VARCHAR(50) NOT NULL,
+                        product_type VARCHAR(80) NOT NULL DEFAULT 'Clothing',
+                        price DECIMAL(10,2) NOT NULL,
+                        compare_at_price DECIMAL(10,2) NULL,
+                        image_url VARCHAR(1000) NULL,
+                        color VARCHAR(80) NULL,
+                        stock_quantity INT UNSIGNED NOT NULL DEFAULT 0,
+                        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+                        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        available_sizes JSON NULL,
+                        gallery_images JSON NULL
+                    );
+                """)
 
     @classmethod
     def tearDownClass(cls):
