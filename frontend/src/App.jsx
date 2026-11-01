@@ -158,6 +158,63 @@ const mergeCarts = (baseCart = [], incomingCart = []) => {
   return merged;
 };
 
+const getWishlistStorageKey = (user) => {
+  if (!user) return 'luxewishlist_guest';
+  if (typeof user === 'string' || typeof user === 'number') {
+    if (user === 'guest') return 'luxewishlist_guest';
+    return `luxewishlist_user_${user}`;
+  }
+  if (user.id) return `luxewishlist_user_${user.id}`;
+  if (user.email) return `luxewishlist_user_${user.email.toLowerCase().replace(/[^a-z0-9_-]/g, '_')}`;
+  return 'luxewishlist_guest';
+};
+
+const loadSavedWishlist = (user) => {
+  try {
+    const key = getWishlistStorageKey(user);
+    const data = localStorage.getItem(key);
+    if (data) {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) return parsed;
+    }
+    // Backward-compatibility: if guest has no saved items under luxewishlist_guest, check legacy un-scoped key
+    if (key === 'luxewishlist_guest') {
+      const legacy = localStorage.getItem('luxewishlist');
+      if (legacy) {
+        localStorage.removeItem('luxewishlist');
+        const parsed = JSON.parse(legacy);
+        if (Array.isArray(parsed) && parsed.length) {
+          localStorage.setItem(key, JSON.stringify(parsed));
+          return parsed;
+        }
+      }
+    }
+    return [];
+  } catch {
+    return [];
+  }
+};
+
+const saveSavedWishlist = (user, items) => {
+  try {
+    const key = getWishlistStorageKey(user);
+    localStorage.setItem(key, JSON.stringify(items || []));
+  } catch {}
+};
+
+const mergeWishlists = (baseWishlist = [], incomingWishlist = []) => {
+  if (!incomingWishlist || !incomingWishlist.length) return baseWishlist ? [...baseWishlist] : [];
+  if (!baseWishlist || !baseWishlist.length) return [...incomingWishlist];
+
+  const merged = baseWishlist.map((item) => ({ ...item }));
+  for (const incoming of incomingWishlist) {
+    if (!merged.some((item) => item.id === incoming.id)) {
+      merged.push({ ...incoming });
+    }
+  }
+  return merged;
+};
+
 function App() {
   const [products, setProducts] = useState(initialProducts);
   const [apiStatus, setApiStatus] = useState('loading');
@@ -178,7 +235,12 @@ function App() {
     return loadSavedCart(initialUser);
   });
   const cartOwnerIdRef = useRef(signedInUser ? (signedInUser.id || signedInUser.email) : 'guest');
-  const [wishlist, setWishlist] = useState(() => { try { return JSON.parse(localStorage.getItem('luxewishlist') || '[]'); } catch { return []; } });
+  const wishlistOwnerIdRef = useRef(signedInUser ? (signedInUser.id || signedInUser.email) : 'guest');
+  const [wishlist, setWishlist] = useState(() => {
+    let initialUser = null;
+    try { initialUser = JSON.parse(localStorage.getItem('luxecustomer') || 'null'); } catch {}
+    return loadSavedWishlist(initialUser);
+  });
   const [selectedSize, setSelectedSize] = useState('S');
   const [selectedColor, setSelectedColor] = useState('Beige');
   const [openDetails, setOpenDetails] = useState({ offer: false, product: true, delivery: true });
@@ -218,7 +280,12 @@ function App() {
       saveSavedCart(signedInUser, cart);
     }
   }, [cart, signedInUser]);
-  useEffect(() => { localStorage.setItem('luxewishlist', JSON.stringify(wishlist)); }, [wishlist]);
+  useEffect(() => {
+    const currentUserId = signedInUser ? (signedInUser.id || signedInUser.email) : 'guest';
+    if (wishlistOwnerIdRef.current === currentUserId) {
+      saveSavedWishlist(signedInUser, wishlist);
+    }
+  }, [wishlist, signedInUser]);
   useEffect(() => { if (signedInUser) localStorage.setItem('luxecustomer', JSON.stringify(signedInUser)); else localStorage.removeItem('luxecustomer'); }, [signedInUser]);
 
   useEffect(() => {
@@ -244,6 +311,16 @@ function App() {
               localStorage.removeItem('luxecart');
               cartOwnerIdRef.current = newUserId;
               setCart(mergedCart);
+            }
+            if (wishlistOwnerIdRef.current !== newUserId) {
+              const guestWishlist = loadSavedWishlist(null);
+              const userSavedWishlist = loadSavedWishlist(data.user);
+              const mergedWishlist = guestWishlist.length ? mergeWishlists(userSavedWishlist, guestWishlist) : userSavedWishlist;
+              saveSavedWishlist(data.user, mergedWishlist);
+              localStorage.removeItem('luxewishlist_guest');
+              localStorage.removeItem('luxewishlist');
+              wishlistOwnerIdRef.current = newUserId;
+              setWishlist(mergedWishlist);
             }
             setSignedInUser(data.user);
             setProfileForm({
@@ -284,6 +361,16 @@ function App() {
                     cartOwnerIdRef.current = newUserId;
                     setCart(mergedCart);
                   }
+                  if (wishlistOwnerIdRef.current !== newUserId) {
+                    const guestWishlist = loadSavedWishlist(null);
+                    const userSavedWishlist = loadSavedWishlist(retryData.user);
+                    const mergedWishlist = guestWishlist.length ? mergeWishlists(userSavedWishlist, guestWishlist) : userSavedWishlist;
+                    saveSavedWishlist(retryData.user, mergedWishlist);
+                    localStorage.removeItem('luxewishlist_guest');
+                    localStorage.removeItem('luxewishlist');
+                    wishlistOwnerIdRef.current = newUserId;
+                    setWishlist(mergedWishlist);
+                  }
                   setSignedInUser(retryData.user);
                   setProfileForm({
                     name: retryData.user.name || '',
@@ -306,6 +393,8 @@ function App() {
           cartOwnerIdRef.current = 'guest';
           setSignedInUser(null);
           setCart(loadSavedCart(null));
+          wishlistOwnerIdRef.current = 'guest';
+          setWishlist(loadSavedWishlist(null));
         }
       })
       .catch((err) => {
@@ -394,7 +483,7 @@ function App() {
       const user = data.user || { name: name || email.split('@')[0], email: email.toLowerCase() };
       const newUserId = user.id || user.email;
 
-      // Only merge genuine guest cart from storage
+      // Merge genuine guest cart and wishlist from storage
       const guestCart = loadSavedCart(null);
       const userSavedCart = loadSavedCart(user);
       const mergedCart = guestCart.length ? mergeCarts(userSavedCart, guestCart) : userSavedCart;
@@ -405,6 +494,17 @@ function App() {
 
       cartOwnerIdRef.current = newUserId;
       setCart(mergedCart);
+
+      const guestWishlist = loadSavedWishlist(null);
+      const userSavedWishlist = loadSavedWishlist(user);
+      const mergedWishlist = guestWishlist.length ? mergeWishlists(userSavedWishlist, guestWishlist) : userSavedWishlist;
+
+      saveSavedWishlist(user, mergedWishlist);
+      localStorage.removeItem('luxewishlist_guest');
+      localStorage.removeItem('luxewishlist');
+
+      wishlistOwnerIdRef.current = newUserId;
+      setWishlist(mergedWishlist);
       setSavedAddresses([]);
       setSelectedAddressId(null);
       setOrders([]);
@@ -440,14 +540,18 @@ function App() {
   const handleLogout = () => {
     if (signedInUser) {
       saveSavedCart(signedInUser, cart);
+      saveSavedWishlist(signedInUser, wishlist);
     }
     const guestCart = loadSavedCart(null);
+    const guestWishlist = loadSavedWishlist(null);
     cartOwnerIdRef.current = 'guest';
+    wishlistOwnerIdRef.current = 'guest';
 
     localStorage.removeItem('luxetoken');
     localStorage.removeItem('luxerefresh');
     localStorage.removeItem('luxecustomer');
     localStorage.removeItem('luxecart');
+    localStorage.removeItem('luxewishlist');
 
     setSavedAddresses([]);
     setSelectedAddressId(null);
@@ -455,6 +559,7 @@ function App() {
     setSignedInUser(null);
     setProfileForm({ name: '', phone: '', address: '' });
     setCart(guestCart);
+    setWishlist(guestWishlist);
 
     navigate('home');
     notify('You have signed out');
@@ -685,7 +790,7 @@ function App() {
       // Refresh saved addresses if newly saved
       fetchAddresses(token);
 
-      notify(`Order ${createdNumber} placed successfully`);
+      notify(`Order ${createdNumber} placed successfully via Cash on Delivery`);
       if (onComplete) onComplete();
       navigate('orders');
     } catch {
@@ -1040,7 +1145,22 @@ function BagPage({
                     </div>
                   </div>
                 )}
-                <p className="micro-copy">Order and address data are securely stored in your Veloura MySQL database.</p>
+                <div style={{ marginTop: '18px', padding: '14px', background: '#faf8f5', border: '1px solid #ded6cb' }}>
+                  <p className="eyebrow" style={{ margin: '0 0 6px', fontSize: '10px' }}>PAYMENT METHOD</p>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <input type="radio" id="pay-cod" name="payOption" checked readOnly style={{ accentColor: '#221c17', cursor: 'pointer' }} />
+                      <label htmlFor="pay-cod" style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: '#221c17', cursor: 'pointer' }}>
+                        Cash on Delivery (COD)
+                      </label>
+                    </div>
+                    <span style={{ fontSize: '9px', background: '#221c17', color: '#fff', padding: '2px 6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Only option</span>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '11px', color: '#66594b', lineHeight: 1.4 }}>
+                    Pay in cash or UPI when your parcel arrives. No advance payment required. Order is registered as <strong>Unpaid</strong> until delivered.
+                  </p>
+                </div>
+                <p className="micro-copy" style={{ marginTop: '10px' }}>Order and address data are securely stored in your Veloura MySQL database.</p>
               </div>
             )}
 
@@ -1074,10 +1194,11 @@ function BagPage({
             <div className="summary-line"><span>Subtotal</span><span>{formatPrice(subtotal)}</span></div>
             <div className="summary-line"><span>Shipping</span><span>{shipping === 0 ? 'Complimentary' : formatPrice(shipping)}</span></div>
             <div className="summary-line"><span>Taxes</span><span>Included</span></div>
+            <div className="summary-line"><span>Payment</span><strong>Cash on Delivery (Unpaid)</strong></div>
             <div className="summary-total"><span>Total</span><strong>{formatPrice(total)}</strong></div>
-            <p className="summary-note"><ShieldCheck size={15} /> Secure checkout · No hidden fees</p>
+            <p className="summary-note"><ShieldCheck size={15} /> Cash on Delivery · No advance payment</p>
             <button className="add-to-bag checkout-button" onClick={localCheckout} disabled={isSubmitting} style={isSubmitting ? { opacity: 0.7, cursor: 'not-allowed' } : {}}>
-              {isSubmitting ? 'Placing order...' : checkoutStarted ? 'Place order' : 'Continue to checkout'} <ArrowRight size={17} />
+              {isSubmitting ? 'Placing order...' : checkoutStarted ? 'Place order (Cash on Delivery)' : 'Continue to checkout'} <ArrowRight size={17} />
             </button>
             {checkoutStarted && <button className="back-to-bag" onClick={() => setCheckoutStarted(false)}>Back to bag</button>}
             <p className="summary-footnote">By continuing, you agree to our terms of service and return policy.</p>
@@ -1239,6 +1360,9 @@ function OrdersPage({ orders, onTrack, onShop, loading = false }) {
                   <div>
                     <strong>{items.length} {items.length === 1 ? 'piece' : 'pieces'}</strong>
                     <span>Total {formatPrice(order.total)}</span>
+                    <small style={{ color: '#8c8176', display: 'block', marginTop: '3px', fontSize: '10px' }}>
+                      Payment: {order.payment_method || 'COD'} ({order.payment_status || 'Unpaid'})
+                    </small>
                   </div>
                 </div>
                 <div className="order-card-bottom">
@@ -1345,7 +1469,7 @@ function TrackingPage({ orders, orderNumber, setOrderNumber, onBack }) {
             <div>
               <p className="eyebrow">ORDER {matchedOrder.order_number || matchedOrder.number}</p>
               <h2>{matchedOrder.status}</h2>
-              <p>Placed on {orderDate} · Total {formatPrice(matchedOrder.total)}</p>
+              <p>Placed on {orderDate} · Total {formatPrice(matchedOrder.total)} · Payment: {matchedOrder.payment_method || 'COD'} ({matchedOrder.payment_status || 'Unpaid'})</p>
               <small style={{ color: '#8c8176' }}>
                 Delivery to: {matchedOrder.delivery_address || matchedOrder.delivery_address_snapshot?.full_name || 'Customer'}
               </small>

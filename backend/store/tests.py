@@ -2,6 +2,7 @@ from decimal import Decimal
 from unittest.mock import patch
 from django.contrib.auth.models import User
 from django.db import DatabaseError, connection
+from django.db.utils import OperationalError
 from django.test import TestCase
 from django.utils import timezone
 from rest_framework import status
@@ -30,6 +31,10 @@ class AuthAPITests(TestCase):
         self.assertEqual(response.data["user"]["email"], "jane@example.com")
         self.assertEqual(response.data["user"]["name"], "Jane Doe")
         self.assertTrue(User.objects.filter(username="jane@example.com").exists())
+        user = User.objects.get(email="jane@example.com")
+        self.assertNotEqual(user.password, "strongpassword123")
+        self.assertTrue(user.password.startswith("pbkdf2_"))
+        self.assertTrue(user.check_password("strongpassword123"))
 
     def test_register_duplicate_email(self):
         User.objects.create_user(
@@ -85,6 +90,143 @@ class AuthAPITests(TestCase):
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_unknown_email_rejected(self):
+        response = self.client.post(
+            self.login_url,
+            {"email": "nobody@example.com", "password": "somepassword123"},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_case_insensitive_email(self):
+        User.objects.create_user(
+            username="casetest@example.com",
+            email="casetest@example.com",
+            password="casepassword123",
+            first_name="Case User",
+        )
+        # Test all uppercase
+        resp_upper = self.client.post(
+            self.login_url,
+            {"email": "CASETEST@EXAMPLE.COM", "password": "casepassword123"},
+            format="json",
+        )
+        self.assertEqual(resp_upper.status_code, status.HTTP_200_OK)
+        self.assertEqual(resp_upper.data["user"]["email"], "casetest@example.com")
+
+        # Test mixed case with whitespace
+        resp_mixed = self.client.post(
+            self.login_url,
+            {"email": "  CaseTest@Example.Com  ", "password": "casepassword123"},
+            format="json",
+        )
+        self.assertEqual(resp_mixed.status_code, status.HTTP_200_OK)
+        self.assertEqual(resp_mixed.data["user"]["email"], "casetest@example.com")
+
+    def test_login_multiple_distinct_users_and_isolation(self):
+        user_a = User.objects.create_user(
+            username="user_alpha@example.com",
+            email="user_alpha@example.com",
+            password="PasswordAlpha123!",
+            first_name="Alpha",
+        )
+        user_b = User.objects.create_user(
+            username="user_beta@example.com",
+            email="user_beta@example.com",
+            password="PasswordBeta456!",
+            first_name="Beta",
+        )
+
+        # User A logs in with their credentials
+        resp_a = self.client.post(
+            self.login_url,
+            {"email": "user_alpha@example.com", "password": "PasswordAlpha123!"},
+            format="json",
+        )
+        self.assertEqual(resp_a.status_code, status.HTTP_200_OK)
+        token_a = resp_a.data["access"]
+        self.assertIn("refresh", resp_a.data)
+        self.assertEqual(resp_a.data["user"]["id"], user_a.id)
+        self.assertEqual(resp_a.data["user"]["email"], "user_alpha@example.com")
+        self.assertEqual(resp_a.data["user"]["name"], "Alpha")
+
+        # User B logs in with their credentials
+        resp_b = self.client.post(
+            self.login_url,
+            {"email": "user_beta@example.com", "password": "PasswordBeta456!"},
+            format="json",
+        )
+        self.assertEqual(resp_b.status_code, status.HTTP_200_OK)
+        token_b = resp_b.data["access"]
+        self.assertIn("refresh", resp_b.data)
+        self.assertEqual(resp_b.data["user"]["id"], user_b.id)
+        self.assertEqual(resp_b.data["user"]["email"], "user_beta@example.com")
+        self.assertEqual(resp_b.data["user"]["name"], "Beta")
+
+        # Ensure tokens are distinct
+        self.assertNotEqual(token_a, token_b)
+
+        # Profile endpoint with User A token
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token_a}")
+        me_a = self.client.get(self.me_url)
+        self.assertEqual(me_a.status_code, status.HTTP_200_OK)
+        self.assertEqual(me_a.data["user"]["id"], user_a.id)
+        self.assertEqual(me_a.data["user"]["email"], "user_alpha@example.com")
+        self.assertEqual(me_a.data["user"]["name"], "Alpha")
+
+        # Profile endpoint with User B token
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token_b}")
+        me_b = self.client.get(self.me_url)
+        self.assertEqual(me_b.status_code, status.HTTP_200_OK)
+        self.assertEqual(me_b.data["user"]["id"], user_b.id)
+        self.assertEqual(me_b.data["user"]["email"], "user_beta@example.com")
+        self.assertEqual(me_b.data["user"]["name"], "Beta")
+
+        # Cross credentials must fail
+        self.client.credentials()
+        cross_a = self.client.post(
+            self.login_url,
+            {"email": "user_alpha@example.com", "password": "PasswordBeta456!"},
+            format="json",
+        )
+        self.assertEqual(cross_a.status_code, status.HTTP_400_BAD_REQUEST)
+
+        cross_b = self.client.post(
+            self.login_url,
+            {"email": "user_beta@example.com", "password": "PasswordAlpha123!"},
+            format="json",
+        )
+        self.assertEqual(cross_b.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_login_and_me_succeeds_when_address_lookup_raises_operational_error(self):
+        User.objects.create_user(
+            username="operroruser@example.com",
+            email="operroruser@example.com",
+            password="mysecretpassword",
+            first_name="OpError User",
+        )
+        with patch("store.serializers.Address.objects.filter", side_effect=OperationalError("Unknown column 'addresses.full_name' in 'field list'")), \
+             patch("store.views.Address.objects.filter", side_effect=OperationalError("Unknown column 'addresses.full_name' in 'field list'")):
+            response = self.client.post(
+                self.login_url,
+                {"email": "operroruser@example.com", "password": "mysecretpassword"},
+                format="json",
+            )
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertIn("access", response.data)
+            self.assertIn("refresh", response.data)
+            self.assertEqual(response.data["user"]["name"], "OpError User")
+            self.assertEqual(response.data["user"]["phone"], "")
+            self.assertEqual(response.data["user"]["address"], "")
+
+            access_token = response.data["access"]
+            self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+            me_resp = self.client.get(self.me_url)
+            self.assertEqual(me_resp.status_code, status.HTTP_200_OK)
+            self.assertEqual(me_resp.data["user"]["email"], "operroruser@example.com")
+            self.assertEqual(me_resp.data["user"]["phone"], "")
+            self.assertEqual(me_resp.data["user"]["address"], "")
 
     def test_me_unauthenticated(self):
         response = self.client.get(self.me_url)

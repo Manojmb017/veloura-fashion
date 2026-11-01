@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.db import transaction
+from django.db.utils import OperationalError
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import Address, Order, OrderItem, Product
@@ -73,7 +74,10 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
         if not user.is_active:
             raise serializers.ValidationError({"detail": "This user account is inactive."})
 
-        default_addr = Address.objects.filter(user=user, is_default=True).first() or Address.objects.filter(user=user).first()
+        try:
+            default_addr = Address.objects.filter(user=user, is_default=True).first() or Address.objects.filter(user=user).first()
+        except OperationalError:
+            default_addr = None
         phone_val = default_addr.phone if default_addr else ""
         address_val = ""
         if default_addr and default_addr.address_line1 and default_addr.address_line1 != "Address not specified":
@@ -191,6 +195,8 @@ class OrderSerializer(serializers.ModelSerializer):
     date = serializers.SerializerMethodField()
     delivery_address = serializers.SerializerMethodField()
     timeline = serializers.SerializerMethodField()
+    payment_method = serializers.SerializerMethodField()
+    payment_status = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
@@ -198,8 +204,16 @@ class OrderSerializer(serializers.ModelSerializer):
             "id", "order_number", "number", "status", "customer_name_snapshot",
             "customer_email_snapshot", "delivery_address_snapshot", "delivery_address",
             "subtotal", "shipping_charge", "discount", "total", "created_at",
-            "date", "timeline", "items",
+            "date", "timeline", "items", "payment_method", "payment_status",
         ]
+
+    def get_payment_method(self, obj):
+        snap = obj.delivery_address_snapshot or {}
+        return snap.get("payment_method") or "COD"
+
+    def get_payment_status(self, obj):
+        snap = obj.delivery_address_snapshot or {}
+        return snap.get("payment_status") or "Unpaid"
 
     def get_date(self, obj):
         return obj.created_at.strftime("%d %b %Y")
@@ -288,6 +302,8 @@ class OrderCreateSerializer(serializers.Serializer):
                 "postal_code": delivery_address_obj.postal_code,
                 "country": delivery_address_obj.country,
                 "label": delivery_address_obj.label,
+                "payment_method": "COD",
+                "payment_status": "Unpaid",
             }
         else:
             full_name = address_data.get("full_name", "").strip() or user.first_name or user.email.split("@")[0]
@@ -331,6 +347,8 @@ class OrderCreateSerializer(serializers.Serializer):
                 "postal_code": postal_code,
                 "country": address_data.get("country", "India").strip() or "India",
                 "label": address_data.get("label", "Home").strip() or "Home",
+                "payment_method": "COD",
+                "payment_status": "Unpaid",
             }
 
         raw_items = attrs.get("items", [])

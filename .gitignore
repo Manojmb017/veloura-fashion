@@ -1,4 +1,4 @@
-﻿# Environment variables and secrets
+# Environment variables and secrets
 .env
 .env.*
 !.env.example
@@ -20,6 +20,8 @@ __pycache__/
 # Local backups
 *.bak
 *.backup*
+*.sql
+pre_ddl_create_tables.txt
 
 # Logs and archives
 *.log

@@ -1,5 +1,6 @@
 [
   {
+    "id": 9,
     "name": "Ivory Regal Embroidered Sherwani",
     "slug": "ivory-regal-embroidered-sherwani",
     "description": "A statement sherwani with intricate tonal embroidery and a matching stole, suited to weddings and formal celebrations.",
@@ -23,6 +24,7 @@
     "is_active": 1
   },
   {
+    "id": 10,
     "name": "Antique Gold Embroidered Bandhgala",
     "slug": "antique-gold-embroidered-bandhgala",
     "description": "An ornate embroidered bandhgala jacket paired with an ivory base for an elevated festive look.",
@@ -46,6 +48,7 @@
     "is_active": 1
   },
   {
+    "id": 11,
     "name": "Burgundy Textured Kurta",
     "slug": "burgundy-textured-kurta",
     "description": "A deep burgundy kurta with subtle vertical texture for festive evenings and relaxed celebrations.",
@@ -69,6 +72,7 @@
     "is_active": 1
   },
   {
+    "id": 12,
     "name": "Champagne Embroidered Nehru Jacket Set",
     "slug": "champagne-embroidered-nehru-set",
     "description": "A champagne kurta and trouser set finished with a patterned Nehru jacket for wedding guests and festivities.",
@@ -92,6 +96,7 @@
     "is_active": 1
   },
   {
+    "id": 13,
     "name": "Sand Jacquard Indo-Western Suit",
     "slug": "sand-jacquard-indo-western-suit",
     "description": "A refined sand-toned Indo-Western outfit with jacquard texture and tailored trousers.",
@@ -115,6 +120,7 @@
     "is_active": 1
   },
   {
+    "id": 14,
     "name": "Black Heritage Embroidered Sherwani",
     "slug": "black-heritage-embroidered-sherwani",
     "description": "A long black sherwani with all-over heritage embroidery and ornate cuffs for evening occasions.",
@@ -138,6 +144,7 @@
     "is_active": 1
   },
   {
+    "id": 15,
     "name": "Ivory Gold Festive Jacket Set",
     "slug": "ivory-gold-festive-jacket-set",
     "description": "An ivory kurta set layered with a light gold embroidered jacket for celebration dressing.",
@@ -161,6 +168,7 @@
     "is_active": 1
   },
   {
+    "id": 16,
     "name": "Modern Black Formal Shirt & Trousers",
     "slug": "modern-black-formal-outfit",
     "description": "A clean all-black shirt and trouser pairing with a sharp, understated silhouette.",
@@ -184,6 +192,7 @@
     "is_active": 1
   },
   {
+    "id": 17,
     "name": "Plum Resort Co-ord Set",
     "slug": "plum-resort-coord-set",
     "description": "A matching short-sleeve shirt and relaxed trouser set in a rich plum shade.",
@@ -207,6 +216,7 @@
     "is_active": 1
   },
   {
+    "id": 18,
     "name": "Olive Utility Overshirt",
     "slug": "olive-utility-overshirt",
     "description": "A laid-back olive overshirt with utility-inspired styling, made for easy layering.",
@@ -230,6 +240,7 @@
     "is_active": 1
   },
   {
+    "id": 19,
     "name": "Espresso Tailored Suit",
     "slug": "espresso-tailored-suit",
     "description": "A rich brown tailored suit styled with dark separates for smart occasions and evening events.",
@@ -253,6 +264,7 @@
     "is_active": 1
   },
   {
+    "id": 20,
     "name": "Midnight Teal Bandhgala",
     "slug": "midnight-teal-bandhgala",
     "description": "A deep teal bandhgala jacket with gold-tone buttons, ideal for formal celebrations.",
@@ -276,6 +288,7 @@
     "is_active": 1
   },
   {
+    "id": 21,
     "name": "Dove Grey Formal Suit",
     "slug": "dove-grey-formal-suit",
     "description": "A classic light-grey suit with a contemporary tailored fit and clean finishing.",
@@ -299,6 +312,7 @@
     "is_active": 1
   },
   {
+    "id": 22,
     "name": "Black Contrast-Trim Shirt",
     "slug": "black-contrast-trim-shirt",
     "description": "A black button-down shirt with subtle contrast detailing for an evening-ready casual look.",
@@ -322,6 +336,7 @@
     "is_active": 1
   },
   {
+    "id": 23,
     "name": "Blue Stripe Relaxed Shirt",
     "slug": "blue-stripe-relaxed-shirt",
     "description": "A relaxed blue-and-white vertical stripe shirt that pairs easily with denim or tailored trousers.",
@@ -345,6 +360,7 @@
     "is_active": 1
   },
   {
+    "id": 24,
     "name": "Ice Blue Printed Short-Sleeve Shirt",
     "slug": "ice-blue-printed-linen-shirt",
     "description": "A lightweight-looking ice-blue printed shirt with a relaxed warm-weather silhouette.",
@@ -368,6 +384,7 @@
     "is_active": 1
   },
   {
+    "id": 25,
     "name": "Sand Textured Casual Shirt",
     "slug": "sand-textured-casual-shirt",
     "description": "A warm sand-coloured shirt with subtle texture, styled for easy smart-casual outfits.",
@@ -391,6 +408,7 @@
     "is_active": 1
   },
   {
+    "id": 26,
     "name": "Deep Teal Textured Casual Shirt",
     "slug": "deep-teal-textured-casual-shirt",
     "description": "A deep teal textured short-sleeve shirt with a clean open-collar finish.",
@@ -414,6 +432,7 @@
     "is_active": 1
   },
   {
+    "id": 27,
     "name": "Oat Linen-Look Casual Shirt",
     "slug": "oat-linen-casual-shirt",
     "description": "A neutral oat-coloured shirt with a breathable, relaxed look for everyday wear.",
@@ -437,6 +456,7 @@
     "is_active": 1
   },
   {
+    "id": 28,
     "name": "Ivory Geometric Embroidered Shirt",
     "slug": "ivory-geometric-embroidered-shirt",
     "description": "An ivory shirt with tonal geometric embroidery down the front for special-occasion styling.",
@@ -460,6 +480,7 @@
     "is_active": 1
   },
   {
+    "id": 29,
     "name": "Charcoal Slim-Fit Formal Trousers",
     "slug": "charcoal-slim-fit-formal-trouser",
     "description": "A tailored charcoal trouser with a neat slim-leg profile for office and occasion wear.",
@@ -485,6 +506,7 @@
     "is_active": 1
   },
   {
+    "id": 30,
     "name": "Oatmeal Pleated Relaxed Trousers",
     "slug": "oatmeal-pleated-relaxed-trouser",
     "description": "Soft oatmeal trousers with a relaxed pleated shape and easy everyday styling.",
@@ -510,6 +532,7 @@
     "is_active": 1
   },
   {
+    "id": 31,
     "name": "Olive Chino Trousers",
     "slug": "olive-chino-trouser",
     "description": "Versatile olive chinos with a clean tapered silhouette for smart-casual dressing.",
@@ -535,6 +558,7 @@
     "is_active": 1
   },
   {
+    "id": 32,
     "name": "Midnight Tapered Trousers",
     "slug": "midnight-tapered-trouser",
     "description": "Deep navy tailored trousers with a tapered ankle and understated finish.",
@@ -560,6 +584,7 @@
     "is_active": 1
   },
   {
+    "id": 33,
     "name": "Slate Grey Jogger Pants",
     "slug": "slate-grey-jogger-pants",
     "description": "Comfort-first grey joggers with a drawstring waist for travel, lounging and everyday wear.",
@@ -583,6 +608,7 @@
     "is_active": 1
   },
   {
+    "id": 34,
     "name": "Beige Double-Pleat Trousers",
     "slug": "beige-double-pleat-trouser",
     "description": "Beige double-pleat trousers with a relaxed, structured leg and polished finish.",
@@ -608,6 +634,7 @@
     "is_active": 1
   },
   {
+    "id": 35,
     "name": "Indigo Textured Relaxed Trousers",
     "slug": "indigo-textured-relaxed-trouser",
     "description": "Textured indigo trousers with a relaxed fit and casual tailoring details.",
@@ -633,6 +660,7 @@
     "is_active": 1
   },
   {
+    "id": 36,
     "name": "White Summer Trousers",
     "slug": "white-summer-trouser",
     "description": "Crisp white trousers for warm-weather dressing and clean monochrome outfits.",
@@ -658,6 +686,7 @@
     "is_active": 1
   },
   {
+    "id": 37,
     "name": "Cocoa Straight-Fit Trousers",
     "slug": "cocoa-straight-fit-trouser",
     "description": "Straight-fit cocoa trousers with a rich brown tone and understated design.",
@@ -683,6 +712,7 @@
     "is_active": 1
   },
   {
+    "id": 38,
     "name": "Dusty Rose Overshirt & Black Wide-Leg Trousers",
     "slug": "dusty-rose-overshirt-black-trouser-set",
     "description": "A dusty rose overshirt styled with black wide-leg trousers for a relaxed modern outfit.",
@@ -706,6 +736,7 @@
     "is_active": 1
   },
   {
+    "id": 39,
     "name": "Black Wide-Leg Tailored Trousers",
     "slug": "black-wide-leg-tailored-trouser",
     "description": "Flowing black wide-leg trousers with a clean waistband and relaxed modern cut.",
@@ -731,6 +762,7 @@
     "is_active": 1
   },
   {
+    "id": 40,
     "name": "Black Textured Drawstring Shorts",
     "slug": "black-textured-drawstring-shorts",
     "description": "Lightweight-looking black shorts with an elastic drawstring waist for casual days.",
@@ -754,6 +786,7 @@
     "is_active": 1
   },
   {
+    "id": 41,
     "name": "Graphite Linen-Look Shorts",
     "slug": "graphite-linen-shorts",
     "description": "Graphite casual shorts with a relaxed fit and easy pull-on styling.",
@@ -777,6 +810,7 @@
     "is_active": 1
   },
   {
+    "id": 42,
     "name": "Ivory Resort Shirt & Checked Shorts Set",
     "slug": "ivory-resort-shirt-checked-shorts-set",
     "description": "A holiday-ready short-sleeve shirt and checked shorts combination with a light, easy mood.",
@@ -800,6 +834,7 @@
     "is_active": 1
   },
   {
+    "id": 43,
     "name": "Grey Performance Training Shorts",
     "slug": "grey-performance-training-shorts",
     "description": "Everyday training shorts with a drawstring waist and sporty utility pocket.",
@@ -823,6 +858,7 @@
     "is_active": 1
   },
   {
+    "id": 44,
     "name": "Sand Contrast-Hem Swim Shorts",
     "slug": "sand-contrast-hem-swim-shorts",
     "description": "Sand-coloured shorts with contrast trim and an adjustable drawstring waist.",
@@ -846,6 +882,7 @@
     "is_active": 1
   },
   {
+    "id": 45,
     "name": "Cocoa Shirt & Ecru Shorts Set",
     "slug": "cocoa-shirt-ecru-shorts-set",
     "description": "A casual warm-weather pairing of a cocoa shirt and light ecru shorts.",
@@ -869,6 +906,7 @@
     "is_active": 1
   },
   {
+    "id": 46,
     "name": "Ivory Asymmetric Tunic & Trousers Set",
     "slug": "ivory-asymmetric-tunic-set",
     "description": "An ivory asymmetric tunic set with a flowing overlay and slim matching trousers for modern occasions.",
@@ -893,6 +931,7 @@
     "is_active": 1
   },
   {
+    "id": 47,
     "name": "Powder Blue Ruched Mini Dress",
     "slug": "powder-blue-ruched-mini-dress",
     "description": "A softly ruched powder-blue mini dress with a smooth, party-ready silhouette.",
@@ -916,6 +955,7 @@
     "is_active": 1
   },
   {
+    "id": 48,
     "name": "Burgundy Printed Co-ord Maxi Set",
     "slug": "burgundy-printed-coord-maxi",
     "description": "A coordinated burgundy printed crop top and flowing maxi skirt with a statement pattern.",
@@ -940,6 +980,7 @@
     "is_active": 1
   },
   {
+    "id": 49,
     "name": "Noir Structured Fit-and-Flare Dress",
     "slug": "noir-structured-fit-flare-dress",
     "description": "A classic black fit-and-flare dress with a structured waist and clean lines.",
@@ -964,6 +1005,7 @@
     "is_active": 1
   },
   {
+    "id": 50,
     "name": "Kaleidoscope Floral Midi Dress",
     "slug": "kaleidoscope-floral-midi-dress",
     "description": "A playful multicolour floral midi dress with a swishy skirt and vibrant print.",
@@ -988,6 +1030,7 @@
     "is_active": 1
   },
   {
+    "id": 51,
     "name": "Berry Embroidered Suit with Dupatta",
     "slug": "berry-embroidered-suit-dupatta",
     "description": "A rich berry suit with a patterned dupatta and delicate festive embroidery.",
@@ -1012,6 +1055,7 @@
     "is_active": 1
   },
   {
+    "id": 52,
     "name": "Blue Floral Kurta & Ivory Trousers Set",
     "slug": "blue-floral-kurta-ivory-trouser-set",
     "description": "A blue floral kurta with a light embroidered yoke and matching ivory trousers.",
@@ -1036,6 +1080,7 @@
     "is_active": 1
   },
   {
+    "id": 53,
     "name": "Sage Botanical Kurta Set",
     "slug": "sage-botanical-kurta-set",
     "description": "A soft sage kurta with botanical motifs and coordinated light trousers.",
@@ -1060,6 +1105,7 @@
     "is_active": 1
   },
   {
+    "id": 54,
     "name": "Ivory Floral Embroidered Kurta Set",
     "slug": "ivory-floral-embroidered-kurta-set",
     "description": "An ivory kurta set finished with floral embroidery and subtle colour accents.",
@@ -1084,6 +1130,7 @@
     "is_active": 1
   },
   {
+    "id": 55,
     "name": "Peacock Teal Embroidered Suit Set",
     "slug": "peacock-teal-embroidered-suit",
     "description": "A peacock-teal suit with ornate embroidery and a matching dupatta for festive dressing.",
@@ -1108,6 +1155,7 @@
     "is_active": 1
   },
   {
+    "id": 56,
     "name": "Ivory Saree with Wine-Gold Border",
     "slug": "ivory-saree-wine-gold-border",
     "description": "An elegant ivory saree finished with a rich wine-and-gold border for traditional celebrations.",
@@ -1127,6 +1175,7 @@
     "is_active": 1
   },
   {
+    "id": 57,
     "name": "Coral Red Woven Saree",
     "slug": "coral-red-woven-saree",
     "description": "A coral-red saree with a lustrous woven border for festive and occasion wear.",
@@ -1146,6 +1195,7 @@
     "is_active": 1
   },
   {
+    "id": 58,
     "name": "Emerald Green Saree with Violet Border",
     "slug": "emerald-violet-border-saree",
     "description": "A vivid emerald-green saree paired with a contrasting violet border and blouse styling.",
@@ -1165,6 +1215,7 @@
     "is_active": 1
   },
   {
+    "id": 59,
     "name": "Wine & Gold Brocade Saree",
     "slug": "wine-gold-brocade-saree",
     "description": "A deep wine saree with gold-toned brocade detailing, designed for wedding and festive occasions.",
@@ -1184,6 +1235,7 @@
     "is_active": 1
   },
   {
+    "id": 60,
     "name": "Blush Pink Embroidered Saree",
     "slug": "blush-pink-embroidered-saree",
     "description": "A soft blush saree with delicate embroidery for receptions, celebrations and evening events.",
@@ -1203,6 +1255,7 @@
     "is_active": 1
   },
   {
+    "id": 61,
     "name": "Crimson Slit Evening Gown",
     "slug": "crimson-slit-evening-gown",
     "description": "A striking crimson gown with a defined waist and high slit, made for evening occasions.",
@@ -1226,6 +1279,7 @@
     "is_active": 1
   },
   {
+    "id": 62,
     "name": "Ivory Lace Occasion Dress",
     "slug": "ivory-lace-occasion-dress",
     "description": "An ivory lace occasion dress with a delicate texture and elegant fitted silhouette.",
@@ -1250,6 +1304,7 @@
     "is_active": 1
   },
   {
+    "id": 63,
     "name": "Ivory Resort Maxi Dress",
     "slug": "ivory-resort-maxi-dress",
     "description": "A light ivory maxi dress with a relaxed resort silhouette for sunny days and getaways.",
@@ -1274,6 +1329,7 @@
     "is_active": 1
   },
   {
+    "id": 64,
     "name": "Forest Botanical Maxi Dress",
     "slug": "forest-botanical-maxi-dress",
     "description": "A dramatic botanical-print maxi dress in green and amber tones with a flowing skirt.",
@@ -1298,6 +1354,7 @@
     "is_active": 1
   },
   {
+    "id": 65,
     "name": "Rust Floral Long Dress",
     "slug": "rust-floral-long-dress",
     "description": "A rust-toned floral dress with a softly gathered waist and relaxed long silhouette.",
@@ -1322,6 +1379,7 @@
     "is_active": 1
   },
   {
+    "id": 66,
     "name": "Midnight Tulle Party Dress",
     "slug": "midnight-tulle-party-dress",
     "description": "A layered midnight-black tulle party dress with a statement bow and playful volume.",
@@ -1345,6 +1403,7 @@
     "is_active": 1
   },
   {
+    "id": 67,
     "name": "Blush Pink Sequin-Hem Ball Gown",
     "slug": "blush-pink-sequin-ball-gown",
     "description": "A full blush-pink party gown with a sparkling sequin hem and bow-waist detail.",
@@ -1368,6 +1427,7 @@
     "is_active": 1
   },
   {
+    "id": 68,
     "name": "Classic Black Cotton T-shirt",
     "slug": "classic-black-cotton-tee-kids",
     "description": "A simple black short-sleeve tee for everyday outfits and easy layering.",
@@ -1394,6 +1454,7 @@
     "is_active": 1
   },
   {
+    "id": 69,
     "name": "Grey Check Kids Shirt",
     "slug": "grey-check-kids-shirt",
     "description": "A smart plaid button-down shirt with rolled sleeves for casual outings and family events.",
@@ -1420,6 +1481,7 @@
     "is_active": 1
   },
   {
+    "id": 70,
     "name": "Mini Formal Black Shirt",
     "slug": "mini-formal-black-shirt",
     "description": "A neat black button-down shirt with a small chest emblem and roll-up sleeves.",
@@ -1446,6 +1508,7 @@
     "is_active": 1
   },
   {
+    "id": 71,
     "name": "White & Black Cargo Boys Set",
     "slug": "white-black-cargo-boys-set",
     "description": "A monochrome long-sleeve shirt and cargo-trouser set with sporty panel details.",
@@ -1472,6 +1535,7 @@
     "is_active": 1
   },
   {
+    "id": 72,
     "name": "Mustard Shirt & Sand Trousers Set",
     "slug": "mustard-shirt-sand-trouser-set",
     "description": "A mustard button-down shirt paired with sand trousers for smart casual styling.",
@@ -1497,6 +1561,7 @@
     "is_active": 1
   },
   {
+    "id": 73,
     "name": "Cartoon Friends Black Joggers",
     "slug": "cartoon-friends-black-joggers",
     "description": "Black joggers with playful animal character graphics down one leg.",
@@ -1523,6 +1588,7 @@
     "is_active": 1
   },
   {
+    "id": 74,
     "name": "Cherry Print Cotton Dress",
     "slug": "cherry-print-cotton-dress",
     "description": "A light white dress decorated with tiny cherry prints and gentle ruffle details.",
@@ -1546,6 +1612,7 @@
     "is_active": 1
   },
   {
+    "id": 75,
     "name": "Plum & Gold Festive Baby Dress",
     "slug": "plum-gold-festive-baby-dress",
     "description": "A traditional plum festive dress with a gold-toned woven hem and delicate all-over detailing.",
@@ -1569,6 +1636,7 @@
     "is_active": 1
   },
   {
+    "id": 76,
     "name": "Ivory Bow-Back Party Dress",
     "slug": "ivory-bow-back-party-dress",
     "description": "An ivory party dress with a soft patterned skirt and an elegant bow-back finish.",
@@ -1592,6 +1660,7 @@
     "is_active": 1
   },
   {
+    "id": 77,
     "name": "Colourblock Pleated Party Dress",
     "slug": "colourblock-pleated-party-dress",
     "description": "A playful colour-block party dress with a black bodice and pleated multicolour skirt.",
@@ -1615,6 +1684,7 @@
     "is_active": 1
   },
   {
+    "id": 78,
     "name": "Rainbow Stripe Sweatshirt & Denim Set",
     "slug": "rainbow-stripe-denim-set",
     "description": "A cheerful rainbow-striped sweatshirt paired with easy denim trousers.",
@@ -1639,6 +1709,7 @@
     "is_active": 1
   },
   {
+    "id": 79,
     "name": "Shark Print Tank & Shorts Set",
     "slug": "shark-print-tank-shorts-set",
     "description": "A sleeveless black top with playful shark-print shorts for summer days.",
@@ -1663,6 +1734,7 @@
     "is_active": 1
   },
   {
+    "id": 80,
     "name": "Burgundy “I Love My Dad” Sweat Set",
     "slug": "burgundy-little-dad-sweat-set",
     "description": "A cosy burgundy sweatshirt and matching jogger set with a playful front graphic.",
@@ -1686,6 +1758,7 @@
     "is_active": 1
   },
   {
+    "id": 81,
     "name": "Grey Contrast Tracksuit Set",
     "slug": "grey-contrast-tracksuit-set",
     "description": "A sporty grey tracksuit with contrast colour-block sleeves and matching trousers.",
@@ -1712,6 +1785,7 @@
     "is_active": 1
   },
   {
+    "id": 82,
     "name": "Santa’s Little Helper Costume",
     "slug": "santas-little-helper-costume",
     "description": "A cheerful red-and-white holiday costume set with a matching hat and mini gift bag.",
@@ -1735,6 +1809,7 @@
     "is_active": 1
   },
   {
+    "id": 83,
     "name": "Olive Sport-Stripe Tracksuit",
     "slug": "olive-sport-stripe-tracksuit",
     "description": "An olive-green sweatshirt and jogger set with sporty white sleeve and leg stripes.",
@@ -1761,6 +1836,7 @@
     "is_active": 1
   },
   {
+    "id": 84,
     "name": "Mustard & Black Mini Gentleman Set",
     "slug": "mustard-black-mini-gentleman-set",
     "description": "A coordinated mini formal outfit with a black shirt, mustard trousers, bow tie, suspenders and accessories.",
@@ -1784,6 +1860,7 @@
     "is_active": 1
   },
   {
+    "id": 85,
     "name": "Navy BMX Graphic Tracksuit",
     "slug": "navy-bmx-graphic-tracksuit",
     "description": "A navy hoodie and jogger set with BMX-inspired graphic details for active days.",
@@ -1807,6 +1884,1304 @@
     ],
     "color": "Navy blue",
     "stock_quantity": 14,
+    "is_active": 1
+  },
+  {
+    "id": 203,
+    "name": "Vermilion Structured Crossbody Bag",
+    "slug": "vermilion-structured-crossbody-bag",
+    "description": "A compact structured crossbody with a top handle and detachable shoulder strap.",
+    "category": "Accessories",
+    "product_type": "Bags",
+    "price": "2299.00",
+    "compare_at_price": "2999.00",
+    "image_url": "/products/accessories/vermilion-structured-crossbody-bag.png",
+    "gallery_images": [
+      "/products/accessories/vermilion-structured-crossbody-bag.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Vermilion red",
+    "stock_quantity": 16,
+    "is_active": 1
+  },
+  {
+    "id": 204,
+    "name": "Camel Everyday Tote Bag",
+    "slug": "camel-everyday-tote-bag",
+    "description": "A spacious everyday tote in a warm camel shade with clean, minimal lines.",
+    "category": "Accessories",
+    "product_type": "Bags",
+    "price": "1999.00",
+    "compare_at_price": "2599.00",
+    "image_url": "/products/accessories/camel-everyday-tote-bag.png",
+    "gallery_images": [
+      "/products/accessories/camel-everyday-tote-bag.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Camel tan",
+    "stock_quantity": 18,
+    "is_active": 1
+  },
+  {
+    "id": 205,
+    "name": "Scarlet Structured Flap Handbag",
+    "slug": "scarlet-structured-flap-handbag",
+    "description": "A polished red flap handbag with a structured silhouette and top handle.",
+    "category": "Accessories",
+    "product_type": "Bags",
+    "price": "2499.00",
+    "compare_at_price": "3299.00",
+    "image_url": "/products/accessories/scarlet-structured-flap-handbag.png",
+    "gallery_images": [
+      "/products/accessories/scarlet-structured-flap-handbag.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Scarlet red",
+    "stock_quantity": 14,
+    "is_active": 1
+  },
+  {
+    "id": 206,
+    "name": "Rust Mini Top-Handle Bag",
+    "slug": "rust-mini-top-handle-bag",
+    "description": "A small warm-toned handbag with a rounded handle and envelope flap.",
+    "category": "Accessories",
+    "product_type": "Bags",
+    "price": "1799.00",
+    "compare_at_price": "2399.00",
+    "image_url": "/products/accessories/rust-mini-top-handle-bag.png",
+    "gallery_images": [
+      "/products/accessories/rust-mini-top-handle-bag.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Rust orange",
+    "stock_quantity": 15,
+    "is_active": 1
+  },
+  {
+    "id": 207,
+    "name": "Chestnut & Ivory Panel Satchel",
+    "slug": "chestnut-ivory-panel-satchel",
+    "description": "A structured satchel featuring a contrasting ivory panel and neat top handle.",
+    "category": "Accessories",
+    "product_type": "Bags",
+    "price": "3299.00",
+    "compare_at_price": "4299.00",
+    "image_url": "/products/accessories/chestnut-ivory-panel-satchel.png",
+    "gallery_images": [
+      "/products/accessories/chestnut-ivory-panel-satchel.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Chestnut brown and ivory",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "id": 208,
+    "name": "Sand Retro Court Sneakers",
+    "slug": "sand-retro-court-sneakers",
+    "description": "Neutral retro-inspired sneakers with layered panels and a cushioned sole.",
+    "category": "Accessories",
+    "product_type": "Shoes",
+    "price": "2999.00",
+    "compare_at_price": "3999.00",
+    "image_url": "/products/accessories/sand-retro-court-sneakers.png",
+    "gallery_images": [
+      "/products/accessories/sand-retro-court-sneakers.png"
+    ],
+    "available_sizes": [
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "color": "Sand beige",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "id": 209,
+    "name": "Black Polished Formal Shoes",
+    "slug": "black-polished-formal-shoes",
+    "description": "Classic black slip-on formal shoes with a polished finish.",
+    "category": "Accessories",
+    "product_type": "Shoes",
+    "price": "2199.00",
+    "compare_at_price": "2799.00",
+    "image_url": "/products/accessories/black-polished-formal-shoes.png",
+    "gallery_images": [
+      "/products/accessories/black-polished-formal-shoes.png"
+    ],
+    "available_sizes": [
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "color": "Black",
+    "stock_quantity": 14,
+    "is_active": 1
+  },
+  {
+    "id": 210,
+    "name": "Espresso Chelsea Boots",
+    "slug": "espresso-chelsea-boots",
+    "description": "Ankle-high Chelsea boots in espresso brown with elastic side panels.",
+    "category": "Accessories",
+    "product_type": "Shoes",
+    "price": "2899.00",
+    "compare_at_price": "3699.00",
+    "image_url": "/products/accessories/espresso-chelsea-boots.png",
+    "gallery_images": [
+      "/products/accessories/espresso-chelsea-boots.png"
+    ],
+    "available_sizes": [
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "color": "Espresso brown",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "id": 211,
+    "name": "Black & White Street Sneakers",
+    "slug": "black-white-street-sneakers",
+    "description": "Graphic black-and-white sneakers with a bold contrast upper.",
+    "category": "Accessories",
+    "product_type": "Shoes",
+    "price": "2499.00",
+    "compare_at_price": "3299.00",
+    "image_url": "/products/accessories/black-white-street-sneakers.png",
+    "gallery_images": [
+      "/products/accessories/black-white-street-sneakers.png"
+    ],
+    "available_sizes": [
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "color": "Black and white",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "id": 212,
+    "name": "White Gum-Sole Sneakers",
+    "slug": "white-gum-sole-sneakers",
+    "description": "Clean white low-top sneakers finished with a contrasting gum sole.",
+    "category": "Accessories",
+    "product_type": "Shoes",
+    "price": "2399.00",
+    "compare_at_price": "3199.00",
+    "image_url": "/products/accessories/white-gum-sole-sneakers.png",
+    "gallery_images": [
+      "/products/accessories/white-gum-sole-sneakers.png"
+    ],
+    "available_sizes": [
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "color": "White and gum brown",
+    "stock_quantity": 13,
+    "is_active": 1
+  },
+  {
+    "id": 213,
+    "name": "Black Pointed Stiletto Heels",
+    "slug": "black-pointed-stiletto-heels",
+    "description": "Elegant pointed-toe black heels with a slim stiletto heel.",
+    "category": "Accessories",
+    "product_type": "Shoes",
+    "price": "2299.00",
+    "compare_at_price": "2999.00",
+    "image_url": "/products/accessories/black-pointed-stiletto-heels.png",
+    "gallery_images": [
+      "/products/accessories/black-pointed-stiletto-heels.png"
+    ],
+    "available_sizes": [
+      "36",
+      "37",
+      "38",
+      "39",
+      "40"
+    ],
+    "color": "Black",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "id": 214,
+    "name": "Black Classic Lace-Up Shoes",
+    "slug": "black-classic-lace-up-shoes",
+    "description": "Classic black lace-up shoes with a low stacked heel.",
+    "category": "Accessories",
+    "product_type": "Shoes",
+    "price": "1899.00",
+    "compare_at_price": "2499.00",
+    "image_url": "/products/accessories/black-classic-lace-up-shoes.png",
+    "gallery_images": [
+      "/products/accessories/black-classic-lace-up-shoes.png"
+    ],
+    "available_sizes": [
+      "39",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44"
+    ],
+    "color": "Black",
+    "stock_quantity": 12,
+    "is_active": 0
+  },
+  {
+    "id": 215,
+    "name": "Brown Strap Mary Jane Flats",
+    "slug": "brown-strap-mary-jane-flats",
+    "description": "Rounded-toe brown flats with a slim adjustable strap.",
+    "category": "Accessories",
+    "product_type": "Shoes",
+    "price": "1699.00",
+    "compare_at_price": "2199.00",
+    "image_url": "/products/accessories/brown-strap-mary-jane-flats.png",
+    "gallery_images": [
+      "/products/accessories/brown-strap-mary-jane-flats.png"
+    ],
+    "available_sizes": [
+      "36",
+      "37",
+      "38",
+      "39",
+      "40"
+    ],
+    "color": "Brown",
+    "stock_quantity": 11,
+    "is_active": 1
+  },
+  {
+    "id": 216,
+    "name": "Ivory Oval Sunglasses",
+    "slug": "ivory-oval-sunglasses",
+    "description": "Light ivory oval sunglasses with dark lenses for a retro-inspired finish.",
+    "category": "Accessories",
+    "product_type": "Accessories",
+    "price": "899.00",
+    "compare_at_price": "1299.00",
+    "image_url": "/products/accessories/ivory-oval-sunglasses.png",
+    "gallery_images": [
+      "/products/accessories/ivory-oval-sunglasses.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Ivory",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "id": 217,
+    "name": "Black Square Sunglasses",
+    "slug": "black-square-sunglasses",
+    "description": "Bold square black sunglasses with dark lenses and a clean frame.",
+    "category": "Accessories",
+    "product_type": "Accessories",
+    "price": "999.00",
+    "compare_at_price": "1499.00",
+    "image_url": "/products/accessories/black-square-sunglasses.png",
+    "gallery_images": [
+      "/products/accessories/black-square-sunglasses.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Black",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "id": 218,
+    "name": "Gold-Frame Aviator Sunglasses",
+    "slug": "gold-frame-aviator-sunglasses",
+    "description": "Classic aviator sunglasses with a slim gold-tone metal frame.",
+    "category": "Accessories",
+    "product_type": "Accessories",
+    "price": "1199.00",
+    "compare_at_price": "1699.00",
+    "image_url": "/products/accessories/gold-frame-aviator-sunglasses.png",
+    "gallery_images": [
+      "/products/accessories/gold-frame-aviator-sunglasses.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Gold and black",
+    "stock_quantity": 18,
+    "is_active": 1
+  },
+  {
+    "id": 219,
+    "name": "Black Everyday Sunglasses",
+    "slug": "black-everyday-sunglasses",
+    "description": "Lightweight black sunglasses with a simple rectangular frame.",
+    "category": "Accessories",
+    "product_type": "Accessories",
+    "price": "899.00",
+    "compare_at_price": "1299.00",
+    "image_url": "/products/accessories/black-everyday-sunglasses.png",
+    "gallery_images": [
+      "/products/accessories/black-everyday-sunglasses.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Black",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "id": 220,
+    "name": "Sand Minimal Baseball Cap",
+    "slug": "sand-minimal-baseball-cap",
+    "description": "A clean six-panel baseball cap in a soft sand shade.",
+    "category": "Accessories",
+    "product_type": "Accessories",
+    "price": "699.00",
+    "compare_at_price": "999.00",
+    "image_url": "/products/accessories/sand-minimal-baseball-cap.png",
+    "gallery_images": [
+      "/products/accessories/sand-minimal-baseball-cap.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Sand beige",
+    "stock_quantity": 24,
+    "is_active": 1
+  },
+  {
+    "id": 221,
+    "name": "Camel Curved-Brim Cap",
+    "slug": "camel-curved-brim-cap",
+    "description": "A camel-toned curved-brim cap with tonal stitching.",
+    "category": "Accessories",
+    "product_type": "Accessories",
+    "price": "699.00",
+    "compare_at_price": "999.00",
+    "image_url": "/products/accessories/camel-curved-brim-cap.png",
+    "gallery_images": [
+      "/products/accessories/camel-curved-brim-cap.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Camel tan",
+    "stock_quantity": 24,
+    "is_active": 1
+  },
+  {
+    "id": 222,
+    "name": "Dove Grey Baseball Cap",
+    "slug": "dove-grey-baseball-cap",
+    "description": "A minimalist grey baseball cap with a curved brim.",
+    "category": "Accessories",
+    "product_type": "Accessories",
+    "price": "699.00",
+    "compare_at_price": "999.00",
+    "image_url": "/products/accessories/dove-grey-baseball-cap.png",
+    "gallery_images": [
+      "/products/accessories/dove-grey-baseball-cap.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Dove grey",
+    "stock_quantity": 24,
+    "is_active": 1
+  },
+  {
+    "id": 223,
+    "name": "Kyrevi Premium Face Cream",
+    "slug": "kyrevi-premium-face-cream",
+    "description": "A premium facial cream presented in a minimalist pump bottle.",
+    "category": "Beauty",
+    "product_type": "Skincare",
+    "price": "1699.00",
+    "compare_at_price": "2199.00",
+    "image_url": "/products/beauty/kyrevi-premium-face-cream.png",
+    "gallery_images": [
+      "/products/beauty/kyrevi-premium-face-cream.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "White",
+    "stock_quantity": 14,
+    "is_active": 1
+  },
+  {
+    "id": 224,
+    "name": "Blush Nude Makeup Essentials Set",
+    "slug": "blush-nude-makeup-essentials-set",
+    "description": "A coordinated blush-toned makeup edit with powders, creams and lip color.",
+    "category": "Beauty",
+    "product_type": "Makeup",
+    "price": "1899.00",
+    "compare_at_price": "2499.00",
+    "image_url": "/products/beauty/blush-nude-makeup-essentials-set.png",
+    "gallery_images": [
+      "/products/beauty/blush-nude-makeup-essentials-set.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Blush pink",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "id": 225,
+    "name": "Cooling Gel & Radiance Cream Duo",
+    "slug": "cooling-gel-radiance-cream-duo",
+    "description": "A two-piece skincare set featuring a cooling gel and a radiance cream.",
+    "category": "Beauty",
+    "product_type": "Skincare",
+    "price": "1299.00",
+    "compare_at_price": "1799.00",
+    "image_url": "/products/beauty/cooling-gel-radiance-cream-duo.png",
+    "gallery_images": [
+      "/products/beauty/cooling-gel-radiance-cream-duo.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Ice blue and orange",
+    "stock_quantity": 15,
+    "is_active": 1
+  },
+  {
+    "id": 226,
+    "name": "Guardian Visage Cream & Serum Set",
+    "slug": "guardian-visage-cream-serum-set",
+    "description": "A clean-lined facial cream and serum pairing for a considered skincare shelf.",
+    "category": "Beauty",
+    "product_type": "Skincare",
+    "price": "2199.00",
+    "compare_at_price": "2899.00",
+    "image_url": "/products/beauty/guardian-visage-cream-serum-set.png",
+    "gallery_images": [
+      "/products/beauty/guardian-visage-cream-serum-set.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "White and silver",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "id": 227,
+    "name": "Botanical Green Skincare Duo",
+    "slug": "botanical-green-skincare-duo",
+    "description": "A botanical-inspired cream and dropper serum duo in dark green packaging.",
+    "category": "Beauty",
+    "product_type": "Skincare",
+    "price": "1799.00",
+    "compare_at_price": "2399.00",
+    "image_url": "/products/beauty/botanical-green-skincare-duo.png",
+    "gallery_images": [
+      "/products/beauty/botanical-green-skincare-duo.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Deep green",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "id": 228,
+    "name": "Daily Body Cleanser",
+    "slug": "daily-body-cleanser",
+    "description": "A minimalist pump bottle of body cleanser, styled with natural stone accents.",
+    "category": "Beauty",
+    "product_type": "Body Care",
+    "price": "999.00",
+    "compare_at_price": "1299.00",
+    "image_url": "/products/beauty/daily-body-cleanser.png",
+    "gallery_images": [
+      "/products/beauty/daily-body-cleanser.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Black",
+    "stock_quantity": 18,
+    "is_active": 1
+  },
+  {
+    "id": 229,
+    "name": "Blush Hydration Skincare Set",
+    "slug": "blush-hydration-skincare-set",
+    "description": "A coordinated blush-pink skincare set with lightweight daily essentials.",
+    "category": "Beauty",
+    "product_type": "Skincare",
+    "price": "1499.00",
+    "compare_at_price": "1999.00",
+    "image_url": "/products/beauty/blush-hydration-skincare-set.png",
+    "gallery_images": [
+      "/products/beauty/blush-hydration-skincare-set.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Blush pink",
+    "stock_quantity": 14,
+    "is_active": 1
+  },
+  {
+    "id": 230,
+    "name": "Guardian Visage Daily Facial Cream",
+    "slug": "guardian-visage-daily-facial-cream",
+    "description": "A daily facial cream in a clear-lidded jar with a minimalist silver finish.",
+    "category": "Beauty",
+    "product_type": "Skincare",
+    "price": "1699.00",
+    "compare_at_price": "2199.00",
+    "image_url": "/products/beauty/guardian-visage-daily-facial-cream.png",
+    "gallery_images": [
+      "/products/beauty/guardian-visage-daily-facial-cream.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "White and silver",
+    "stock_quantity": 15,
+    "is_active": 1
+  },
+  {
+    "id": 231,
+    "name": "Salt & Stone Bath Essentials Set",
+    "slug": "salt-stone-bath-essentials-set",
+    "description": "A coordinated body-care edit with a clean, botanical visual style.",
+    "category": "Beauty",
+    "product_type": "Body Care",
+    "price": "1999.00",
+    "compare_at_price": "2699.00",
+    "image_url": "/products/beauty/salt-stone-bath-essentials-set.png",
+    "gallery_images": [
+      "/products/beauty/salt-stone-bath-essentials-set.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Sage green and pale yellow",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "id": 232,
+    "name": "Amber Heart Eau de Parfum",
+    "slug": "amber-heart-eau-de-parfum",
+    "description": "An amber-toned heart-shaped perfume bottle with a decorative cap.",
+    "category": "Beauty",
+    "product_type": "Fragrance",
+    "price": "1599.00",
+    "compare_at_price": "2199.00",
+    "image_url": "/products/beauty/amber-heart-eau-de-parfum.png",
+    "gallery_images": [
+      "/products/beauty/amber-heart-eau-de-parfum.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Amber",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "id": 233,
+    "name": "Winter Apple Fragrance",
+    "slug": "winter-apple-fragrance",
+    "description": "A warm amber fragrance in a compact glass bottle.",
+    "category": "Beauty",
+    "product_type": "Fragrance",
+    "price": "1399.00",
+    "compare_at_price": "1899.00",
+    "image_url": "/products/beauty/winter-apple-fragrance.png",
+    "gallery_images": [
+      "/products/beauty/winter-apple-fragrance.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Amber brown",
+    "stock_quantity": 12,
+    "is_active": 1
+  },
+  {
+    "id": 234,
+    "name": "Blush Amber Eau de Parfum",
+    "slug": "blush-amber-eau-de-parfum",
+    "description": "A refined perfume presentation with a warm, translucent glass bottle.",
+    "category": "Beauty",
+    "product_type": "Fragrance",
+    "price": "2499.00",
+    "compare_at_price": "3299.00",
+    "image_url": "/products/beauty/blush-amber-eau-de-parfum.png",
+    "gallery_images": [
+      "/products/beauty/blush-amber-eau-de-parfum.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Clear glass and blush",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "id": 235,
+    "name": "Studio Set Wet Face Wash",
+    "slug": "studio-set-wet-face-wash",
+    "description": "A compact daily face-wash tube in deep blue packaging.",
+    "category": "Beauty",
+    "product_type": "Face Wash",
+    "price": "249.00",
+    "compare_at_price": "349.00",
+    "image_url": "/products/beauty/studio-set-wet-face-wash.png",
+    "gallery_images": [
+      "/products/beauty/studio-set-wet-face-wash.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Navy blue",
+    "stock_quantity": 24,
+    "is_active": 1
+  },
+  {
+    "id": 236,
+    "name": "Studio X Brightening Face Wash",
+    "slug": "studio-x-brightening-face-wash",
+    "description": "A charcoal-toned face-wash tube with gold and green label accents.",
+    "category": "Beauty",
+    "product_type": "Face Wash",
+    "price": "299.00",
+    "compare_at_price": "399.00",
+    "image_url": "/products/beauty/studio-x-brightening-face-wash.png",
+    "gallery_images": [
+      "/products/beauty/studio-x-brightening-face-wash.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Black and gold",
+    "stock_quantity": 24,
+    "is_active": 1
+  },
+  {
+    "id": 237,
+    "name": "Aqualogica Glow Hydration Face Wash",
+    "slug": "aqualogica-glow-hydration-face-wash",
+    "description": "A bright yellow daily face-wash tube with a fresh citrus-inspired presentation.",
+    "category": "Beauty",
+    "product_type": "Face Wash",
+    "price": "399.00",
+    "compare_at_price": "499.00",
+    "image_url": "/products/beauty/aqualogica-glow-hydration-face-wash.png",
+    "gallery_images": [
+      "/products/beauty/aqualogica-glow-hydration-face-wash.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Yellow and orange",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "id": 238,
+    "name": "Dot & Key Blueberry Hydrate Sunscreen SPF 50+",
+    "slug": "dot-key-blueberry-sunscreen-spf50",
+    "description": "A teal sunscreen tube with SPF 50+ clearly visible on the pack.",
+    "category": "Beauty",
+    "product_type": "Sunscreen",
+    "price": "499.00",
+    "compare_at_price": "699.00",
+    "image_url": "/products/beauty/dot-key-blueberry-sunscreen-spf50.png",
+    "gallery_images": [
+      "/products/beauty/dot-key-blueberry-sunscreen-spf50.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Teal blue",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "id": 239,
+    "name": "Yellow UV Rays Sunscreen SPF 50",
+    "slug": "yellow-uv-rays-sunscreen-spf50",
+    "description": "A yellow sunscreen tube and box shown in a warm studio composition.",
+    "category": "Beauty",
+    "product_type": "Sunscreen",
+    "price": "399.00",
+    "compare_at_price": "599.00",
+    "image_url": "/products/beauty/yellow-uv-rays-sunscreen-spf50.png",
+    "gallery_images": [
+      "/products/beauty/yellow-uv-rays-sunscreen-spf50.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Yellow",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "id": 240,
+    "name": "Lacto Calamine Sunscreen SPF 50",
+    "slug": "lacto-calamine-sunscreen-spf50",
+    "description": "A portable sunscreen tube photographed in a casual everyday setting.",
+    "category": "Beauty",
+    "product_type": "Sunscreen",
+    "price": "349.00",
+    "compare_at_price": "499.00",
+    "image_url": "/products/beauty/lacto-calamine-sunscreen-spf50.png",
+    "gallery_images": [
+      "/products/beauty/lacto-calamine-sunscreen-spf50.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "White and yellow",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "id": 241,
+    "name": "Tropical SPF 30 Sunscreen",
+    "slug": "tropical-spf30-sunscreen",
+    "description": "A turquoise SPF 30 sunscreen tube in a tropical-inspired product photo.",
+    "category": "Beauty",
+    "product_type": "Sunscreen",
+    "price": "299.00",
+    "compare_at_price": "399.00",
+    "image_url": "/products/beauty/tropical-spf30-sunscreen.png",
+    "gallery_images": [
+      "/products/beauty/tropical-spf30-sunscreen.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Turquoise",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "id": 242,
+    "name": "Jet Black Eyeliner Pencil",
+    "slug": "jet-black-eyeliner-pencil",
+    "description": "A slim black eyeliner pencil presented with a bold swatch.",
+    "category": "Beauty",
+    "product_type": "Makeup",
+    "price": "299.00",
+    "compare_at_price": "399.00",
+    "image_url": "/products/beauty/jet-black-eyeliner-pencil.png",
+    "gallery_images": [
+      "/products/beauty/jet-black-eyeliner-pencil.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Jet black and beige",
+    "stock_quantity": 20,
+    "is_active": 1
+  },
+  {
+    "id": 243,
+    "name": "Midnight Mirrorwork Festive Lehenga",
+    "slug": "midnight-mirrorwork-festive-lehenga",
+    "description": "A dramatic black festive lehenga set decorated with colorful mirrorwork and embroidered borders.",
+    "category": "Sale",
+    "product_type": "Lehenga Sets",
+    "price": "6999.00",
+    "compare_at_price": "9999.00",
+    "image_url": "/products/sale/midnight-mirrorwork-festive-lehenga.png",
+    "gallery_images": [
+      "/products/sale/midnight-mirrorwork-festive-lehenga.png"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Black multicolor",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "id": 244,
+    "name": "Ivory Anarkali Gown with Red Border",
+    "slug": "ivory-red-border-anarkali-gown",
+    "description": "An ivory floor-length gown with floral bodice detailing and a vivid red hem.",
+    "category": "Sale",
+    "product_type": "Anarkali Gowns",
+    "price": "3999.00",
+    "compare_at_price": "5999.00",
+    "image_url": "/products/sale/ivory-red-border-anarkali-gown.png",
+    "gallery_images": [
+      "/products/sale/ivory-red-border-anarkali-gown.png"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Ivory and red",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "id": 245,
+    "name": "Gold & Red Heritage Saree",
+    "slug": "gold-red-heritage-saree",
+    "description": "A traditional gold saree with a rich red border and matching blouse.",
+    "category": "Sale",
+    "product_type": "Sarees",
+    "price": "4999.00",
+    "compare_at_price": "7499.00",
+    "image_url": "/products/sale/gold-red-heritage-saree.png",
+    "gallery_images": [
+      "/products/sale/gold-red-heritage-saree.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Gold and red",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "id": 246,
+    "name": "Sky Blue Casual Button-Front Top",
+    "slug": "sky-blue-casual-button-top",
+    "description": "A relaxed sky-blue button-front top with a soft, everyday silhouette.",
+    "category": "Sale",
+    "product_type": "Tops",
+    "price": "1799.00",
+    "compare_at_price": "2599.00",
+    "image_url": "/products/sale/sky-blue-casual-button-top.png",
+    "gallery_images": [
+      "/products/sale/sky-blue-casual-button-top.png"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Sky blue",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "id": 247,
+    "name": "Crimson Floral Occasion Saree",
+    "slug": "crimson-floral-occasion-saree",
+    "description": "A rich crimson saree with floral texture and an elegant occasion-ready drape.",
+    "category": "Sale",
+    "product_type": "Sarees",
+    "price": "4799.00",
+    "compare_at_price": "6999.00",
+    "image_url": "/products/sale/crimson-floral-occasion-saree.png",
+    "gallery_images": [
+      "/products/sale/crimson-floral-occasion-saree.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Crimson red",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "id": 248,
+    "name": "Powder Blue Embroidered Lehenga",
+    "slug": "powder-blue-embroidered-lehenga",
+    "description": "A powder-blue lehenga with ornate metallic embroidery along its wide hem.",
+    "category": "Sale",
+    "product_type": "Lehenga Sets",
+    "price": "6499.00",
+    "compare_at_price": "8999.00",
+    "image_url": "/products/sale/powder-blue-embroidered-lehenga.png",
+    "gallery_images": [
+      "/products/sale/powder-blue-embroidered-lehenga.png"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Powder blue and gold",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "id": 249,
+    "name": "Raspberry Cape Lehenga Set",
+    "slug": "raspberry-cape-lehenga-set",
+    "description": "A raspberry lehenga and crop top paired with a floral embroidered long cape.",
+    "category": "Sale",
+    "product_type": "Lehenga Sets",
+    "price": "4299.00",
+    "compare_at_price": "6299.00",
+    "image_url": "/products/sale/raspberry-cape-lehenga-set.png",
+    "gallery_images": [
+      "/products/sale/raspberry-cape-lehenga-set.png"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Raspberry and pink",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "id": 250,
+    "name": "Ivory Paisley-Border Lehenga",
+    "slug": "ivory-paisley-border-lehenga",
+    "description": "An ivory festive lehenga finished with a broad paisley-inspired burgundy hem.",
+    "category": "Sale",
+    "product_type": "Lehenga Sets",
+    "price": "3999.00",
+    "compare_at_price": "5999.00",
+    "image_url": "/products/sale/ivory-paisley-border-lehenga.png",
+    "gallery_images": [
+      "/products/sale/ivory-paisley-border-lehenga.png"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Ivory and burgundy",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "id": 251,
+    "name": "Olive & Pink Festive Anarkali",
+    "slug": "olive-pink-festive-anarkali",
+    "description": "An olive-green flared dress with bright pink and green stripe detailing.",
+    "category": "Sale",
+    "product_type": "Anarkali Dresses",
+    "price": "1999.00",
+    "compare_at_price": "2999.00",
+    "image_url": "/products/sale/olive-pink-festive-anarkali.png",
+    "gallery_images": [
+      "/products/sale/olive-pink-festive-anarkali.png"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Olive green and pink",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "id": 252,
+    "name": "Vermilion Occasion Saree",
+    "slug": "vermilion-occasion-saree",
+    "description": "A vivid red saree with a detailed border for festive and formal occasions.",
+    "category": "Sale",
+    "product_type": "Sarees",
+    "price": "2999.00",
+    "compare_at_price": "4499.00",
+    "image_url": "/products/sale/vermilion-occasion-saree.png",
+    "gallery_images": [
+      "/products/sale/vermilion-occasion-saree.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Vermilion red",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "id": 253,
+    "name": "Ivory Gold Bandhgala Sherwani",
+    "slug": "ivory-gold-boys-bandhgala-sherwani",
+    "description": "An ivory bandhgala-style sherwani with subtle gold detailing and a pocket accent.",
+    "category": "Sale",
+    "product_type": "Sherwanis",
+    "price": "4999.00",
+    "compare_at_price": "7499.00",
+    "image_url": "/products/sale/ivory-gold-boys-bandhgala-sherwani.png",
+    "gallery_images": [
+      "/products/sale/ivory-gold-boys-bandhgala-sherwani.png"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Ivory and gold",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "id": 254,
+    "name": "Champagne Embroidered Sherwani",
+    "slug": "champagne-embroidered-sherwani",
+    "description": "A champagne sherwani with intricate tonal embroidery for wedding occasions.",
+    "category": "Sale",
+    "product_type": "Sherwanis",
+    "price": "5999.00",
+    "compare_at_price": "8999.00",
+    "image_url": "/products/sale/champagne-embroidered-sherwani.png",
+    "gallery_images": [
+      "/products/sale/champagne-embroidered-sherwani.png"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Champagne gold",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "id": 255,
+    "name": "Ivory Celebration Sherwani Set",
+    "slug": "ivory-celebration-sherwani-set",
+    "description": "A light ivory formal sherwani outfit photographed in a refined architectural setting.",
+    "category": "Sale",
+    "product_type": "Sherwani Sets",
+    "price": "5499.00",
+    "compare_at_price": "7999.00",
+    "image_url": "/products/sale/ivory-celebration-sherwani-set.png",
+    "gallery_images": [
+      "/products/sale/ivory-celebration-sherwani-set.png"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Ivory",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "id": 256,
+    "name": "Cream Traditional Dhoti Kurta Set",
+    "slug": "cream-traditional-dhoti-kurta-set",
+    "description": "A cream kurta paired with a traditional dhoti and subtle gold border details.",
+    "category": "Sale",
+    "product_type": "Ethnic Sets",
+    "price": "2499.00",
+    "compare_at_price": "3699.00",
+    "image_url": "/products/sale/cream-traditional-dhoti-kurta-set.png",
+    "gallery_images": [
+      "/products/sale/cream-traditional-dhoti-kurta-set.png"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Cream and gold",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "id": 257,
+    "name": "Black Floral Waistcoat Kurta Set",
+    "slug": "black-floral-waistcoat-kurta-set",
+    "description": "A black kurta set with a colorful floral embroidered waistcoat.",
+    "category": "Sale",
+    "product_type": "Ethnic Sets",
+    "price": "3299.00",
+    "compare_at_price": "4999.00",
+    "image_url": "/products/sale/black-floral-waistcoat-kurta-set.png",
+    "gallery_images": [
+      "/products/sale/black-floral-waistcoat-kurta-set.png"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Black multicolor",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "id": 258,
+    "name": "Slate Blue Printed Kurta Set",
+    "slug": "slate-blue-printed-kurta-set",
+    "description": "A slate-blue kurta with an all-over subtle print and matching bottoms.",
+    "category": "Sale",
+    "product_type": "Kurtas",
+    "price": "1799.00",
+    "compare_at_price": "2699.00",
+    "image_url": "/products/sale/slate-blue-printed-kurta-set.png",
+    "gallery_images": [
+      "/products/sale/slate-blue-printed-kurta-set.png"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Slate blue",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "id": 259,
+    "name": "Taupe Antique Brocade Sherwani",
+    "slug": "taupe-antique-brocade-sherwani",
+    "description": "A taupe sherwani with a fine brocade pattern and coordinated stole.",
+    "category": "Sale",
+    "product_type": "Sherwanis",
+    "price": "4999.00",
+    "compare_at_price": "7299.00",
+    "image_url": "/products/sale/taupe-antique-brocade-sherwani.png",
+    "gallery_images": [
+      "/products/sale/taupe-antique-brocade-sherwani.png"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Taupe and antique gold",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "id": 260,
+    "name": "Pastel Mint Embroidered Kurta",
+    "slug": "pastel-mint-embroidered-kurta",
+    "description": "A pastel mint kurta with delicate tonal embroidery and a clean collar.",
+    "category": "Sale",
+    "product_type": "Kurtas",
+    "price": "1599.00",
+    "compare_at_price": "2399.00",
+    "image_url": "/products/sale/pastel-mint-embroidered-kurta.png",
+    "gallery_images": [
+      "/products/sale/pastel-mint-embroidered-kurta.png"
+    ],
+    "available_sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": "Pastel mint",
+    "stock_quantity": 10,
+    "is_active": 1
+  },
+  {
+    "id": 261,
+    "name": "Ruby Red Sheer Drape Saree",
+    "slug": "ruby-red-sheer-drape-saree",
+    "description": "A flowing ruby-red saree with a sheer drape and understated border.",
+    "category": "Sale",
+    "product_type": "Sarees",
+    "price": "2999.00",
+    "compare_at_price": "4499.00",
+    "image_url": "/products/sale/ruby-red-sheer-drape-saree.png",
+    "gallery_images": [
+      "/products/sale/ruby-red-sheer-drape-saree.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Ruby red",
+    "stock_quantity": 8,
+    "is_active": 1
+  },
+  {
+    "id": 262,
+    "name": "Blush Embroidered Festive Saree",
+    "slug": "blush-embroidered-festive-saree",
+    "description": "A blush-toned occasion saree with delicate all-over embroidery.",
+    "category": "Sale",
+    "product_type": "Sarees",
+    "price": "3499.00",
+    "compare_at_price": "4999.00",
+    "image_url": "/products/sale/blush-embroidered-festive-saree.png",
+    "gallery_images": [
+      "/products/sale/blush-embroidered-festive-saree.png"
+    ],
+    "available_sizes": [
+      "One Size"
+    ],
+    "color": "Blush pink",
+    "stock_quantity": 8,
     "is_active": 1
   }
 ]

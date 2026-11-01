@@ -1,5 +1,6 @@
 import re
 from django.db.models import Q
+from django.db.utils import OperationalError
 from django.http import Http404, JsonResponse
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -157,7 +158,10 @@ class CurrentUserView(APIView):
 
     def _get_user_data(self, user):
         data = UserSerializer(user).data
-        default_addr = Address.objects.filter(user=user, is_default=True).first() or Address.objects.filter(user=user).first()
+        try:
+            default_addr = Address.objects.filter(user=user, is_default=True).first() or Address.objects.filter(user=user).first()
+        except OperationalError:
+            default_addr = None
         if default_addr:
             data["phone"] = default_addr.phone or ""
             if default_addr.address_line1 and default_addr.address_line1 != "Address not specified":
