@@ -450,39 +450,66 @@ class PasswordResetAPITests(TestCase):
             first_name="Reset User",
         )
 
-    def test_request_reset_existing_user_sends_email(self):
+    def test_forgot_password_existing_user(self):
         mail.outbox.clear()
-        res = self.client.post(self.reset_request_url, {"email": "resetuser@example.com"}, format="json")
+        for url in [self.reset_request_url, "/api/auth/forgot-password/"]:
+            res = self.client.post(url, {"email": "resetuser@example.com"}, format="json")
+            self.assertEqual(res.status_code, status.HTTP_200_OK)
+            self.assertTrue(res.data.get("found"))
+            self.assertEqual(
+                res.data.get("detail"),
+                "Your account was found. Please contact support to reset your password."
+            )
+            # Ensure no email was sent
+            self.assertEqual(len(mail.outbox), 0)
+            # Ensure no password data or tokens are exposed
+            self.assertNotIn("password", res.data)
+            self.assertNotIn("token", res.data)
+
+        # Verify user password remains unchanged
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("originalpassword123"))
+
+    def test_forgot_password_case_insensitive_and_trimmed(self):
+        mail.outbox.clear()
+        res = self.client.post(self.reset_request_url, {"email": "  RESETUSER@EXAMPLE.COM  "}, format="json")
         self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertTrue(res.data.get("found"))
         self.assertEqual(
             res.data.get("detail"),
-            "If an account exists with that email address, password reset instructions have been sent."
-        )
-        self.assertEqual(len(mail.outbox), 1)
-        email = mail.outbox[0]
-        self.assertEqual(email.to, ["resetuser@example.com"])
-        self.assertEqual(email.subject, "Reset your Veloura Fashion password")
-        self.assertIn("Hello Reset User,", email.body)
-        self.assertIn("?uid=", email.body)
-        self.assertIn("&token=", email.body)
-        self.assertNotIn("originalpassword123", email.body)
-
-    def test_request_reset_case_insensitive_email(self):
-        mail.outbox.clear()
-        res = self.client.post(self.reset_request_url, {"email": "RESETUSER@EXAMPLE.COM"}, format="json")
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].to, ["resetuser@example.com"])
-
-    def test_request_reset_nonexistent_user_reveals_nothing(self):
-        mail.outbox.clear()
-        res = self.client.post(self.reset_request_url, {"email": "doesnotexist@example.com"}, format="json")
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            res.data.get("detail"),
-            "If an account exists with that email address, password reset instructions have been sent."
+            "Your account was found. Please contact support to reset your password."
         )
         self.assertEqual(len(mail.outbox), 0)
+
+    def test_forgot_password_nonexistent_user(self):
+        mail.outbox.clear()
+        res = self.client.post(self.reset_request_url, {"email": "doesnotexist@example.com"}, format="json")
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertFalse(res.data.get("found"))
+        self.assertEqual(
+            res.data.get("detail"),
+            "No account found with this email."
+        )
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_forgot_password_invalid_email(self):
+        res = self.client.post(self.reset_request_url, {"email": "not-an-email"}, format="json")
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("email", res.data)
+
+    @patch("django.core.mail.send_mail")
+    def test_forgot_password_never_invokes_send_mail_existing_user(self, mock_send_mail):
+        res = self.client.post(self.reset_request_url, {"email": "resetuser@example.com"}, format="json")
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertTrue(res.data.get("found"))
+        mock_send_mail.assert_not_called()
+
+    @patch("django.core.mail.send_mail")
+    def test_forgot_password_never_invokes_send_mail_nonexistent_user(self, mock_send_mail):
+        res = self.client.post(self.reset_request_url, {"email": "doesnotexist@example.com"}, format="json")
+        self.assertEqual(res.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertFalse(res.data.get("found"))
+        mock_send_mail.assert_not_called()
 
     def test_reset_confirm_success_and_login_with_new_password(self):
         uid = urlsafe_base64_encode(force_bytes(self.user.pk))

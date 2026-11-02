@@ -22,6 +22,7 @@ urlpatterns = [
     path("products/<slug:slug>/", ProductDetailView.as_view(), name="product-detail"),
     path("auth/register/", RegisterView.as_view(), name="auth-register"),
     path("auth/login/", EmailTokenObtainPairView.as_view(), name="auth-login"),
+    path("auth/forgot-password/", PasswordResetRequestView.as_view(), name="auth-forgot-password"),
     path("auth/password-reset/", PasswordResetRequestView.as_view(), name="auth-password-reset-request"),
     path("auth/password-reset/confirm/", PasswordResetConfirmView.as_view(), name="auth-password-reset-confirm"),
     path("auth/token/refresh/", TokenRefreshView.as_view(), name="auth-token-refresh"),

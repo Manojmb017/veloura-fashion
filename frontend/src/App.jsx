@@ -252,6 +252,7 @@ function App() {
   const [authRedirect, setAuthRedirect] = useState(null);
   const [resetParams, setResetParams] = useState({ uid: '', token: '' });
   const [forgotMessage, setForgotMessage] = useState('');
+  const [forgotStatus, setForgotStatus] = useState(null);
   const [resetSuccess, setResetSuccess] = useState(false);
   const [resetMessage, setResetMessage] = useState('');
   const [checkoutAddress, setCheckoutAddress] = useState({ name: '', phone: '', address: '', city: '', pin: '', state: 'Karnataka' });
@@ -465,6 +466,7 @@ function App() {
     if (redirect) setAuthRedirect(redirect);
     setAuthForm({ name: '', email: '', password: '', confirmPassword: '' });
     setForgotMessage('');
+    setForgotStatus(null);
     setResetSuccess(false);
     navigate('auth');
   };
@@ -569,6 +571,8 @@ function App() {
       return;
     }
     setAuthLoading(true);
+    setForgotStatus(null);
+    setForgotMessage('');
     try {
       const response = await fetch(`${API_BASE}/auth/password-reset/`, {
         method: 'POST',
@@ -576,14 +580,26 @@ function App() {
         body: JSON.stringify({ email }),
       });
       const data = await response.json().catch(() => ({}));
-      setForgotMessage(
-        data.detail ||
-        'If an account exists with that email address, password reset instructions have been sent.'
-      );
+      if (response.ok && data.found) {
+        setForgotStatus('found');
+        setForgotMessage(
+          data.detail ||
+          'Your account was found. Please contact support to reset your password.'
+        );
+      } else if (response.status === 404 || data.found === false) {
+        setForgotStatus('not_found');
+        setForgotMessage(
+          data.detail ||
+          'No account found with this email.'
+        );
+      } else {
+        const errorMsg = extractErrorMessage(data, 'Unable to check account. Please try again.');
+        setForgotStatus('error');
+        setForgotMessage(errorMsg);
+      }
     } catch {
-      setForgotMessage(
-        'If an account exists with that email address, password reset instructions have been sent.'
-      );
+      setForgotStatus('error');
+      setForgotMessage('Unable to connect to the authentication service. Please try again.');
     } finally {
       setAuthLoading(false);
     }
@@ -949,6 +965,8 @@ function App() {
           onResetPassword={submitResetPassword}
           forgotMessage={forgotMessage}
           setForgotMessage={setForgotMessage}
+          forgotStatus={forgotStatus}
+          setForgotStatus={setForgotStatus}
           resetSuccess={resetSuccess}
           setResetSuccess={setResetSuccess}
           resetMessage={resetMessage}
@@ -970,6 +988,8 @@ function App() {
         onResetPassword={submitResetPassword}
         forgotMessage={forgotMessage}
         setForgotMessage={setForgotMessage}
+        forgotStatus={forgotStatus}
+        setForgotStatus={setForgotStatus}
         resetSuccess={resetSuccess}
         setResetSuccess={setResetSuccess}
         resetMessage={resetMessage}
@@ -990,6 +1010,8 @@ function App() {
         onResetPassword={submitResetPassword}
         forgotMessage={forgotMessage}
         setForgotMessage={setForgotMessage}
+        forgotStatus={forgotStatus}
+        setForgotStatus={setForgotStatus}
         resetSuccess={resetSuccess}
         setResetSuccess={setResetSuccess}
         resetMessage={resetMessage}
@@ -1372,6 +1394,8 @@ function AuthPage({
   onResetPassword,
   forgotMessage,
   setForgotMessage,
+  forgotStatus,
+  setForgotStatus,
   resetSuccess,
   setResetSuccess,
   resetMessage,
@@ -1387,8 +1411,8 @@ function AuthPage({
     intro = 'A few details and your next favourite things are closer.';
   } else if (mode === 'forgot') {
     eyebrow = 'PASSWORD RECOVERY';
-    title = 'Reset your password.';
-    intro = "Enter your email address and we'll send you instructions to reset your password.";
+    title = 'Forgot your password?';
+    intro = 'Enter your registered email address to check your account.';
   } else if (mode === 'reset') {
     eyebrow = 'ACCOUNT SECURITY';
     title = 'Set a new password.';
@@ -1418,8 +1442,27 @@ function AuthPage({
         </div>
       </div>
       <div className="auth-form-panel">
-        <button className="back-link" onClick={onHome}>
-          <ArrowLeft size={15} /> Back to the store
+        <button
+          className="back-link"
+          onClick={() => {
+            if (mode === 'forgot') {
+              if (setForgotMessage) setForgotMessage('');
+              if (setForgotStatus) setForgotStatus(null);
+              setMode('login');
+            } else {
+              onHome();
+            }
+          }}
+        >
+          {mode === 'forgot' ? (
+            <>
+              <ArrowLeft size={15} /> Back to Login
+            </>
+          ) : (
+            <>
+              <ArrowLeft size={15} /> Back to the store
+            </>
+          )}
         </button>
         <p className="eyebrow">{eyebrow}</p>
         <h1>{title}</h1>
@@ -1429,31 +1472,52 @@ function AuthPage({
           <div className="forgot-confirmation">
             <div
               style={{
-                background: '#f8f6f3',
-                border: '1px solid #ded6cb',
+                background: forgotStatus === 'not_found' || forgotStatus === 'error' ? '#fdf2f2' : '#f8f6f3',
+                border: forgotStatus === 'not_found' || forgotStatus === 'error' ? '1px solid #f0b8b8' : '1px solid #ded6cb',
                 padding: '18px 20px',
                 borderRadius: '4px',
                 margin: '18px 0',
-                color: '#3d3126',
+                color: forgotStatus === 'not_found' || forgotStatus === 'error' ? '#8a2424' : '#3d3126',
                 fontSize: '11px',
                 lineHeight: '1.7',
               }}
             >
               <p style={{ margin: 0, fontWeight: 500 }}>{forgotMessage}</p>
-              <p style={{ margin: '8px 0 0', color: '#7a6e63', fontSize: '10px' }}>
-                Please check your inbox as well as your spam or junk folder. The reset link is single-use and time-limited.
-              </p>
             </div>
             <button
               className="dark-button auth-submit"
               type="button"
               onClick={() => {
                 if (setForgotMessage) setForgotMessage('');
+                if (setForgotStatus) setForgotStatus(null);
                 setMode('login');
               }}
             >
-              Back to sign in <ArrowRight size={15} />
+              Back to Login <ArrowRight size={15} />
             </button>
+            {forgotStatus === 'not_found' && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (setForgotMessage) setForgotMessage('');
+                  if (setForgotStatus) setForgotStatus(null);
+                }}
+                style={{
+                  marginTop: '12px',
+                  width: '100%',
+                  textAlign: 'center',
+                  background: 'none',
+                  border: 'none',
+                  color: '#897c6e',
+                  fontSize: '11px',
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                  padding: '6px 0',
+                }}
+              >
+                Try another email
+              </button>
+            )}
           </div>
         ) : mode === 'reset' && resetSuccess ? (
           <div className="reset-confirmation">
@@ -1525,6 +1589,7 @@ function AuthPage({
                       type="button"
                       onClick={() => {
                         if (setForgotMessage) setForgotMessage('');
+                        if (setForgotStatus) setForgotStatus(null);
                         setMode('forgot');
                       }}
                       style={{
@@ -1595,14 +1660,14 @@ function AuthPage({
                 ? mode === 'signup'
                   ? 'Creating account...'
                   : mode === 'forgot'
-                  ? 'Sending reset link...'
+                  ? 'Checking account...'
                   : mode === 'reset'
                   ? 'Saving new password...'
                   : 'Signing in...'
                 : mode === 'signup'
                 ? 'Create account'
                 : mode === 'forgot'
-                ? 'Send reset link'
+                ? 'Find account'
                 : mode === 'reset'
                 ? 'Save new password'
                 : 'Sign in'}{' '}
@@ -1635,11 +1700,12 @@ function AuthPage({
             <button
               onClick={() => {
                 if (setForgotMessage) setForgotMessage('');
+                if (setForgotStatus) setForgotStatus(null);
                 setMode('login');
               }}
               disabled={loading}
             >
-              Back to sign in
+              Back to Login
             </button>
           </p>
         )}
