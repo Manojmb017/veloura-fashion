@@ -110,31 +110,143 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 
 # --------------------------------------------------
-# DATABASE CONFIGURATION (PostgreSQL / Neon & MySQL)
+# DATABASE CONFIGURATION (Multi-Engine: PostgreSQL, TiDB & MySQL)
 # --------------------------------------------------
 
+import ssl
 import dj_database_url
 
+
+def verify_ssl_ca_bundle(ca_path: str) -> str:
+    """Validate that ca_path exists and is a readable, valid X.509 CA certificate bundle.
+
+    Raises django.core.exceptions.ImproperlyConfigured if the file is missing,
+    corrupted, or contains no loadable CA certificates.
+    """
+    if not ca_path or not os.path.exists(ca_path):
+        raise ImproperlyConfigured(
+            f"TiDB Cloud SSL CA bundle was not found at '{ca_path}'."
+        )
+    try:
+        ctx = ssl.create_default_context()
+        ctx.load_verify_locations(cafile=ca_path)
+        certs = ctx.get_ca_certs()
+        if not certs:
+            raise ValueError("No valid X.509 certificates found in bundle.")
+    except Exception as exc:
+        raise ImproperlyConfigured(
+            f"TiDB Cloud SSL CA bundle at '{ca_path}' is invalid and cannot be loaded for TLS verification: {exc}"
+        ) from exc
+    return ca_path
+
+
 database_url = os.getenv("DATABASE_URL", "").strip()
+db_engine_env = os.getenv("DB_ENGINE", "").strip().lower()
 
 if database_url:
-    DATABASES = {
-        "default": dj_database_url.config(
+    if database_url.startswith("postgres://") or database_url.startswith("postgresql://"):
+        DATABASES = {
+            "default": dj_database_url.config(
+                default=database_url,
+                conn_max_age=600,
+                conn_health_checks=True,
+                ssl_require=True,
+            )
+        }
+    else:
+        # MySQL / TiDB via DATABASE_URL
+        db_config = dj_database_url.config(
             default=database_url,
             conn_max_age=600,
             conn_health_checks=True,
-            ssl_require=True,
         )
-    }
+        host = (db_config.get("HOST") or "").lower()
+        target_tidb_host = (os.getenv("TIDB_HOST") or os.getenv("DB_HOST", "")).strip().lower()
+        is_tidb_url = (
+            "tidbcloud.com" in host
+            or (bool(target_tidb_host) and host == target_tidb_host and target_tidb_host not in ("127.0.0.1", "localhost"))
+        )
+
+        if is_tidb_url:
+            db_config["ENGINE"] = "common.db_backends.tidb"
+            if not db_config.get("PORT"):
+                db_config["PORT"] = 4000
+            options = {
+                "charset": "utf8mb4",
+                "use_pure": True,
+                "connection_timeout": 15,
+                "raise_on_warnings": False,
+            }
+            explicit_ca = os.getenv("DB_SSL_CA", "").strip() or os.getenv("TIDB_SSL_CA", "").strip()
+            if explicit_ca:
+                ca_path = verify_ssl_ca_bundle(explicit_ca)
+            else:
+                auto_candidates = [
+                    str(BASE_DIR / "certs" / "isrgrootx1.pem"),
+                    str(BASE_DIR / "backend" / "certs" / "isrgrootx1.pem"),
+                    "/etc/ssl/certs/ca-certificates.crt",
+                    "/etc/pki/tls/certs/ca-bundle.crt",
+                ]
+                ca_path = ""
+                for candidate in auto_candidates:
+                    if candidate and os.path.exists(candidate):
+                        try:
+                            ca_path = verify_ssl_ca_bundle(candidate)
+                            break
+                        except ImproperlyConfigured:
+                            continue
+                if not ca_path:
+                    raise ImproperlyConfigured(
+                        "TiDB Cloud requires a valid SSL CA certificate bundle (e.g. ISRG Root X1) "
+                        "for strict TLS verification. None was found in certs/isrgrootx1.pem or system trust stores."
+                    )
+            options["ssl_ca"] = ca_path
+            options["ssl_verify_cert"] = True
+            options["ssl_verify_identity"] = True
+
+            conn_max_age_val = os.getenv("DB_CONN_MAX_AGE", "0").strip()
+            try:
+                db_config["CONN_MAX_AGE"] = int(conn_max_age_val)
+            except ValueError:
+                db_config["CONN_MAX_AGE"] = 0
+            db_config["CONN_HEALTH_CHECKS"] = db_config["CONN_MAX_AGE"] > 0
+            db_config["OPTIONS"] = options
+            DATABASES = {"default": db_config}
+        else:
+            options = db_config.get("OPTIONS", {})
+            ssl_val = options.pop("ssl-mode", None) or options.pop("sslmode", None)
+            options.pop("ssl_require", None)
+
+            if host and host not in ("127.0.0.1", "localhost"):
+                options["ssl_mode"] = "REQUIRED" if not ssl_val or "require" in str(ssl_val).lower() else str(ssl_val)
+
+                ca_path = os.getenv("DB_SSL_CA", "").strip()
+                if not ca_path:
+                    for candidate in [BASE_DIR / "backend" / "aiven-ca.pem", BASE_DIR / "aiven-ca.pem"]:
+                        if candidate.exists():
+                            ca_path = str(candidate)
+                            break
+                if ca_path and os.path.exists(ca_path):
+                    options["ssl"] = {"ca": ca_path}
+
+            options.setdefault("charset", "utf8mb4")
+            db_config["OPTIONS"] = options
+            DATABASES = {"default": db_config}
 else:
-    db_engine = os.getenv("DB_ENGINE", "").strip()
+    db_engine = db_engine_env
     db_port = os.getenv("DB_PORT", "").strip()
     db_host = os.getenv("DB_HOST", "").strip()
 
     is_postgres = (
-        "postgres" in db_engine.lower()
+        "postgres" in db_engine
         or db_port == "5432"
         or ".neon.tech" in db_host.lower()
+    )
+
+    is_tidb = (
+        db_engine in ("tidb", "tidbcloud")
+        or "tidbcloud.com" in db_host.lower()
+        or bool(os.getenv("TIDB_HOST", "").strip())
     )
 
     if is_postgres:
@@ -153,19 +265,87 @@ else:
                 "CONN_HEALTH_CHECKS": True,
             }
         }
-    else:
-        # Default to MySQL (e.g. local development on 127.0.0.1:3306)
-        DB_SSL_CA = os.getenv("DB_SSL_CA", "").strip()
-        if not DB_SSL_CA:
-            candidate_ca = BASE_DIR / "aiven-ca.pem"
-            if candidate_ca.exists():
-                DB_SSL_CA = str(candidate_ca)
+    elif is_tidb:
+        tidb_port_raw = os.getenv("TIDB_PORT") or os.getenv("DB_PORT") or "4000"
+        if str(tidb_port_raw).strip() == "3306" and not os.getenv("TIDB_PORT"):
+            tidb_port_raw = "4000"
+        try:
+            tidb_port = int(str(tidb_port_raw).strip())
+        except (ValueError, TypeError):
+            tidb_port = 4000
 
+        explicit_ca = os.getenv("DB_SSL_CA", "").strip() or os.getenv("TIDB_SSL_CA", "").strip()
+        if explicit_ca:
+            ca_path = verify_ssl_ca_bundle(explicit_ca)
+        else:
+            auto_candidates = [
+                str(BASE_DIR / "certs" / "isrgrootx1.pem"),
+                str(BASE_DIR / "backend" / "certs" / "isrgrootx1.pem"),
+                "/etc/ssl/certs/ca-certificates.crt",
+                "/etc/pki/tls/certs/ca-bundle.crt",
+            ]
+            ca_path = ""
+            for candidate in auto_candidates:
+                if candidate and os.path.exists(candidate):
+                    try:
+                        ca_path = verify_ssl_ca_bundle(candidate)
+                        break
+                    except ImproperlyConfigured:
+                        continue
+            if not ca_path:
+                raise ImproperlyConfigured(
+                    "TiDB Cloud requires a valid SSL CA certificate bundle (e.g. ISRG Root X1) "
+                    "for strict TLS verification. None was found in certs/isrgrootx1.pem or system trust stores."
+                )
+
+        tidb_options = {
+            "charset": "utf8mb4",
+            "use_pure": True,
+            "connection_timeout": 15,
+            "raise_on_warnings": False,
+            "ssl_ca": ca_path,
+            "ssl_verify_cert": True,
+            "ssl_verify_identity": True,
+        }
+
+        conn_max_age_val = os.getenv("DB_CONN_MAX_AGE", "0").strip()
+        try:
+            conn_max_age = int(conn_max_age_val)
+        except ValueError:
+            conn_max_age = 0
+
+        DATABASES = {
+            "default": {
+                "ENGINE": "common.db_backends.tidb",
+                "NAME": os.getenv("DB_NAME") or os.getenv("TIDB_NAME") or os.getenv("TIDB_DATABASE") or "fashion_store",
+                "USER": os.getenv("DB_USER") or os.getenv("TIDB_USER", ""),
+                "PASSWORD": os.getenv("DB_PASSWORD") or os.getenv("TIDB_PASSWORD", ""),
+                "HOST": os.getenv("DB_HOST") or os.getenv("TIDB_HOST", ""),
+                "PORT": tidb_port,
+                "OPTIONS": tidb_options,
+                "CONN_MAX_AGE": conn_max_age,
+                "CONN_HEALTH_CHECKS": conn_max_age > 0,
+            }
+        }
+    else:
+        # Default to MySQL (e.g. Aiven cloud MySQL or local development on 127.0.0.1:3306)
         db_options = {
             "charset": "utf8mb4",
         }
-        if DB_SSL_CA and os.path.exists(DB_SSL_CA):
-            db_options["ssl"] = {"ca": DB_SSL_CA}
+
+        # If connecting to a remote cloud MySQL host (e.g. Aiven), enforce SSL REQUIRED
+        is_remote_mysql = bool(db_host and db_host.lower() not in ("127.0.0.1", "localhost"))
+        if is_remote_mysql:
+            db_options["ssl_mode"] = os.getenv("DB_SSLMODE", "REQUIRED")
+
+            ca_path = os.getenv("DB_SSL_CA", "").strip()
+            if not ca_path:
+                for candidate in [BASE_DIR / "backend" / "aiven-ca.pem", BASE_DIR / "aiven-ca.pem"]:
+                    if candidate.exists():
+                        ca_path = str(candidate)
+                        break
+            if ca_path and os.path.exists(ca_path):
+                db_options["ssl"] = {"ca": ca_path}
 
         DATABASES = {
             "default": {
@@ -176,6 +356,8 @@ else:
                 "HOST": os.getenv("DB_HOST", "127.0.0.1"),
                 "PORT": os.getenv("DB_PORT", "3306"),
                 "OPTIONS": db_options,
+                "CONN_MAX_AGE": 600 if is_remote_mysql else 0,
+                "CONN_HEALTH_CHECKS": True if is_remote_mysql else False,
             }
         }
 

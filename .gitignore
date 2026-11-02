@@ -39,6 +39,7 @@ Thumbs.db
 
 # Cloud database certificate
 *.pem
+!backend/certs/isrgrootx1.pem
 
 # Generated Django static files
 /backend/staticfiles/
@@ -46,3 +47,19 @@ Thumbs.db
 
 # Local-only product migration utility
 /backend/transfer_products_to_aiven.py
+/backend/sync_to_cloud_db.py
+/backend/migrate_mysql_to_neon.py
+/backend/verify_neon_data.py
+/backend/check_aiven_mysql_preflight.py
+/backend/migrate_neon_to_aiven_mysql.py
+/backend/compare_neon_aiven_readonly.py
+/backend/test_tidb_connection.py
+/backend/test_django_tidb_compatibility.py
+/backend/test_django_mysqlclient_tidb.py
+/backend/test_tidb_windows_adapter.py
+/backend/test_tidb_integration.py
+/backend/config/settings_tidb_test.py
+/backend/compare_neon_tidb_catalog.py
+/backend/import_neon_products_to_tidb.py
+/backend/diagnose_product_conflict.py
+/backend/delete_tidb_test_product.py

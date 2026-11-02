@@ -101,6 +101,14 @@ class Order(models.Model):
         db_table = "orders"
         ordering = ["-created_at", "-id"]
 
+    def save(self, *args, **kwargs):
+        if hasattr(self.status, "value"):
+            self.status = str(self.status.value)
+        elif self.status is not None and not isinstance(self.status, str):
+            self.status = str(self.status)
+        super().save(*args, **kwargs)
+
+
     def __str__(self):
         return f"Order {self.order_number} ({self.status}) - ₹{self.total}"
 

@@ -432,7 +432,7 @@ class OrderCreateSerializer(serializers.Serializer):
             order = Order.objects.create(
                 user=user,
                 order_number=order_number,
-                status=Order.Status.PENDING,
+                status=Order.Status.PENDING.value,
                 address=validated_data["delivery_address_obj"],
                 customer_name_snapshot=customer_name,
                 customer_email_snapshot=user.email,

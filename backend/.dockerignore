@@ -13,5 +13,7 @@ products_migration_dump/
 schema.sql
 
 *.pem
+!certs/isrgrootx1.pem
+!backend/certs/isrgrootx1.pem
 *.log
 
